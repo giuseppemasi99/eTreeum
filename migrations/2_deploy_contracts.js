@@ -1,5 +1,5 @@
-const ContractName = artifacts.require("ContractName");
+const BitMathGame = artifacts.require("BitMathGame");
 
 module.exports = function(deployer){
-    deployer.deploy(ContractName, constructor_param1, etc);
+    deployer.deploy(BitMathGame, 1);
 };
