@@ -1,72 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 	<meta charset="utf-8">
+
 	<head>
-		<title>BitMathGame</title>
-    <!-- Bootstrap -->
-    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+		<title>eTreeum</title>
+
+	    <!-- Bootstrap -->
+	    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
 	</head>
+
 	<body>
+
 		<main class="container">
-			<!-- Some preliminary information added to embellish the page -->
-			<header><h1>The bit-math puzzle</h1></header>
-			<section id="playingthegame">
-				<header>
-					<h2>Play the Bit-Math Game and win!</h2>
-					<p>With this game, we want to show how
-						<em>application tokens work</em>.
-						The tip is:
-						<code id="problem">the problem number</code>.
-						<!-- see the JS function checkProblem() -->
-					</p>
-					<p>
-						<strong>Hint:</strong>
-						<em>No, giving it as the input won't work.</em>
-					</p>
-				</header>
-				<form onsubmit="play(); updateDisplayedInformation(); return false;"
-					id="playform">
-					<fieldset>
-						<legend>Try and win</legend>
-						<label for="guessinput" />
-						<!-- Notice that "required" imposes a value to be inserted! -->
-						<input type="number" name="guess" id="guessinput"
-								required="required"
-								placeholder="127"
-								min="1" max="255"/>
-						<!-- "min" and "max" limit the range of possible inputs -->
-						<!-- "placeholder" is a suggestion -->
-						<button type="submit">Check!</button>
-						<!-- see the JS function winLoseOrMint() -->
-						<em id="result">Did you win?</em>
-					</fieldset>
-				</form>
-			</section>
+
+			<header><h1>eTreeum</h1></header>
+
 			<footer>
+
 				<header><h2>Status</h2></header>
+
 				<p>Your account address is:
 					<code id="myaccountaddress">n</code>.
 					<!-- see the JS function displayAccountAddress() -->
 				</p>
-				<p>Your current balance in BitMathCoins is:
-					<strong id="mybalance">x</strong>.
-					<!-- see the JS function checkBalance() -->
-				</p>
+
 				<p>Your current balance in Wei is:
 					<strong id="myweibalance">x</strong>.
 					<!-- see the JS function checkBalance() -->
 				</p>
+
 				<p>
 					And the minter is...:
 					<strong id="currentminter">y</strong>!
 					<!-- see the JS function displayMinter() -->
+
 				</p>
+
 			</footer>
+
 		</main>
+
 	</body>
+
+	<!-- JavaScript -->
+
 	<script src="dist/js/jquery.min.js"></script>
 	<script src="dist/js/bootstrap.min.js"></script>
 	<script src="dist/js/web3.min.js"></script>
-  <!-- To make our code tidier, we separate the JS script from the HTML file -->
-	<script src="frontend/script.js"></script>
+
+  	<script src="frontend/eTreeum.front-end.js"></script>
+
 </html>

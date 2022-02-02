@@ -1,5 +1,6 @@
-const BitMathGame = artifacts.require("BitMathGame");
+const ETreeum = artifacts.require("ETreeum");
 
 module.exports = function(deployer){
-    deployer.deploy(BitMathGame, 1);
+    // parameters for the constructor
+    deployer.deploy(ETreeum);
 };
