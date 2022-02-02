@@ -15,6 +15,8 @@ $(window).on('load', function() {
     initialise(contractAddress);
 });
 
+
+
 // Asynchronous function (to work with modules loaded on the go)
 // For further info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/async_function
 async function initialise(contractAddress) {
