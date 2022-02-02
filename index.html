@@ -1,49 +1,52 @@
 <!DOCTYPE html>
+
+<meta charset="utf-8">
 <html lang="en">
 
-	<meta charset="utf-8">
+    <head>
 
-	<head>
+        <title>eTreeum</title>
 
-		<title>eTreeum</title>
+        <link rel="stylesheet" href="style.css">
 
-	    <!-- Bootstrap -->
-	    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
 
-	</head>
+    <body>
+        
+        <header>Welcome to your garden!</header>
 
-	<body>
+        <div id= 'complete_body'>
+            <div id= 'left_div'>
+                    <div id= 'first_row'>
+                        Want to do more?
+                    </div>
+                    <div id='menu'>
 
-		<main class="container">
+                        <button type="button">Buy a seed!</button>
+                        <button type="button">Buy a tree!</button>
+                        <button type="button">Sell a tree!</button>                        
+                    
+                    </div>
+                </div>
 
-			<header><h1>eTreeum</h1></header>
+                <div id= 'middle_div'> 
+                    <div id="top">
+                        <img class="arrow" src="frontend/img/left-arrow.png" alt="left-arrow">
+                        <div id="tree"></div>
+                        <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
+                    </div>
+                    <div id="bottom">
+                        <button class="down-button" id="water" type="button">&#128167;</button>
+                        <button class="down-button" id="sun" type="button">&#9728;</button>
+                    </div>
+                </div>
 
-			<footer>
+                <div id= 'right_div'>
+                    <img src="frontend/img/podio_completo_cut.png" alt="podio">
+                </div>
+        </div>
 
-				<header><h2>Status</h2></header>
-
-				<p>Your account address is:
-					<code id="myaccountaddress">n</code>.
-					<!-- see the JS function displayAccountAddress() -->
-				</p>
-
-				<p>Your current balance in Wei is:
-					<strong id="myweibalance">x</strong>.
-					<!-- see the JS function checkBalance() -->
-				</p>
-
-				<p>
-					And the minter is...:
-					<strong id="currentminter">y</strong>!
-					<!-- see the JS function displayMinter() -->
-
-				</p>
-
-			</footer>
-
-		</main>
-
-	</body>
+    </body>
 
 	<!-- JavaScript -->
 
@@ -52,5 +55,5 @@
 	<script src="dist/js/web3.min.js"></script>
 
   	<script src="frontend/eTreeum.front-end.js"></script>
-
-</html>
+    
+</html> 
