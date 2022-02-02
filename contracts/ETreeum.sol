@@ -62,20 +62,26 @@ contract ETreeum {
     // output: bool (success or failure)
     function renameTree(){}
 
+    // check if the tree is going to grow or not (and eventually update the tree status)
+    // input:
+    // output: (new)status
+    function growTree(){}
+
     // give water to the tree
     // input: tree_id, amount_of_millimeters
-    // output: bool (success or failure)
+    // output: (new)status
     function giveWater(){}
 
     // give sun to the tree
     // input: tree_id, hours_of_sun
-    // output: bool (success or failure)
+    // output: (new)status
     function giveSun(){}
 
     // adding a new type of Tree
     // only the minter is able to run this method
     // input: Specie
     // output: bool (success or failure)
+    // events: emit event when a new specie is added by the minter
     function addSpecie(){}
 
     // create a new tree and store it in the user2trees mapping
@@ -92,6 +98,7 @@ contract ETreeum {
     // compute the ranking and store it in the ranking field, by iterating on all the users
     // input:
     // output:
+    // events: emit event when the ranking is going to change
     function computeRanking(){}
 
     // get the ranking
@@ -105,11 +112,13 @@ contract ETreeum {
     //      transfer tree_price to the owner of the tree and the ETH for real plant to the planter
     // input: tree_id
     // output: bool (success or failure)
+    // events: emit event when the tree is sold
     function buyTree(){}
 
     // store the tree in the shop field at the price given by user (check that the price is in the range of the value of the tree)
     // input: tree_id, user_given_price
     // output: bool (success or failure)
+    // events: emit event when the tree is inserted in the shop
     function sellTree(){}
 
     // destruct everything
