@@ -7,32 +7,55 @@
 
         <title>eTreeum</title>
 
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+        </style>
+
         <link rel="stylesheet" href="frontend/style.css">
 
     </head>
 
     <body>
         
-        <header>Welcome to your garden!</header>
+        <header>Welcome to your CryptoGarden!</header>
+
+        <div id="initial_div">
+            <p>Hello, first time here?</p>
+            Take a seed for free!
+            <button id="free_seed" type="button">Free seed!</button>
+        </div>
+
+        <div id="nickName_change_div">
+            Enter a NickName for your plant: <input type="text" id="newName" value="" />
+            <button id="submit_change_name" type="button">Change NickName</button>
+        </div>
 
         <div id= 'complete_body'>
+            
             <div id= 'left_div'>
                     <div id= 'first_row'>
                         Want to do more?
                     </div>
                     <div id='menu'>
 
-                        <button type="button">Buy a seed!</button>
-                        <button type="button">Buy a tree!</button>
-                        <button type="button">Sell a tree!</button>                        
+                        <button id="shop" type="button">&#128722;</button>                  
                     
                     </div>
                 </div>
 
                 <div id= 'middle_div'> 
+
                     <div id="top">
                         <img class="arrow" src="frontend/img/left-arrow.png" alt="left-arrow">
-                        <div id="tree"></div>
+                        <div id="tree">
+                            <div id="info-row">
+                                <span>
+                                    <label id="nickName">NickName </label>
+                                    <button id="change_name" type="button">✏️</button>
+                                </span>
+                                <label id="info">&#8505;</label>
+                            </div> 
+                        </div>
                         <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
                     </div>
                     <div id="bottom">
@@ -42,7 +65,19 @@
                 </div>
 
                 <div id= 'right_div'>
-                    <img src="frontend/img/podio_completo_cut.png" alt="podio">
+                    <div id= 'first_row'>Kings of the Forest!</div>
+
+                    <div id="podium">
+                        <label class="podium" id="first">
+                            1. <img src="frontend/img/first.png" alt="first place"> First
+                        </label>
+                        <label class="podium" id="second">
+                            2. <img src="frontend/img/third.png" alt="second place"> Second
+                        </label>
+                        <label class="podium" id="third">
+                            3. <img src="frontend/img/second.png" alt="third place"> Third
+                        </label>
+                    </div>
                 </div>
         </div>
 

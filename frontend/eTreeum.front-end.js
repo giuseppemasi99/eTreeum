@@ -13,8 +13,109 @@ var contract = null;
 
 $(window).on('load', function() {
     initialise(contractAddress);
+    calculatePodium();
+    var water, sun, seed, shop, rename;
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    seed = document.getElementById("free_seed");
+    shop = document.getElementById("shop");
+    rename = document.getElementById("change_name");
+    submit_change = document.getElementById("submit_change_name");
+
+    seed.addEventListener('click', freeSeed);
+    rename.addEventListener('click', changeName);
+    submit_change.addEventListener('click', submitNewName);
+
+    
+    if (checkNewUser(senderAddress)){
+        water.disabled = true;
+        sun.disabled = true;
+        shop.disabled = true;
+        rename.disabled = true;
+        seed.disabled = false;
+    }
+    else{
+        printTrees(senderAddress);
+    }
 });
 
+// new used that plant a seed for free
+function freeSeed(){
+    var initial_div, complete_body, plant, water, sun, seed, shop, rename, infoRow;
+
+    infoRow = document.getElementById("info-row");
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    seed = document.getElementById("free_seed");
+    shop = document.getElementById("shop");
+    initial_div = document.getElementById("initial_div");
+    complete_body = document.getElementById("complete_body");
+    plant = document.getElementById("tree");
+    
+    initial_div.style.display = "none";
+    complete_body.style.opacity = 1;
+    plant.style.filter = "grayscale(0%)";
+    infoRow.style.display = "flex";
+
+    water.style.cursor = "pointer";
+    sun.style.cursor = "pointer";
+    shop.style.cursor = "pointer";
+
+    seed.disabled = true;
+    water.disabled = false;
+    sun.disabled = false;
+    shop.disabled = false;
+    rename.disabled = false;
+}
+
+// function that allow you to change the nickname of a plant
+// disply a div in wich you can input the new nickname
+function changeName(){
+    var complete_body, divRename, water, sun, shop, rename;
+
+    divRename = document.getElementById("nickName_change_div");
+    complete_body = document.getElementById("complete_body");
+
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    shop = document.getElementById("shop");
+    
+    divRename.style.display = "flex";
+    complete_body.style.opacity = 0.2;
+
+    water.disabled = true;
+    sun.disabled = true;
+    shop.disabled = true;
+    rename.disabled = true;
+}
+
+// function that sumbit the change of the nickname
+function submitNewName(){
+    var label, name, complete_body, divRename, water, sun, shop, rename;
+    
+    label = document.getElementById("nickName");
+    name = document.getElementById("newName");
+
+    divRename = document.getElementById("nickName_change_div");
+    complete_body = document.getElementById("complete_body");
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    shop = document.getElementById("shop");
+    
+    label.innerText = name.value;
+    name.value = "";
+
+    divRename.style.display = "none";
+    complete_body.style.opacity = 1;
+
+    water.disabled = false;
+    sun.disabled = false;
+    shop.disabled = false;
+    rename.disabled = false;
+}
 
 
 // Asynchronous function (to work with modules loaded on the go)
@@ -60,6 +161,23 @@ function updateDisplayedInformation() {
 	displayAccountAddress();
 	return false;
 }
+
+
+function calculatePodium(){
+    return ["aaaa", "bbbb", "cccc"];
+}
+
+function checkNewUser(senderAddress){
+    return 1;
+}
+
+function printTrees(senderAddress){
+    web3.eth.getTreesByAddress(senderAddress).then(function(trees){
+
+    });
+}
+
+
 
 // Displays the current wei balance
 function checkWeiBalance(){

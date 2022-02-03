@@ -1,6 +1,6 @@
 *{
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: 'Varela Round', sans-serif;
 }
 
 html{
@@ -36,10 +36,56 @@ header{
     background: -webkit-linear-gradient(rgb(0, 66, 0), rgb(10, 192, 10));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 0.5px black;
+    
 
-    font-weight: bolder;
+    font-weight: 950;
     font-size: 45pt;
+}
+
+div#initial_div, div#nickName_change_div{
+    position: absolute;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    top: 35%;
+    left: 37.5%;
+    width: 25%;
+    border-radius: 10px;
+
+    border: #664526 solid 2px;
+    padding: 15px;
+
+    background-color: white;
+
+    font-size: 17pt;
+    font-weight: 700;
+
+}
+
+button#free_seed{
+    max-width: max-content;
+    cursor: pointer;
+}
+
+div#nickName_change_div{
+    display: none;
+    z-index: 11;
+
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+input#newName{
+    margin-top: 10px;
+}
+
+button#submit_change_name{
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 div#complete_body{
@@ -49,6 +95,8 @@ div#complete_body{
     display: flex;
     align-items: center;
     justify-content: center;
+
+    opacity: 0.2;
 }
 
 div#left_div{
@@ -56,6 +104,17 @@ div#left_div{
     height: 60%;
 
 }
+
+div#menu{
+    height: 70%;
+    width: max-content;
+    margin: 5px 0px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 
 div#middle_div{
     display: flex;
@@ -71,7 +130,8 @@ img.arrow{
     max-height: 50%;
     border-radius: none;
 
-    cursor: pointer;
+    cursor: not-allowed;
+    opacity: 0.55;
 }
 
 div#top{
@@ -91,6 +151,40 @@ div#tree{
     background-size: cover;                 
     background-repeat: no-repeat;
     background-position: center center; 
+
+    filter: grayscale(100%);
+}
+
+div#info-row{
+    display: none;
+    place-content: space-between;
+    margin: 5px 10px;
+
+}
+
+span{
+    display: flex;
+    align-items: center;
+}
+
+button#change_name{
+    background-color: grey;
+    color: black;
+    cursor: pointer;
+    margin: 0px;
+    margin-left: 1px;
+    font-size: 10pt;
+    padding: 0px;
+    border-radius: 5px;
+    display: inline;
+}
+
+label#info{    
+    border-radius: 5px;
+    border: 3px black solid;
+    padding: 1px 3px;
+    
+    cursor: pointer;
 }
 
 div#bottom{
@@ -110,6 +204,10 @@ button.down-button{
     padding: 15px;
 
     background-color: #664526;
+
+    cursor: not-allowed;
+
+    font-size: 15pt;
 }
 
 button#water{
@@ -125,6 +223,50 @@ div#right_div{
     height: 60%;
 }
 
+div#podium{
+    height: 75%;
+
+    margin-left: 20%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: justify;
+}
+
+label.podium{
+    color: black;
+    margin-bottom: 10px;
+
+    font-weight: 600;
+}
+
+label#first{
+    font-size: 25pt;
+    color: #ffd700;
+}
+
+label#first img{
+    max-width: 25pt;
+}
+
+label#second{
+    font-size: 20pt;
+    color: #c0c0c0;
+}
+
+label#second img{
+    max-width: 20pt;
+}
+
+label#third{
+    font-size: 15pt;
+    color: #cd7f32;
+}
+
+label#third img{
+    max-width: 15pt;
+}
 
 div#first_row{
     height: 20%;
@@ -141,20 +283,16 @@ div#first_row{
     align-items: center;
 }
 
-div#menu{
-    height: 70%;
-    margin: 5px 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+p{
+    margin: 0;
 }
 
 button{
     display: block;
     margin-top: 10px;
-    padding: 10px;
+    padding: 20px;
 
-    cursor: pointer;
+    cursor: not-allowed;
 
     font-size: 12pt;
     font-weight: bolder;
@@ -165,6 +303,8 @@ button{
     background-color: rgb(28, 75, 17);
     color: white;
 }
+
+
 
 
 label.stat, label.response{
