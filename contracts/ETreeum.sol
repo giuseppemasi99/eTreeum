@@ -12,96 +12,173 @@ contract ETreeum {
     /// @notice Organization who plants real-world plants
     address payable private planter;
 
-    enum SpeciesNames{SPECIE1, SPECIE2}
-    enum StagesNames{Seed, Ok, Good}
+    enum SpeciesName {AbiesNebrodensis, AfzeliaAfricana, AloeSquarrosa, CanariumZeylanicum, PinusSylvestris, MalusDomestica, TheobromaCacao}
+    enum StagesName {Seed, Bush, Adult, Majestic, Secular}
+    enum ExtinctionRisk {LeastConcern, Vulnerable, CriticallyEndangered}
+
+    uint8 private speciesLength = 7;
+    uint64 private treesInTheGame = 0;
 
     /// @notice Maximum number of levels of rarity
-    int constant MAX_RARITY = 2; // [0 -> normal, 1-> low risk, 2 -> high risk]
+    //int constant MAX_RARITY = 2; // [0 -> normal, 1-> low risk, 2 -> high risk]
     
-    /// @notice price of a seed
-    int constant SEED_PRICE = 150;
+    /// @notice price of a seed (1 finney)
+    uint constant SEED_PRICE = 1e15;
 
-    /// @notice  percentage of ETH used for plant real tree
-    int constant PERCENTAGE_FOR_REAL_PLANT = 5;
+    /// @notice percentage of ETH used for plant real tree
+    uint8 constant PERCENTAGE_FOR_REAL_PLANT = 5;
 
-    struct Specie {
-        int rarity; // level of rarity
-        SpeciesNames specieName; // name of the specie
-        int waterNeeded; // millimeter of water
-        int sunNeeded; // hours of sun
+    struct Species {
+        SpeciesName specieName; // name of the specie NOTE: if we want to be able to add a specie this cannot be an enum
+        ExtinctionRisk risk; // risk for the species -> determines rarity in the game
+        uint16 waterNeeded; // millimeter of water
+        uint8 sunNeeded; // hours of sun
     }
 
     struct Tree {
-        Specie specie; // specie of the tree among Species
-        int id; // identifier of the tree
+        Species species; // specie of the tree
         string nickname; // think about
-        int waterGiven; // millimeter of water given to the tree
-        int sunGiven; // hours of sun given to the tree
-        StagesNames stage; // status of the tree
-        int value; // value of the tree as linear combination of stage and rarity
+        uint16 waterGiven; // millimeter of water given to the tree
+        uint8 sunGiven; // hours of sun given to the tree
+        StagesName stage; // status of the tree
+        //since this can be calculated, probably better not to store it
+        //uint value; // value of the tree as linear combination of stage and rarity
     }
 
-    Specie[] private species;
+    struct TreeOwned {
+        bool isValid;
+        uint64[] treeIds;
+        //from identifier of the tree to the tree itself
+        mapping(uint64 => Tree) trees;
+    }
+
+    Species[] private gameSpecies;
 
     // user_address -> user_nickname
-    mapping(address => string) private address2nickname;
+    mapping(address => string) private userNicknames;
 
     // user_address -> [Tree1, Tree2, ...]
-    mapping(address => Tree[]) private user2trees;
+    mapping(address => TreeOwned) private ownedTrees;
 
     // tree_id -> tree_price
     mapping(int => int) private shop;
+
+    modifier MustOwnTree (uint64 id) {
+        require (ownsTree(msg.sender, id), "This tree isn't yours");
+        _;
+    }
 
     constructor() {
 
         minter = payable(msg.sender);
 
         // initialise species
-
+        gameSpecies[0] = Species(SpeciesName.AbiesNebrodensis, ExtinctionRisk.CriticallyEndangered, 1000, 10);
+        gameSpecies[1] = Species(SpeciesName.AfzeliaAfricana, ExtinctionRisk.Vulnerable, 1000, 10);
+        gameSpecies[2] = Species(SpeciesName.AloeSquarrosa, ExtinctionRisk.Vulnerable, 1000, 10);
+        gameSpecies[3] = Species(SpeciesName.CanariumZeylanicum, ExtinctionRisk.Vulnerable, 1000, 10);
+        gameSpecies[4] = Species(SpeciesName.MalusDomestica, ExtinctionRisk.LeastConcern, 1000, 10);
+        gameSpecies[5] = Species(SpeciesName.PinusSylvestris, ExtinctionRisk.LeastConcern, 1000, 10);
+        gameSpecies[6] = Species(SpeciesName.TheobromaCacao, ExtinctionRisk.LeastConcern, 1000, 10);
     }
 
-    // create a new tree and store it in the user2trees mapping
+    function joinGame(string calldata nickname) public {
+        require (isNewUser(msg.sender), "You're already playing");
+        ownedTrees[msg.sender].isValid = true;
+        plantSeed(msg.sender, nickname);
+    }
+
+    // create a new tree and assign it to the player
     // input: nickname
     // output: Tree
-    function plantSeed() public {}
+    function plantSeed(address player, string calldata nickname) private returns (Tree memory) {
+        uint specie = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, treesInTheGame)));
+        specie = specie % speciesLength;
+        Tree memory t = Tree(gameSpecies[specie], nickname, 0, 0, StagesName.Seed);
+        ownedTrees[player].trees[treesInTheGame] = t;
+        ownedTrees[player].treeIds.push(treesInTheGame);
+        treesInTheGame++;
+        return t;
+    }
 
     // change nickname of the tree
-    // input: new_nickname
+    // input: id, new_nickname
     // output: bool (success or failure)
-    function renameTree() public {}
+    function renameTree(uint64 id, string calldata newNickname) public MustOwnTree(id) {
+        ownedTrees[msg.sender].trees[id].nickname = newNickname;
+    }
 
-    // check if the tree is going to grow or not (and eventually update the tree status)
+    function ownsTree(address player, uint64 id) view private returns (bool) {
+        return bytes(ownedTrees[player].trees[id].nickname).length > 0;
+    }
+
+    // check if the tree is going to grow or not (and in case update the tree status)
     // input:
     // output: (new)status
-    function growTree() public {}
+    function growTree(Tree storage t) private view returns (StagesName) {
+        uint8 currentStage = uint8(t.stage);
+        if (currentStage < 3 && t.waterGiven == t.species.waterNeeded && t.sunGiven == t.species.sunNeeded) {
+            currentStage++;
+        }
+        return StagesName(currentStage);
+    }
 
     // give water to the tree
     // input: tree_id, amount_of_millimeters
     // output: (new)status
-    function giveWater() public {}
+    function giveWater(uint64 id, uint16 waterAmount) public MustOwnTree(id) returns (StagesName) {
+        Tree storage t = ownedTrees[msg.sender].trees[id];
+        t.waterGiven += waterAmount;
+        return growTree(t);
+    }
 
     // give sun to the tree
     // input: tree_id, hours_of_sun
     // output: (new)status
-    function giveSun() public {}
+    function giveSun(uint64 id, uint8 sunHours) public MustOwnTree(id) returns (StagesName) {
+        Tree storage t = ownedTrees[msg.sender].trees[id];
+        t.sunGiven += sunHours;
+        return growTree(t);
+    }
 
     // adding a new type of Tree
     // only the minter is able to run this method
     // input: Specie
     // output: bool (success or failure)
     // events: emit event when a new specie is added by the minter
-    function addSpecie() public {}
+    function addSpecie() public {
+        //require(msg.sender == minter, "Only the Original Gardener can set the rules for this game");
 
-    // create a new tree and store it in the user2trees mapping
-    // this method requires some weis and then call the method plantSeed()
+    }
+
+    // requires the player pays the seed price, calls the method plantSeed()
     // input: nickname
     // output: Tree
-    function buySeed() public {}
+    function buySeed(string calldata nickname) public payable {
+        require(msg.value >= SEED_PRICE, "Not enough money for a seed");
+        planter.transfer(msg.value);
+        plantSeed(msg.sender, nickname);
+    }
+
+    //Maximum value for a tree = 75 (Maximum rarity and stage);
+    //Minimum 6
+    function computeTreeValue(Tree storage t) view private returns (uint8) {
+        uint8 value = uint8(t.species.risk) == 0 ? 50 : (uint8(t.species.risk) == 1? 15 : 5);
+        value += (uint8(t.stage)+1) * 5;
+        return value;
+    }
 
     // computing the score of the user as sum of the owned trees
     // input: user_address
     // output: user_score
-    function computeUserScore() public {}
+    function computeUserScore(address player) view public returns (uint32) {
+        uint64[] storage ids = ownedTrees[player].treeIds;
+        uint32 userScore = 0;
+        for (uint64 i=0; i<ids.length; i++) {
+            userScore += computeTreeValue(ownedTrees[player].trees[ids[i]]);
+        }
+        return userScore;
+    }
 
     // compute the ranking and store it in the ranking field, by iterating on all the users
     // input:
@@ -124,6 +201,7 @@ contract ETreeum {
     function buyTree() public {}
 
     // store the tree in the shop field at the price given by user (check that the price is in the range of the value of the tree)
+    // requires tree to be at least adult
     // input: tree_id, user_given_price
     // output: bool (success or failure)
     // events: emit event when the tree is inserted in the shop
@@ -132,7 +210,9 @@ contract ETreeum {
     // check that the user is a new one or it already got the free seed
     // input:
     // output: bool (0 -> old user, 1 -> new user)
-    function isNewUser() public {}
+    function isNewUser(address player) public view returns (bool) {
+        return !ownedTrees[player].isValid;
+    }
 
     // destruct everything
     // check that the sender is the minter
