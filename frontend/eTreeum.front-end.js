@@ -14,6 +14,7 @@ var contract = null;
 $(window).on('load', function() {
     initialise(contractAddress);
     calculatePodium();
+
     var water, sun, seed, shop, rename;
     water = document.getElementById("water");
     sun = document.getElementById("sun");
@@ -35,13 +36,18 @@ $(window).on('load', function() {
         seed.disabled = false;
     }
     else{
+        water.disabled = false;
+        sun.disabled = false;
+        shop.disabled = false;
+        rename.disabled = false;
+        seed.disabled = true;
         printTrees(senderAddress);
     }
 });
 
 // new used that plant a seed for free
 function freeSeed(){
-    var initial_div, complete_body, plant, water, sun, seed, shop, rename, infoRow;
+    var initial_div, complete_body, plant, water, sun, seed, shop, rename, infoRow, counter, tree_num, tot_trees;
 
     infoRow = document.getElementById("info-row");
     rename = document.getElementById("change_name");
@@ -52,11 +58,18 @@ function freeSeed(){
     initial_div = document.getElementById("initial_div");
     complete_body = document.getElementById("complete_body");
     plant = document.getElementById("tree");
+    counter = document.getElementById("counting_tree");
+    tree_num = document.getElementById("tree_number");
+    tot_trees = document.getElementById("tot_trees");
     
     initial_div.style.display = "none";
     complete_body.style.opacity = 1;
     plant.style.filter = "grayscale(0%)";
     infoRow.style.display = "flex";
+
+    tree_num.innerHTML = 1;
+    tot_trees.innerHTML = 1;
+    counter.style.display = "flex";
 
     water.style.cursor = "pointer";
     sun.style.cursor = "pointer";
@@ -72,7 +85,7 @@ function freeSeed(){
 // function that allow you to change the nickname of a plant
 // disply a div in wich you can input the new nickname
 function changeName(){
-    var complete_body, divRename, water, sun, shop, rename;
+    var complete_body, divRename, water, sun, shop, rename, arrow;
 
     divRename = document.getElementById("nickName_change_div");
     complete_body = document.getElementById("complete_body");
@@ -81,6 +94,8 @@ function changeName(){
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     shop = document.getElementById("shop");
+
+    arrow = document.getElementsByClassName("arrow")
     
     divRename.style.display = "flex";
     complete_body.style.opacity = 0.2;
@@ -89,11 +104,13 @@ function changeName(){
     sun.disabled = true;
     shop.disabled = true;
     rename.disabled = true;
+    arrow[0].removeEventListener("click", goLeft);
+    arrow[1].removeEventListener("click", goRight);
 }
 
 // function that sumbit the change of the nickname
 function submitNewName(){
-    var label, name, complete_body, divRename, water, sun, shop, rename;
+    var label, name, complete_body, divRename, water, sun, shop, rename, arrow;
     
     label = document.getElementById("nickName");
     name = document.getElementById("newName");
@@ -104,6 +121,8 @@ function submitNewName(){
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     shop = document.getElementById("shop");
+
+    arrow = document.getElementsByClassName("arrow")
     
     label.innerText = name.value;
     name.value = "";
@@ -115,8 +134,119 @@ function submitNewName(){
     sun.disabled = false;
     shop.disabled = false;
     rename.disabled = false;
+    arrow[0].addEventListener("click", goLeft);
+    arrow[1].addEventListener("click", goRight);
 }
 
+function calculatePodium(){
+    var podium, first, second, third;
+
+    podium = ["A", "B", "C"];
+    first = document.getElementById("first_name");
+    second = document.getElementById("second_name");
+    third = document.getElementById("third_name");
+
+    first.innerHTML = podium[0]
+    second.innerHTML = podium[1]
+    third.innerHTML = podium[2]
+}
+
+function checkNewUser(senderAddress){
+    return 0;
+}
+
+// function that show all the owned trees with the respective info
+function printTrees(senderAddress){
+    //web3.eth.getTreesByAddress(senderAddress).then(function(trees){});
+    // qui mi ritornerà l'informazione relativa a tutti i gli alberi che ho
+    freeSeed();
+
+    var counter, tree_num, tot_trees, div_tree, tree_img, arrow;
+
+    counter = document.getElementById("counting_tree");
+    tree_num = document.getElementById("tree_number");
+    tot_trees = document.getElementById("tot_trees");
+    div_tree = document.getElementById("tree");
+    
+    trees = [1, 2, 3, 2, 1, 2];
+
+    arrow = document.getElementsByClassName("arrow")
+
+    if(trees.length > 1){
+    
+        arrow[0].style.opacity = 1;
+        arrow[1].style.opacity = 1;
+
+        arrow[0].style.cursor = "pointer";
+        arrow[1].style.cursor = "pointer";
+
+        arrow[0].addEventListener("click", goLeft);
+        arrow[1].addEventListener("click", goRight);
+
+    }else{
+        arrow[0].removeEventListener("click", goLeft);
+        arrow[1].removeEventListener("click", goRight);
+    }
+
+    tree_num.innerHTML = 1;
+    tot_trees.innerHTML = trees.length;
+
+    tree_img = whichImage(trees[tree_num.innerHTML-1]);
+    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+
+    counter.style.display = "flex";
+
+}
+
+// if you click on the left arrow you can see the tree on the left side
+function goLeft(){
+    var tree_num, tot_trees, div_tree, tree_img;
+    
+    tree_num = document.getElementById("tree_number");
+    tot_trees = document.getElementById("tot_trees");
+    div_tree = document.getElementById("tree");
+
+    if(tree_num.innerHTML == 1){
+        tree_num.innerHTML = tot_trees.innerHTML;
+    }else{
+        tree_num.innerHTML--;
+    }
+
+    tree_img = whichImage(trees[tree_num.innerHTML-1]);
+    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+}
+
+// if you click on the right arrow you can see the tree on the right side
+function goRight(){
+    var tree_num, tot_trees, div_tree, tree_img;
+    
+    tree_num = document.getElementById("tree_number");
+    tot_trees = document.getElementById("tot_trees");
+    div_tree = document.getElementById("tree");
+    
+    if(tree_num.innerHTML == tot_trees.innerHTML){
+        tree_num.innerHTML = 1;
+    }else{
+        tree_num.innerHTML++;
+    }
+
+    tree_img = whichImage(trees[tree_num.innerHTML-1]);
+    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+}
+
+//function that given a value return the type of image to show
+function whichImage(value){
+    switch(value){
+        case 1:
+            return "seed.gif";
+        case 2:
+            return "little_tree.gif";
+        case 3:
+            return "da9cc5efa7671200c3def8a880721db7.gif";
+        default:
+            return "seed.gif";
+    }
+}
 
 // Asynchronous function (to work with modules loaded on the go)
 // For further info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/async_function
@@ -161,22 +291,6 @@ function updateDisplayedInformation() {
 	displayAccountAddress();
 	return false;
 }
-
-
-function calculatePodium(){
-    return ["aaaa", "bbbb", "cccc"];
-}
-
-function checkNewUser(senderAddress){
-    return 1;
-}
-
-function printTrees(senderAddress){
-    web3.eth.getTreesByAddress(senderAddress).then(function(trees){
-
-    });
-}
-
 
 
 // Displays the current wei balance

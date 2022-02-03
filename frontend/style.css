@@ -148,7 +148,7 @@ div#tree{
     width: 100%;
 
     background-image: url(img/seed.gif);
-    background-size: cover;                 
+    background-size: contain;                 
     background-repeat: no-repeat;
     background-position: center center; 
 
@@ -179,12 +179,24 @@ button#change_name{
     display: inline;
 }
 
+label#nickName{
+    font-weight: 600;
+}
+
 label#info{    
     border-radius: 5px;
     border: 3px black solid;
     padding: 1px 3px;
     
     cursor: pointer;
+}
+
+div#counting_tree{
+    display: none;
+    justify-content: center;
+    margin-top: 5px;
+    font-size: 15pt;
+    font-weight: 700;
 }
 
 div#bottom{

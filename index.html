@@ -17,7 +17,7 @@
 
     <body>
         
-        <header>Welcome to your CryptoGarden!</header>
+        <header>Welcome into your CryptoGarden!</header>
 
         <div id="initial_div">
             <p>Hello, first time here?</p>
@@ -58,6 +58,14 @@
                         </div>
                         <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
                     </div>
+
+                    <div id="counting_tree">
+                        <span>
+                            <label id="tree_number">1</label>/
+                            <label id="tot_trees">1</label>
+                        </span>
+                    </div>
+
                     <div id="bottom">
                         <button class="down-button" id="water" type="button">&#128167;</button>
                         <button class="down-button" id="sun" type="button">&#9728;</button>
@@ -69,13 +77,16 @@
 
                     <div id="podium">
                         <label class="podium" id="first">
-                            1. <img src="frontend/img/first.png" alt="first place"> First
+                            1. <img src="frontend/img/first.png" alt="first place">
+                            <label id="first_name"></label>
                         </label>
                         <label class="podium" id="second">
-                            2. <img src="frontend/img/third.png" alt="second place"> Second
+                            2. <img src="frontend/img/third.png" alt="second place">
+                            <label id="second_name"></label>
                         </label>
                         <label class="podium" id="third">
-                            3. <img src="frontend/img/second.png" alt="third place"> Third
+                            3. <img src="frontend/img/second.png" alt="third place">
+                            <label id="third_name"></label>
                         </label>
                     </div>
                 </div>
