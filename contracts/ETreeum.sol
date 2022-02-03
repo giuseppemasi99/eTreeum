@@ -1,20 +1,28 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 pragma solidity >=0.8.0 <0.9.0;
 
+/**
+ *  @title eTreeumGame
+ */
 contract ETreeum {
 
-    /** The originator of this contract */
+    /// @notice The originator of this contract
     address payable public minter;
 
-    // organization who plants real-world plants
+    /// @notice Organization who plants real-world plants
     address payable private planter;
 
     enum SpeciesNames{SPECIE1, SPECIE2}
     enum StagesNames{Seed, Ok, Good}
 
-    int constant MAX_RARITY = 2; // maximum number of levels of rarity [0 -> normal, 1-> low risk, 2 -> high risk]
-    int constant SEED_PRICE = 150; // price of a seed
-    int constant PERCENTAGE_FOR_REAL_PLANT = 5; // percentage of ETH used for plant real tree
+    /// @notice Maximum number of levels of rarity
+    int constant MAX_RARITY = 2; // [0 -> normal, 1-> low risk, 2 -> high risk]
+    
+    /// @notice price of a seed
+    int constant SEED_PRICE = 150;
+
+    /// @notice  percentage of ETH used for plant real tree
+    int constant PERCENTAGE_FOR_REAL_PLANT = 5;
 
     struct Specie {
         int rarity; // level of rarity
