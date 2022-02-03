@@ -119,7 +119,12 @@ contract ETreeum {
     // input: tree_id, user_given_price
     // output: bool (success or failure)
     // events: emit event when the tree is inserted in the shop
-    function sellTree() public {}
+    function addTreeToTheShop() public {}
+
+    // check that the user is a new one or it already got the free seed
+    // input:
+    // output: bool (0 -> old user, 1 -> new user)
+    function isNewUser() public {}
 
     // destruct everything
     // check that the sender is the minter
