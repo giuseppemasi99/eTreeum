@@ -15,20 +15,28 @@ function start(){
 
     calculatePodium();
 
+    // remove comment when working with blockchain
     isNewUser(senderAddress);
+
+    // comment this line when working with blockchain
+    //thenIsNewUser(isNewUser(senderAddress));
 
 }
 
+// setting up all the necessary buttons and elements in the page
 function setupPage(){
 
-    var initial_div, complete_body, plant, water, sun, seed, shop, rename, infoRow, counter, tree_num, tot_trees;
-
-    infoRow = document.getElementById("info-row");
+    var water, sun, seed, shop, rename, info;
+    var initial_div, complete_body, infoRow, counter, tree_num, tot_trees, plant;
+    
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     seed = document.getElementById("free_seed");
     shop = document.getElementById("shop");
+    info = document.getElementById("info")
+
+    infoRow = document.getElementById("info-row");
     initial_div = document.getElementById("initial_div");
     complete_body = document.getElementById("complete_body");
     plant = document.getElementById("tree");
@@ -54,12 +62,15 @@ function setupPage(){
     sun.disabled = false;
     shop.disabled = false;
     rename.disabled = false;
+
+    info.addEventListener("click", showInfo);
     
 }
 
 // new used that plant a seed for free
 function freeSeed(){
-
+    
+    // remove comment when working with the blockchain
     plantFreeSeed(senderAddress);
 
     setupPage();
@@ -70,16 +81,20 @@ function freeSeed(){
 // disply a div in wich you can input the new nickname
 function changeName(){
 
-    var complete_body, divRename, water, sun, shop, rename, arrow;
-
+    var complete_body, divRename, tot_trees;
+    var water, sun, shop, rename, arrow, info;
+    
+    // divs and other elements
     divRename = document.getElementById("nickName_change_div");
     complete_body = document.getElementById("complete_body");
+    tot_trees = document.getElementById("tot_trees");
 
+    // buttons
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     shop = document.getElementById("shop");
-
+    info = document.getElementById("info")
     arrow = document.getElementsByClassName("arrow")
     
     divRename.style.display = "flex";
@@ -89,27 +104,36 @@ function changeName(){
     sun.disabled = true;
     shop.disabled = true;
     rename.disabled = true;
-    arrow[0].removeEventListener("click", goLeft);
-    arrow[1].removeEventListener("click", goRight);
 
+    info.removeEventListener("click", showInfo);
+    
+
+    if(tot_trees.innerHTML > 1){
+        arrow[0].removeEventListener("click", goLeft);
+        arrow[1].removeEventListener("click", goRight);
+    }
 }
 
 // function that sumbit the change of the nickname
 function submitNewName(){
 
-    var label, name, complete_body, divRename, water, sun, shop, rename, arrow;
-    
+    var label, name, complete_body, divRename, tot_trees;
+    var water, sun, shop, rename, arrow, info;
+
+    // divs and other elements
     label = document.getElementById("nickName");
     name = document.getElementById("newName");
-
     divRename = document.getElementById("nickName_change_div");
     complete_body = document.getElementById("complete_body");
+    tot_trees = document.getElementById("tot_trees");
+
+    // buttons
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     shop = document.getElementById("shop");
-
     arrow = document.getElementsByClassName("arrow")
+    info = document.getElementById("info")
     
     label.innerText = name.value;
     name.value = "";
@@ -121,9 +145,12 @@ function submitNewName(){
     sun.disabled = false;
     shop.disabled = false;
     rename.disabled = false;
-    arrow[0].addEventListener("click", goLeft);
-    arrow[1].addEventListener("click", goRight);
+    info.addEventListener("click", showInfo);
 
+    if (tot_trees.innerHTML > 1){
+        arrow[0].addEventListener("click", goLeft);
+        arrow[1].addEventListener("click", goRight);
+    }
 }
 
 function calculatePodium(){
@@ -141,20 +168,26 @@ function calculatePodium(){
 
 }
 
-// function that show all the owned trees with the respective info
+// function that show all the owned trees with the respective info and the user nickname
 function printTrees(senderAddress){
     //web3.eth.getTreesByAddress(senderAddress).then(function(trees){});
     // qui mi ritornerà l'informazione relativa a tutti i gli alberi che ho
     setupPage();
 
-    var counter, tree_num, tot_trees, div_tree, tree_img, arrow;
+    var counter, tree_num, tot_trees, div_tree, tree_img;
+    var arrow, info;
 
     counter = document.getElementById("counting_tree");
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
+
+    // button
+    info = document.getElementById("info")
     
     trees = [1, 2, 3, 2, 1, 2];
+
+    info.addEventListener("click", showInfo);
 
     arrow = document.getElementsByClassName("arrow")
 
@@ -172,6 +205,9 @@ function printTrees(senderAddress){
     }else{
         arrow[0].removeEventListener("click", goLeft);
         arrow[1].removeEventListener("click", goRight);
+
+        arrow[0].style.cursor = "not-allowed";
+        arrow[1].style.cursor = "not-allowed";
     }
 
     tree_num.innerHTML = 1;
@@ -238,10 +274,132 @@ function whichImage(value){
     }
 }
 
+// function used to show the information (stat) of a tree
+function showInfo(value){
+
+    var complete_body, stat_div, tot_trees, num_tree, stat_label;
+    var water, sun, shop, rename, arrow, info;
+    
+    // divs and other elements
+    stat_div = document.getElementById("treeStat");
+    complete_body = document.getElementById("complete_body");
+    num_tree = document.getElementById("tree_number");
+    tot_trees = document.getElementById("tot_trees");
+    stat_label = document.getElementById("tree_id");
+
+    // buttons
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    shop = document.getElementById("shop");
+    info = document.getElementById("info")
+    arrow = document.getElementsByClassName("arrow")
+    
+    stat_label.innerHTML = num_tree.innerHTML;
+    stat_div.style.display = "flex";
+    complete_body.style.opacity = 0.2;
+
+    water.disabled = true;
+    sun.disabled = true;
+    shop.disabled = true;
+    rename.disabled = true;
+
+    info.removeEventListener("click", showInfo);
+    
+    if(tot_trees.innerHTML > 1){
+        arrow[0].removeEventListener("click", goLeft);
+        arrow[1].removeEventListener("click", goRight);
+    }
+}
+
+// function used when exiting off the stat of the tree
+function exitStat(){
+    var complete_body, stat_div, tot_trees;
+    var water, sun, shop, rename, arrow, info;
+
+    // divs and other elements
+    stat_div = document.getElementById("treeStat");
+    complete_body = document.getElementById("complete_body");
+    tot_trees = document.getElementById("tot_trees");
+
+    // buttons
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    shop = document.getElementById("shop");
+    arrow = document.getElementsByClassName("arrow")
+    info = document.getElementById("info")
+
+    stat_div.style.display = "none";
+    complete_body.style.opacity = 1;
+
+    water.disabled = false;
+    sun.disabled = false;
+    shop.disabled = false;
+    rename.disabled = false;
+    info.addEventListener("click", showInfo);
+
+    if (tot_trees.innerHTML > 1){
+        arrow[0].addEventListener("click", goLeft);
+        arrow[1].addEventListener("click", goRight);
+    }
+}
+
+// timer used for water and sun button
+function startTimer(duration, display, msg) {
+    var timer = duration, minutes, seconds, intervalID;
+    
+    
+    intervalID = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.innerHTML = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            //timer = duration;
+            clearInterval(intervalID)
+            display.disabled = false;
+            display.style.cursor = "pointer";
+            display.innerHTML = msg;
+        }
+    }, 1000);
+}
+
+// function that gives the sun to the tree
+function giveSun(){
+    var counter, sun;
+    counter = 60;
+    sun = document.getElementById('sun');
+
+    sun.disabled = true;
+    sun.style.cursor = "not-allowed"
+    startTimer(counter, sun, "&#9728;");
+}
+
+// function that gives the water to the tree
+function giveWater(){
+    var counter, water;
+    counter = 30;
+    water = document.getElementById('water');
+
+    water.disabled = true;
+    water.style.cursor = "not-allowed"
+    startTimer(counter, water, "&#128167;");
+}
 
 /* START BLOCKCHAIN INTERACTION */
 
+// function that check if you are or not a new user
 function isNewUser(senderAddress){
+    
+    // comment the return when working with the blockchain
+    //return Math.floor(Math.random() * 2);
+
+    // remove comment when working with the blockchain
     contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 120000}).then(function(newUser) {
         console.log('isNewUser:'+ newUser);
         thenIsNewUser(newUser);
@@ -251,7 +409,7 @@ function isNewUser(senderAddress){
 function thenIsNewUser(newUser){
     
     var water, sun, shop;
-    var seed, rename, submit_change;
+    var seed, rename, submit_change, exit_stat;
 
     water = document.getElementById("water");
     sun = document.getElementById("sun");
@@ -260,14 +418,18 @@ function thenIsNewUser(newUser){
     seed = document.getElementById("free_seed");
     rename = document.getElementById("change_name");
     submit_change = document.getElementById("submit_change_name");
+    exit_stat = document.getElementById("exit");
 
     seed.addEventListener('click', freeSeed);
     rename.addEventListener('click', changeName);
     submit_change.addEventListener('click', submitNewName);
+    exit_stat.addEventListener('click', exitStat);
+    sun.addEventListener('click', giveSun);
+    water.addEventListener('click', giveWater);
     
     if(newUser){ // new user
         
-        console.log('nuovo utente');
+        //console.log('nuovo utente');
         water.disabled = true;
         sun.disabled = true;
         shop.disabled = true;
@@ -276,7 +438,7 @@ function thenIsNewUser(newUser){
         
     }else{ // old user
         
-        console.log('vecchio utente');
+        //console.log('vecchio utente');
         water.disabled = false;
         sun.disabled = false;
         shop.disabled = false;
@@ -316,6 +478,9 @@ function plantFreeSeed(senderAddress){
 /* DO NOT MODIFY CODE BELOW */
 
 $(window).on('load', function() {
+    // comment this code when working with blockchain
+    //start();
+
     initialise(contractAddress);
 });
 
