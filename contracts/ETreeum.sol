@@ -68,24 +68,27 @@ contract ETreeum {
         _;
     }
 
+    // event to be emitted when the free seed is planted
+    event PlantedFreeSeed(address owner, Tree freePlantedTree);
+
     constructor() {
 
         minter = payable(msg.sender);
 
         // initialise species
-        gameSpecies[0] = Species(SpeciesName.AbiesNebrodensis, ExtinctionRisk.CriticallyEndangered, 1000, 10);
-        gameSpecies[1] = Species(SpeciesName.AfzeliaAfricana, ExtinctionRisk.Vulnerable, 1000, 10);
-        gameSpecies[2] = Species(SpeciesName.AloeSquarrosa, ExtinctionRisk.Vulnerable, 1000, 10);
-        gameSpecies[3] = Species(SpeciesName.CanariumZeylanicum, ExtinctionRisk.Vulnerable, 1000, 10);
-        gameSpecies[4] = Species(SpeciesName.MalusDomestica, ExtinctionRisk.LeastConcern, 1000, 10);
-        gameSpecies[5] = Species(SpeciesName.PinusSylvestris, ExtinctionRisk.LeastConcern, 1000, 10);
-        gameSpecies[6] = Species(SpeciesName.TheobromaCacao, ExtinctionRisk.LeastConcern, 1000, 10);
+        gameSpecies.push(Species(SpeciesName.AbiesNebrodensis, ExtinctionRisk.CriticallyEndangered, 1000, 10));
+        gameSpecies.push(Species(SpeciesName.AfzeliaAfricana, ExtinctionRisk.Vulnerable, 1000, 10));
+        gameSpecies.push(Species(SpeciesName.AloeSquarrosa, ExtinctionRisk.Vulnerable, 1000, 10));
+        gameSpecies.push(Species(SpeciesName.CanariumZeylanicum, ExtinctionRisk.Vulnerable, 1000, 10));
+        gameSpecies.push(Species(SpeciesName.MalusDomestica, ExtinctionRisk.LeastConcern, 1000, 10));
+        gameSpecies.push(Species(SpeciesName.PinusSylvestris, ExtinctionRisk.LeastConcern, 1000, 10));
+        gameSpecies.push(Species(SpeciesName.TheobromaCacao, ExtinctionRisk.LeastConcern, 1000, 10));
     }
 
     function joinGame(string calldata nickname) public {
         require (isNewUser(msg.sender), "You're already playing");
         ownedTrees[msg.sender].isValid = true;
-        plantSeed(msg.sender, nickname);
+        emit PlantedFreeSeed(msg.sender, plantSeed(msg.sender, nickname));
     }
 
     // create a new tree and assign it to the player
@@ -148,7 +151,6 @@ contract ETreeum {
     // events: emit event when a new specie is added by the minter
     function addSpecie() public {
         //require(msg.sender == minter, "Only the Original Gardener can set the rules for this game");
-
     }
 
     // requires the player pays the seed price, calls the method plantSeed()
@@ -210,8 +212,8 @@ contract ETreeum {
     // check that the user is a new one or it already got the free seed
     // input:
     // output: bool (0 -> old user, 1 -> new user)
-    function isNewUser(address player) public view returns (bool) {
-        return !ownedTrees[player].isValid;
+    function isNewUser(address userAddress) public view returns (bool) {
+        return !ownedTrees[userAddress].isValid;
     }
 
     // destruct everything

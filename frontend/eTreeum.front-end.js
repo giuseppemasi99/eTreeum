@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xc2cC599462E5C3040F1b157cd576b47eBAb32Eb9';
+var contractAddress = '0x4e4647C36C5c737C601CaD6D1A0966D3e182595c';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeum.json"
@@ -11,42 +11,16 @@ var senderAddress = '0x0';
 // Set contract ABI and the contract
 var contract = null;
 
-$(window).on('load', function() {
-    initialise(contractAddress);
+function start(){
+
     calculatePodium();
 
-    var water, sun, seed, shop, rename;
-    water = document.getElementById("water");
-    sun = document.getElementById("sun");
-    seed = document.getElementById("free_seed");
-    shop = document.getElementById("shop");
-    rename = document.getElementById("change_name");
-    submit_change = document.getElementById("submit_change_name");
+    isNewUser(senderAddress);
 
-    seed.addEventListener('click', freeSeed);
-    rename.addEventListener('click', changeName);
-    submit_change.addEventListener('click', submitNewName);
+}
 
-    
-    if (checkNewUser(senderAddress)){
-        water.disabled = true;
-        sun.disabled = true;
-        shop.disabled = true;
-        rename.disabled = true;
-        seed.disabled = false;
-    }
-    else{
-        water.disabled = false;
-        sun.disabled = false;
-        shop.disabled = false;
-        rename.disabled = false;
-        seed.disabled = true;
-        printTrees(senderAddress);
-    }
-});
+function setupPage(){
 
-// new used that plant a seed for free
-function freeSeed(){
     var initial_div, complete_body, plant, water, sun, seed, shop, rename, infoRow, counter, tree_num, tot_trees;
 
     infoRow = document.getElementById("info-row");
@@ -80,11 +54,22 @@ function freeSeed(){
     sun.disabled = false;
     shop.disabled = false;
     rename.disabled = false;
+    
+}
+
+// new used that plant a seed for free
+function freeSeed(){
+
+    plantFreeSeed(senderAddress);
+
+    setupPage();
+
 }
 
 // function that allow you to change the nickname of a plant
 // disply a div in wich you can input the new nickname
 function changeName(){
+
     var complete_body, divRename, water, sun, shop, rename, arrow;
 
     divRename = document.getElementById("nickName_change_div");
@@ -106,10 +91,12 @@ function changeName(){
     rename.disabled = true;
     arrow[0].removeEventListener("click", goLeft);
     arrow[1].removeEventListener("click", goRight);
+
 }
 
 // function that sumbit the change of the nickname
 function submitNewName(){
+
     var label, name, complete_body, divRename, water, sun, shop, rename, arrow;
     
     label = document.getElementById("nickName");
@@ -136,9 +123,11 @@ function submitNewName(){
     rename.disabled = false;
     arrow[0].addEventListener("click", goLeft);
     arrow[1].addEventListener("click", goRight);
+
 }
 
 function calculatePodium(){
+
     var podium, first, second, third;
 
     podium = ["A", "B", "C"];
@@ -146,20 +135,17 @@ function calculatePodium(){
     second = document.getElementById("second_name");
     third = document.getElementById("third_name");
 
-    first.innerHTML = podium[0]
-    second.innerHTML = podium[1]
-    third.innerHTML = podium[2]
-}
+    first.innerHTML = podium[0];
+    second.innerHTML = podium[1];
+    third.innerHTML = podium[2];
 
-function checkNewUser(senderAddress){
-    return 0;
 }
 
 // function that show all the owned trees with the respective info
 function printTrees(senderAddress){
     //web3.eth.getTreesByAddress(senderAddress).then(function(trees){});
     // qui mi ritornerà l'informazione relativa a tutti i gli alberi che ho
-    freeSeed();
+    setupPage();
 
     var counter, tree_num, tot_trees, div_tree, tree_img, arrow;
 
@@ -200,6 +186,7 @@ function printTrees(senderAddress){
 
 // if you click on the left arrow you can see the tree on the left side
 function goLeft(){
+
     var tree_num, tot_trees, div_tree, tree_img;
     
     tree_num = document.getElementById("tree_number");
@@ -214,10 +201,12 @@ function goLeft(){
 
     tree_img = whichImage(trees[tree_num.innerHTML-1]);
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+
 }
 
 // if you click on the right arrow you can see the tree on the right side
 function goRight(){
+
     var tree_num, tot_trees, div_tree, tree_img;
     
     tree_num = document.getElementById("tree_number");
@@ -232,6 +221,7 @@ function goRight(){
 
     tree_img = whichImage(trees[tree_num.innerHTML-1]);
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+
 }
 
 //function that given a value return the type of image to show
@@ -248,10 +238,92 @@ function whichImage(value){
     }
 }
 
+
+/* START BLOCKCHAIN INTERACTION */
+
+function isNewUser(senderAddress){
+    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 120000}).then(function(newUser) {
+        console.log('isNewUser:'+ newUser);
+        thenIsNewUser(newUser);
+    });
+}
+
+function thenIsNewUser(newUser){
+    
+    var water, sun, shop;
+    var seed, rename, submit_change;
+
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    shop = document.getElementById("shop");
+
+    seed = document.getElementById("free_seed");
+    rename = document.getElementById("change_name");
+    submit_change = document.getElementById("submit_change_name");
+
+    seed.addEventListener('click', freeSeed);
+    rename.addEventListener('click', changeName);
+    submit_change.addEventListener('click', submitNewName);
+    
+    if(newUser){ // new user
+        
+        console.log('nuovo utente');
+        water.disabled = true;
+        sun.disabled = true;
+        shop.disabled = true;
+        rename.disabled = true;
+        seed.disabled = false;    
+        
+    }else{ // old user
+        
+        console.log('vecchio utente');
+        water.disabled = false;
+        sun.disabled = false;
+        shop.disabled = false;
+        rename.disabled = false;
+        seed.disabled = true;
+        printTrees(senderAddress);
+
+    }
+
+}
+
+function plantFreeSeed(senderAddress){
+
+     // Subscribe to all PlantedFreeSeed events
+    contract.events.PlantedFreeSeed(
+        function(error, event){
+                if (!error) {
+                    if (event.returnValues["owner"] == senderAddress) {
+                        console.log('After PlantedFreeSeed event');
+                        console.log(event.returnValues['freePlantedTree']);
+                    }
+                }
+            }
+      );
+
+    contract.methods.joinGame('myNickName').send({from:senderAddress, gas: 120000}).on('receipt', function(transaction) {
+        console.log(transaction);
+    });
+
+}
+
+
+/* END BLOCKCHAIN INTERACTION */
+
+
+
+/* DO NOT MODIFY CODE BELOW */
+
+$(window).on('load', function() {
+    initialise(contractAddress);
+});
+
 // Asynchronous function (to work with modules loaded on the go)
 // For further info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/async_function
 async function initialise(contractAddress) {
-  // Initialisation of Web3
+
+    // Initialisation of Web3
 	if (typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider);
 	} else {
@@ -264,7 +336,6 @@ async function initialise(contractAddress) {
     // More on the await operator: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
     await $.getJSON(contractJSON,
         function( contractData ) { // Use of IIFEs: https://developer.mozilla.org/en-US/docs/Glossary/IIFE
-              // console.log(contractAbi);
               contract = new web3.eth.Contract(contractData.abi, contractAddress);
         }
     ).catch((error) => { console.error(error); });
@@ -280,10 +351,15 @@ async function initialise(contractAddress) {
     senderAddress = accounts[0]
     console.log("Sender address set: " + senderAddress)
 
-    // Update the information displayed
-    updateDisplayedInformation();
+    start();
 
 }
+
+
+
+/*
+
+    METODI PROFESSORE
 
 function updateDisplayedInformation() {
     checkWeiBalance();
@@ -291,7 +367,6 @@ function updateDisplayedInformation() {
 	displayAccountAddress();
 	return false;
 }
-
 
 // Displays the current wei balance
 function checkWeiBalance(){
@@ -318,3 +393,4 @@ function displayAccountAddress() {
 		senderAddress
 	);
 }
+*/
