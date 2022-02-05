@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x4e4647C36C5c737C601CaD6D1A0966D3e182595c';
+var contractAddress = '0x6b7476E576987c1955527E4A1C369b50E5aF57c3';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeum.json"
@@ -22,6 +22,99 @@ function start(){
     //thenIsNewUser(isNewUser(senderAddress));
 
 }
+
+
+
+/* BLOCKCHAIN INTERACTION - START */
+
+
+// function that check if you are or not a new user
+function isNewUser(senderAddress){
+    
+    // comment the return when working with the blockchain
+    //return Math.floor(Math.random() * 2);
+
+    // remove comment when working with the blockchain
+    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
+        console.log('isNewUser:'+ newUser);
+        thenIsNewUser(newUser);
+    }); 
+
+}
+
+function plantFreeSeed(senderAddress){
+
+     // Subscribe to all PlantedFreeSeed events
+    contract.events.JoinedGame(
+        function(error, event){
+                if (!error) {
+                    if (event.returnValues["owner"] == senderAddress) {
+                        console.log('After PlantedFreeSeed event');
+                        console.log(event.returnValues['freePlantedTree']);
+                    }
+                }
+            }
+      );
+
+    contract.methods.joinGame('myNickName').send({from:senderAddress, gas: 150000}).on('receipt', function(transaction) {
+        console.log(transaction);        
+    });
+
+}
+
+
+/* BLOCKCHAIN INTERACTION - END */
+
+
+
+/* AFTER BLOCKCHAIN CALL - START */
+
+
+function thenIsNewUser(newUser){
+    
+    var water, sun, shop;
+    var seed, rename, submit_change, exit_stat;
+
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    shop = document.getElementById("shop");
+
+    seed = document.getElementById("free_seed");
+    rename = document.getElementById("change_name");
+    submit_change = document.getElementById("submit_change_name");
+    exit_stat = document.getElementById("exit");
+
+    seed.addEventListener('click', freeSeed);
+    rename.addEventListener('click', changeName);
+    submit_change.addEventListener('click', submitNewName);
+    exit_stat.addEventListener('click', exitStat);
+    sun.addEventListener('click', giveSun);
+    water.addEventListener('click', giveWater);
+    
+    if(newUser){ // new user
+        
+        water.disabled = true;
+        sun.disabled = true;
+        shop.disabled = true;
+        rename.disabled = true;
+        seed.disabled = false;    
+        
+    }else{ // old user
+        
+        water.disabled = false;
+        sun.disabled = false;
+        shop.disabled = false;
+        rename.disabled = false;
+        seed.disabled = true;
+        printTrees(senderAddress);
+
+    }
+
+}
+
+
+/* AFTER BLOCKCHAIN CALL - END */
+
 
 // setting up all the necessary buttons and elements in the page
 function setupPage(){
@@ -67,7 +160,7 @@ function setupPage(){
     
 }
 
-// new used that plant a seed for free
+// new user that plant a seed for free
 function freeSeed(){
     
     // remove comment when working with the blockchain
@@ -107,11 +200,11 @@ function changeName(){
 
     info.removeEventListener("click", showInfo);
     
-
     if(tot_trees.innerHTML > 1){
         arrow[0].removeEventListener("click", goLeft);
         arrow[1].removeEventListener("click", goRight);
     }
+
 }
 
 // function that sumbit the change of the nickname
@@ -151,6 +244,7 @@ function submitNewName(){
         arrow[0].addEventListener("click", goLeft);
         arrow[1].addEventListener("click", goRight);
     }
+
 }
 
 function calculatePodium(){
@@ -310,10 +404,12 @@ function showInfo(value){
         arrow[0].removeEventListener("click", goLeft);
         arrow[1].removeEventListener("click", goRight);
     }
+
 }
 
 // function used when exiting off the stat of the tree
 function exitStat(){
+
     var complete_body, stat_div, tot_trees;
     var water, sun, shop, rename, arrow, info;
 
@@ -343,34 +439,40 @@ function exitStat(){
         arrow[0].addEventListener("click", goLeft);
         arrow[1].addEventListener("click", goRight);
     }
+
 }
 
 // timer used for water and sun button
 function startTimer(duration, display, msg) {
+
     var timer = duration, minutes, seconds, intervalID;
-    
-    
-    intervalID = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
+        
+    intervalID = setInterval(
+        function () {
+                
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.innerHTML = minutes + ":" + seconds;
+            display.innerHTML = minutes + ":" + seconds;
 
-        if (--timer < 0) {
-            //timer = duration;
-            clearInterval(intervalID)
-            display.disabled = false;
-            display.style.cursor = "pointer";
-            display.innerHTML = msg;
-        }
-    }, 1000);
+            if (--timer < 0) {
+                //timer = duration;
+                clearInterval(intervalID)
+                display.disabled = false;
+                display.style.cursor = "pointer";
+                display.innerHTML = msg;
+            }
+        }, 
+        1000);
+
 }
 
 // function that gives the sun to the tree
 function giveSun(){
+
     var counter, sun;
     counter = 60;
     sun = document.getElementById('sun');
@@ -378,10 +480,12 @@ function giveSun(){
     sun.disabled = true;
     sun.style.cursor = "not-allowed"
     startTimer(counter, sun, "&#9728;");
+
 }
 
 // function that gives the water to the tree
 function giveWater(){
+
     var counter, water;
     counter = 30;
     water = document.getElementById('water');
@@ -389,91 +493,8 @@ function giveWater(){
     water.disabled = true;
     water.style.cursor = "not-allowed"
     startTimer(counter, water, "&#128167;");
-}
-
-/* START BLOCKCHAIN INTERACTION */
-
-// function that check if you are or not a new user
-function isNewUser(senderAddress){
-    
-    // comment the return when working with the blockchain
-    //return Math.floor(Math.random() * 2);
-
-    // remove comment when working with the blockchain
-    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 120000}).then(function(newUser) {
-        console.log('isNewUser:'+ newUser);
-        thenIsNewUser(newUser);
-    });
-}
-
-function thenIsNewUser(newUser){
-    
-    var water, sun, shop;
-    var seed, rename, submit_change, exit_stat;
-
-    water = document.getElementById("water");
-    sun = document.getElementById("sun");
-    shop = document.getElementById("shop");
-
-    seed = document.getElementById("free_seed");
-    rename = document.getElementById("change_name");
-    submit_change = document.getElementById("submit_change_name");
-    exit_stat = document.getElementById("exit");
-
-    seed.addEventListener('click', freeSeed);
-    rename.addEventListener('click', changeName);
-    submit_change.addEventListener('click', submitNewName);
-    exit_stat.addEventListener('click', exitStat);
-    sun.addEventListener('click', giveSun);
-    water.addEventListener('click', giveWater);
-    
-    if(newUser){ // new user
-        
-        //console.log('nuovo utente');
-        water.disabled = true;
-        sun.disabled = true;
-        shop.disabled = true;
-        rename.disabled = true;
-        seed.disabled = false;    
-        
-    }else{ // old user
-        
-        //console.log('vecchio utente');
-        water.disabled = false;
-        sun.disabled = false;
-        shop.disabled = false;
-        rename.disabled = false;
-        seed.disabled = true;
-        printTrees(senderAddress);
-
-    }
 
 }
-
-function plantFreeSeed(senderAddress){
-
-     // Subscribe to all PlantedFreeSeed events
-    contract.events.PlantedFreeSeed(
-        function(error, event){
-                if (!error) {
-                    if (event.returnValues["owner"] == senderAddress) {
-                        console.log('After PlantedFreeSeed event');
-                        console.log(event.returnValues['freePlantedTree']);
-                    }
-                }
-            }
-      );
-
-    contract.methods.joinGame('myNickName').send({from:senderAddress, gas: 120000}).on('receipt', function(transaction) {
-        console.log(transaction);
-    });
-
-}
-
-
-/* END BLOCKCHAIN INTERACTION */
-
-
 
 /* DO NOT MODIFY CODE BELOW */
 
