@@ -13,8 +13,6 @@ var contract = null;
 
 function start(){
 
-    calculatePodium();
-
     // remove comment when working with blockchain
     isNewUser(senderAddress);
 
@@ -32,7 +30,8 @@ function start(){
 function isNewUser(senderAddress){
     
     // comment the return when working with the blockchain
-    //return Math.floor(Math.random() * 2);
+    //infoNewUser = Math.floor(Math.random() * 2)
+    //return infoNewUser;
 
     // remove comment when working with the blockchain
     contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
@@ -74,17 +73,26 @@ function thenIsNewUser(newUser){
     
     var water, sun, shop;
     var seed, rename, submit_change, exit_stat;
+    var username, rules, start_play;
 
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     shop = document.getElementById("shop");
 
     seed = document.getElementById("free_seed");
+    username = document.getElementById("submit_username");
+    rules = document.getElementById("rules_observed");
+    start_play = document.getElementById("start_play");
+    
     rename = document.getElementById("change_name");
     submit_change = document.getElementById("submit_change_name");
     exit_stat = document.getElementById("exit");
 
-    seed.addEventListener('click', freeSeed);
+    seed.addEventListener('click', setUsername);
+    username.addEventListener('click', showRules);
+    rules.addEventListener('click', setPlantName);
+    start_play.addEventListener('click', setupPage);
+
     rename.addEventListener('click', changeName);
     submit_change.addEventListener('click', submitNewName);
     exit_stat.addEventListener('click', exitStat);
@@ -97,6 +105,10 @@ function thenIsNewUser(newUser){
         sun.disabled = true;
         shop.disabled = true;
         rename.disabled = true;
+        username.disabled = true;
+        rules.disabled = true;
+        start_play.disabled = true;
+
         seed.disabled = false;    
         
     }else{ // old user
@@ -105,6 +117,10 @@ function thenIsNewUser(newUser){
         sun.disabled = false;
         shop.disabled = false;
         rename.disabled = false;
+        
+        rules.disabled = true;
+        start_play.disabled = true;
+        username.disabled = true;
         seed.disabled = true;
         printTrees(senderAddress);
 
@@ -112,51 +128,173 @@ function thenIsNewUser(newUser){
 
 }
 
-
 /* AFTER BLOCKCHAIN CALL - END */
 
+// function that allow the counter
+function startTreeCounter(){
+    var a = 0;
+    $(window).ready(function() {
+
+    var oTop = $('#counter').offset().top - window.innerHeight;
+    if (a == 0 && $(window).scrollTop() > oTop) {
+        $('.counter-value').each(function() {
+        var $this = $(this),
+            countTo = $this.attr('data-count');
+        $({
+            countNum: $this.text()
+        }).animate({
+            countNum: countTo
+            },
+
+            {
+            duration: 6000,
+            easing: 'swing',
+            step: function() {
+                $this.text(Math.floor(this.countNum));
+            },
+            complete: function() {
+                $this.text(this.countNum);
+            }
+
+            });
+        });
+        a = 1;
+    }
+
+    });
+}
+
+// function that set the username for a new user
+function setUsername(){
+    var initial_div, div_username;
+    var seed, username;
+
+    initial_div = document.getElementById("initial_div");
+    div_username = document.getElementById("insert_username");
+
+    //  buttons
+    username = document.getElementById("submit_username");
+    seed = document.getElementById("free_seed");
+    
+    initial_div.style.display = "none";
+    div_username.style.display = "flex";
+
+    username.disabled = false;
+    
+    seed.disabled = true;
+}
+
+// function that show the rules of the game
+function showRules(){
+    var div_username, rules_div;
+    var username_button, rules_button;
+    var span, username;
+
+    div_username = document.getElementById("insert_username");
+    rules_div = document.getElementById("game_rules");
+    span = document.getElementById("username");
+    username = document.getElementById("input_username");
+
+    //  buttons
+    username_button = document.getElementById("submit_username");
+    rules_button = document.getElementById("rules_observed");
+    
+    span.innerHTML = username.value;
+    username.innerHTML = "";
+
+    div_username.style.display = "none";
+    rules_div.style.display = "flex";
+
+    username_button.disabled = true;
+    rules_button.disabled = false;
+    
+}
+
+// function that set the plant name for a new user
+function setPlantName(){
+    var div_plantName, rules_div;
+    var start_play, rules_button;
+
+    div_plantName = document.getElementById("select_treeName");
+    rules_div = document.getElementById("game_rules");
+
+    //  buttons
+    start_play = document.getElementById("start_play");
+    rules_button = document.getElementById("rules_observed");
+    
+    rules_div.style.display = "none";
+    div_plantName.style.display = "flex";
+
+    rules_button.disabled = true;
+    start_play.disabled = false;
+}
 
 // setting up all the necessary buttons and elements in the page
 function setupPage(){
 
-    var water, sun, seed, shop, rename, info;
-    var initial_div, complete_body, infoRow, counter, tree_num, tot_trees, plant;
-    
+    var water, sun, seed, shop, rename, info, play_button;
+    var div_treeName, complete_body, infoRow, counter, tree_num, tot_trees;
+    var right_top_header;
+
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     seed = document.getElementById("free_seed");
+    play_button = document.getElementById("start_play");
     shop = document.getElementById("shop");
-    info = document.getElementById("info")
+    info = document.getElementById("info");
 
     infoRow = document.getElementById("info-row");
-    initial_div = document.getElementById("initial_div");
+    div_treeName = document.getElementById("select_treeName");
     complete_body = document.getElementById("complete_body");
-    plant = document.getElementById("tree");
+    //plant = document.getElementById("tree");
     counter = document.getElementById("counting_tree");
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
+    right_top_header = document.getElementById("right_top_header");
     
-    initial_div.style.display = "none";
-    complete_body.style.opacity = 1;
-    plant.style.filter = "grayscale(0%)";
+    div_treeName.style.display = "none";
     infoRow.style.display = "flex";
+    complete_body.style.display = "flex";
 
     tree_num.innerHTML = 1;
     tot_trees.innerHTML = 1;
     counter.style.display = "flex";
+    right_top_header.style.display = "flex";
 
     water.style.cursor = "pointer";
     sun.style.cursor = "pointer";
     shop.style.cursor = "pointer";
 
     seed.disabled = true;
+    play_button.disabled = true;
+    
     water.disabled = false;
     sun.disabled = false;
     shop.disabled = false;
     rename.disabled = false;
 
     info.addEventListener("click", showInfo);
+
+    startTreeCounter();
+
+    if(infoNewUser){
+        var input_treeName, label_treeName;
+
+        input_treeName = document.getElementById("input_treeName");
+        label_treeName = document.getElementById("nickName");
+
+        label_treeName.innerHTML = input_treeName.value;
+        input_treeName.innerHTML = "";
+
+    }
+    else{
+        var initial_div;
+        initial_div = document.getElementById("initial_div");
+        initial_div.style.display = "none";
+    }
+
+    calculatePodium();
     
 }
 
@@ -247,18 +385,56 @@ function submitNewName(){
 
 }
 
+// function that calculate the actual podium
 function calculatePodium(){
 
-    var podium, first, second, third;
+    var podium, first, second, third, fourth, fifth;
+    var username;
 
-    podium = ["A", "B", "C"];
+    podium = ["A", "B", "UserName", "D", "E"];
+
     first = document.getElementById("first_name");
     second = document.getElementById("second_name");
     third = document.getElementById("third_name");
+    fourth = document.getElementById("fourth_name");
+    fifth = document.getElementById("fifth_name");
+
+    username = document.getElementById("username");
 
     first.innerHTML = podium[0];
+    if(first.innerHTML == username.innerHTML){
+        first.innerHTML += " (you)";
+    }
+
     second.innerHTML = podium[1];
+    if(second.innerHTML == username.innerHTML){
+        second.innerHTML += " (you)";
+    }
+
     third.innerHTML = podium[2];
+    if(third.innerHTML == username.innerHTML){
+        third.innerHTML += " (you)";
+    }
+
+    fourth.innerHTML = podium[3];
+    if(fourth.innerHTML == username.innerHTML){
+        fourth.innerHTML += " (you)";
+    }
+
+    fifth.innerHTML = podium[4];
+    if(fifth.innerHTML == username.innerHTML){
+        fifth.innerHTML += " (you)";
+    }
+
+    if(!podium.includes(username.innerHTML)){
+        var you, your_name;
+        
+        you = document.getElementById("you");
+        your_name = document.getElementById("your_name");
+
+        your_name.innerHTML = username.innerHTML;
+        you.style.display = "inline";
+    }
 
 }
 

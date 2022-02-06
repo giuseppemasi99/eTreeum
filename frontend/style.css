@@ -67,7 +67,7 @@ header{
     font-size: 23pt;
 }
 
-div#left_top_header{
+div#right_top_header{
     height: 100%;
     width: 20%;
     
@@ -94,7 +94,7 @@ button#shop{
     padding: 10px;
 }
 
-div#initial_div, div#nickName_change_div, div#treeStat{
+div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#nickName_change_div, div#treeStat{
     position: absolute;
     z-index: 10;
 
@@ -117,7 +117,8 @@ div#initial_div, div#nickName_change_div, div#treeStat{
 
 }
 
-div#initial_div{
+/*CSS FOR THE DIVS USED FOR NEW USERS*/
+div#initial_div, div#insert_username, div#game_rules, div#select_treeName{
     top: 15%;
     left: 0%;
     border: none;
@@ -126,19 +127,29 @@ div#initial_div{
     width: 100%;
 }
 
+div#insert_username, div#game_rules, div#select_treeName{
+    display: none;
+}
+
 h2{
     margin-bottom: 0px;
 }
 
-p#space_parag{
+p.space_parag{
     margin-top: 30px;
 }
 
-button#free_seed{
+input#input_username, input#input_treeName{
+    margin-top: 30px;
+}
+
+button#free_seed, button#submit_username, button#rules_observed, button#start_play{
     max-width: max-content;
     cursor: pointer;
     margin-top: 30px;
 }
+
+/*CSS FOR THE DIV USED TO CHANGE THE NICKNAME OF THE PLANT*/
 
 div#nickName_change_div, div#treeStat{
     display: none;
@@ -162,6 +173,7 @@ div#treeStat{
     padding: 0px;
 }
 
+/* CSS FOR THE HEADER*/
 div#stat_header{
     display: flex;
     align-items: center;
@@ -204,6 +216,8 @@ label.stat{
     font-size: 12pt;
 }
 
+/* CSS FOR THE BODY OF THE PAGE*/
+
 div#complete_body{
     height: 70%;
     width: 100%;
@@ -211,27 +225,40 @@ div#complete_body{
     display: flex;
     align-items: center;
     justify-content: center;
-
-    opacity: 0.2;
 }
 
+/* CSS FOR THE LEFT BODY OF THE PAGE*/
 div#left_div{
     width: 20%;
     height: 60%;
 
-}
+    margin-right: 2.5%;
 
-div#menu{
-    height: 70%;
-    width: max-content;
-    margin: 5px 0px;
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
+    display: flex;
     align-items: center;
+    flex-direction: column;
+}
+
+div#counter{
+    margin-top: 30px;
+    font-size: 25pt;
+    font-weight: 800;
+}
+
+div.counter-value{
+    padding: 3px;
+
+    color: rgb(19, 179, 54);
+}
+
+button#find_out{
+    cursor: pointer;
+
+    margin-top: 50px;
 }
 
 
+/* CSS FOR THE MIDDLE BODY OF THE PAGE*/
 div#middle_div{
     display: flex;
     justify-content: center;
@@ -267,8 +294,6 @@ div#tree{
     background-size: contain;                 
     background-repeat: no-repeat;
     background-position: center center; 
-
-    filter: grayscale(100%);
 }
 
 div#info-row{
@@ -346,15 +371,37 @@ button#sun{
     color: #f9d71c;
 }
 
+/* CSS FOR THE RIGHT BODY OF THE PAGE*/
 div#right_div{
     width: 20%;
-    height: 60%;
+    height: 100%;
+
+    font-weight: 600;
+    font-size: 20pt;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin-left: 2.5%;
+
 }
+
+div#first_row{
+    height: 10%;
+
+    border: none;
+    font-weight: bold;
+
+    padding: 5px;
+
+    text-align: center;
+}
+
+
 
 div#podium{
     height: 75%;
-
-    margin-left: 20%;
 
     display: flex;
     flex-direction: column;
@@ -365,8 +412,15 @@ div#podium{
 label.podium{
     color: black;
     margin-bottom: 10px;
+    border-bottom: 2px solid black;
 
-    font-weight: 600;
+    max-width: 500px;
+
+    margin-bottom: 5px;
+}
+
+label.podium img{
+    max-width: 20pt;
 }
 
 label#first{
@@ -374,41 +428,9 @@ label#first{
     color: #ffd700;
 }
 
-label#first img{
-    max-width: 25pt;
-}
-
-label#second{
-    font-size: 20pt;
-    color: #c0c0c0;
-}
-
-label#second img{
-    max-width: 20pt;
-}
-
-label#third{
-    font-size: 15pt;
-    color: #cd7f32;
-}
-
-label#third img{
-    max-width: 15pt;
-}
-
-div#first_row{
-    height: 20%;
-
-    background-color: rgb(27, 179, 22);
-    border-bottom: black 1px solid;
-    border-radius: 5px;
-    font-weight: bold;
-
-    padding: 5px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+label#you{
+    margin-top: 30px;
+    display: none;
 }
 
 p{
