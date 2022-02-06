@@ -69,7 +69,7 @@ contract ETreeum {
     }
 
     // event to be emitted when the free seed is planted
-    event PlantedFreeSeed(address owner, Tree freePlantedTree);
+    event JoinedGame(address owner, Tree freePlantedTree);
 
     constructor() {
 
@@ -88,7 +88,7 @@ contract ETreeum {
     function joinGame(string calldata nickname) public {
         require (isNewUser(msg.sender), "You're already playing");
         ownedTrees[msg.sender].isValid = true;
-        emit PlantedFreeSeed(msg.sender, plantSeed(msg.sender, nickname));
+        emit JoinedGame(msg.sender, plantSeed(msg.sender, nickname));
     }
 
     // create a new tree and assign it to the player
