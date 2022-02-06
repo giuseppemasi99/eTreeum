@@ -16,13 +16,27 @@
     </head>
 
     <body>
-        
-        <header>Welcome into your CryptoGarden!</header>
+        <div id="header">
+            <div id="logo">
+                <img id="logo" src="frontend/img/Treedom_Logo.jpg" alt="logo">
+            </div>
+            <header>Welcome into your CryptoGarden!</header>
+            <div id="left_top_header">
+                <button id="shop" type="button">&#128722;</button>
+                <span id="username">username</span>
+            </div>
+        </div>
 
         <div id="initial_div">
-            <p>Hello, first time here?</p>
-            Take a seed for free!
-            <button id="free_seed" type="button">Free seed!</button>
+            <h2>Hi there, first time here?</h2>
+            <p>Join out game for free:</p>
+            <p>get a new seed, care for it and make it grow old into a beatiful tree</p>
+            <p>and when the time is right, you will be able to sell it for real money!</p>
+            <p id="space_parag">Wanna know the best part?</p>
+            <p>With every purchase, a part of the money will go into planting a real tree in the world!</p>
+            <p>How cool is that?</p>
+            <p>You can have fun, earn money and save the planet at the same time!</p>
+            <button id="free_seed" type="button">Join now!</button>
         </div>
 
         <div id="nickName_change_div">
@@ -49,65 +63,55 @@
         </div>
 
         <div id= 'complete_body'>
-            
-            <div id= 'left_div'>
-                    <div id= 'first_row'>
-                        Want to do more?
+            <div id="left-div">
+                
+            </div>
+            <div id= 'middle_div'> 
+                <div id="top">
+                    <img class="arrow" src="frontend/img/left-arrow.png" alt="left-arrow">
+                    <div id="tree">
+                        <div id="info-row">
+                            <span>
+                                <label id="nickName">TreeName </label>
+                                <button id="change_name" type="button">✏️</button>
+                            </span>
+                            <label id="info">&#8505;</label>
+                        </div> 
                     </div>
-                    <div id='menu'>
-
-                        <button id="shop" type="button">&#128722;</button>                  
-                    
-                    </div>
+                    <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
                 </div>
 
-                <div id= 'middle_div'> 
-
-                    <div id="top">
-                        <img class="arrow" src="frontend/img/left-arrow.png" alt="left-arrow">
-                        <div id="tree">
-                            <div id="info-row">
-                                <span>
-                                    <label id="nickName">TreeName </label>
-                                    <button id="change_name" type="button">✏️</button>
-                                </span>
-                                <label id="info">&#8505;</label>
-                            </div> 
-                        </div>
-                        <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
-                    </div>
-
-                    <div id="counting_tree">
-                        <span>
-                            <label id="tree_number">1</label>/
-                            <label id="tot_trees">1</label>
-                        </span>
-                    </div>
-
-                    <div id="bottom">
-                        <button class="down-button" id="water" type="button">&#128167;</button>
-                        <button class="down-button" id="sun" type="button">&#9728;</button>
-                    </div>
+                <div id="counting_tree">
+                    <span>
+                        <label id="tree_number">1</label>/
+                        <label id="tot_trees">1</label>
+                    </span>
                 </div>
 
-                <div id= 'right_div'>
-                    <div id= 'first_row'>Kings of the Forest!</div>
-
-                    <div id="podium">
-                        <label class="podium" id="first">
-                            1. <img src="frontend/img/first.png" alt="first place">
-                            <label id="first_name"></label>
-                        </label>
-                        <label class="podium" id="second">
-                            2. <img src="frontend/img/third.png" alt="second place">
-                            <label id="second_name"></label>
-                        </label>
-                        <label class="podium" id="third">
-                            3. <img src="frontend/img/second.png" alt="third place">
-                            <label id="third_name"></label>
-                        </label>
-                    </div>
+                <div id="bottom">
+                    <button class="down-button" id="water" type="button">&#128167;</button>
+                    <button class="down-button" id="sun" type="button">&#9728;</button>
                 </div>
+            </div>
+
+            <div id= 'right_div'>
+                <div id= 'first_row'>Kings of the Forest!</div>
+
+                <div id="podium">
+                    <label class="podium" id="first">
+                        1. <img src="frontend/img/first.png" alt="first place">
+                        <label id="first_name"></label>
+                    </label>
+                    <label class="podium" id="second">
+                        2. <img src="frontend/img/third.png" alt="second place">
+                        <label id="second_name"></label>
+                    </label>
+                    <label class="podium" id="third">
+                        3. <img src="frontend/img/second.png" alt="third place">
+                        <label id="third_name"></label>
+                    </label>
+                </div>
+            </div>
         </div>
 
     </body>
