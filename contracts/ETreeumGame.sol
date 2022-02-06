@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract ETreeumGame is ERC721 {
 
     enum ExtinctionRisk {LeastConcern, ConservationDependent, NearThreatened, Vulnerable, Endangered, CriticallyEndangered}
-    enum StagesName {Seed, Bush, Adult, Majestic, Secular}
+    enum Stages {Seed, Bush, Adult, Majestic, Secular}
 
+    uint constant public SEED_PRICE = 1e15;
     uint256 public treeCounter;
     address payable private _gardener;
     //fake address
@@ -17,21 +18,50 @@ contract ETreeumGame is ERC721 {
     //number of plants in the world: about 390000
     mapping (ExtinctionRisk => uint32[]) private risksIndexes;
     mapping (uint256 => Tree) trees;
+    mapping(address => string) private userNicknames;
+    mapping(address => Player) private players;
+    address[] private playersAdresses;
+    //mapping(address => )
 
     struct Species {
         string name; 
         ExtinctionRisk risk;
-        uint16 waterNeeded;
-        uint8 sunNeeded;
+        uint16 waterNeededInAWeek;
+        uint8 sunNeededInAWeek;
     }
 
     struct Tree {
         Species species;
         string nickname;
-        uint16 waterGiven;
-        uint8 sunGiven;
-        StagesName stage;
+        uint16 waterGivenInAWeek;
+        uint8 sunGivenInAWeek;
+        Stages stage;
         uint8 value;
+        uint256 startWeek;
+        uint256 lastWater;
+        uint256 lastSun;
+    }
+
+    struct Player {
+        string nickname;
+        uint256[] treeOwned;
+        uint256 lastEntered;
+        uint32 score;
+    }
+
+    modifier MustOwnTree (uint256 id) {
+        require (_ownsTree(msg.sender, id), "This tree isn't yours");
+        _;
+    }
+
+    modifier SetLastEntered () {
+        players[msg.sender].lastEntered = block.timestamp;
+        _;
+    }
+
+    modifier UpdatePlayerScore (address player) {
+        _;
+        players[player].score = _computePlayerScore(player);
     }
   
     constructor () ERC721 ("Tree", "T"){
@@ -64,11 +94,18 @@ contract ETreeumGame is ERC721 {
         return false;
     }
 
-    function joinGame(string calldata nickname) public returns (uint256) {
-       return plantSeed(msg.sender, nickname);
+    function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered() public returns (uint256) {
+        require (isNewUser(msg.sender), "You're already playing");
+        players[msg.sender].nickname = userNickname;
+        playersAdresses.push(msg.sender);
+        return _plantSeed(msg.sender, treeNickname);
     }
 
-    function plantSeed(address owner, string calldata nickname) private returns (uint256) {
+    function isNewUser(address userAddress) public view returns (bool) {
+        return bytes(players[userAddress].nickname).length > 0;
+    }
+
+    function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256) {
         uint256 treeId = treeCounter;
         _safeMint(owner, treeId);
         //_setTokenURI(treeCounter, tokenURI);
@@ -76,20 +113,54 @@ contract ETreeumGame is ERC721 {
         ExtinctionRisk risk = ExtinctionRisk(probabilitiesDitribution[random % probabilitiesDitribution.length]);
         uint32[] memory speciesAtRisk = risksIndexes[risk];
         uint32 speciesIndex = speciesAtRisk[random % speciesAtRisk.length];
-        trees[treeId].species = gameSpecies[speciesIndex];
-        trees[treeId].nickname = nickname;
-        //actually not necessary since they're already 0d out
-        trees[treeId].waterGiven = 0;
-        trees[treeId].sunGiven = 0;
-        trees[treeId].stage = StagesName.Seed;
-        trees[treeId].value = computeTreeValue(risk, StagesName.Seed);
+        trees[treeId] = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _computeTreeValue(risk, Stages.Seed), 0, 0, 0);
+        players[owner].treeOwned.push(treeId);
         treeCounter = treeCounter + 1;
         return treeId;
     }
 
-    //Maximum value for a tree = 75 (Maximum rarity and stage);
-    //Minimum 6
-    function computeTreeValue(ExtinctionRisk risk, StagesName stage) pure private returns (uint8) {
+    function _ownsTree(address player, uint256 id) view private returns (bool) {
+        return ERC721.ownerOf(id) == player;
+    }
+
+    function _growTree(Tree storage t) private returns (Stages) {
+        if (t.startWeek > block.timestamp -1 weeks) {
+            if (t.stage != Stages.Secular && t.waterGivenInAWeek == t.species.waterNeededInAWeek && t.sunGivenInAWeek == t.species.sunNeededInAWeek) {
+                t.stage = Stages(uint8(t.stage)+1);
+                t.value = _computeTreeValue(t.species.risk, t.stage);
+                players[msg.sender].score = _computePlayerScore(msg.sender);
+            }
+        }
+        else { t.startWeek = block.timestamp; }
+        return t.stage;
+    }
+
+    function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public returns (Stages) {
+        Tree storage t = trees[id];
+        require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
+        t.waterGivenInAWeek += waterAmount;
+        t.lastWater = block.timestamp;
+        return _growTree(t);
+    }
+
+    function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public returns (Stages) {
+        Tree storage t = trees[id];
+        require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
+        t.sunGivenInAWeek += sunHours;
+        return _growTree(t);
+    }
+
+    /*function resetStartWeek(Tree storage t) private {
+        t.startWeek = block.timestamp;
+    }*/
+
+    function buySeed(string calldata treeNickname) SetLastEntered public payable {
+        require(msg.value >= SEED_PRICE, "Not enough money for a seed");
+        planter.transfer(msg.value);
+        _plantSeed(msg.sender, treeNickname);
+    }
+
+    function _computeTreeValue(ExtinctionRisk risk, Stages stage) pure private returns (uint8) {
         uint8 value;
         if (risk == ExtinctionRisk.CriticallyEndangered) value = 50;
         else if (risk == ExtinctionRisk.Endangered) value = 40;
@@ -99,5 +170,17 @@ contract ETreeumGame is ERC721 {
         else if (risk == ExtinctionRisk.LeastConcern) value = 1;
         value += (uint8(stage)+1) * 5;
         return value;
+    }
+
+    function _computePlayerScore(address player) view private returns (uint32) {
+        uint256[] storage ids = players[player].treeOwned;
+        uint32 score = 0;
+        for (uint64 i=0; i<ids.length; i++) {
+            score += trees[ids[i]].value;
+        }
+        return score;
+    }
+
+    function computeRanking() view public {
     }
 }
