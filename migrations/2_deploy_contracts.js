@@ -1,8 +1,8 @@
-const ETreeum = artifacts.require("ETreeum");
+const ETreeumGame = artifacts.require("ETreeumGame");
 
 module.exports = function(deployer){
 
     // parameters for the constructor
-    deployer.deploy(ETreeum);
+    deployer.deploy(ETreeumGame);
 
 };
