@@ -63,7 +63,10 @@ contract ETreeumGame is ERC721 {
         _;
         players[player].score = _computePlayerScore(player);
     }
-  
+
+    // event to be emitted when the free seed is planted
+    event JoinedGame(address owner, Tree plantedFreeTree);
+
     constructor () ERC721 ("Tree", "T"){
         treeCounter = 0;
         _gardener = payable(msg.sender);
@@ -94,15 +97,16 @@ contract ETreeumGame is ERC721 {
         return false;
     }
 
-    function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered() public returns (uint256) {
+    function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered() public {
         require (isNewUser(msg.sender), "You're already playing");
         players[msg.sender].nickname = userNickname;
         playersAddresses.push(msg.sender);
-        return _plantSeed(msg.sender, treeNickname);
+        uint256 treeId = _plantSeed(msg.sender, treeNickname);
+        emit JoinedGame(msg.sender, trees[treeId]);
     }
 
     function isNewUser(address userAddress) public view returns (bool) {
-        return bytes(players[userAddress].nickname).length > 0;
+        return !(bytes(players[userAddress].nickname).length > 0);
     }
 
     function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256) {
