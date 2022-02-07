@@ -1,0 +1,89 @@
+*{
+    box-sizing: border-box;
+    font-family: 'Varela Round', sans-serif;
+}
+
+html{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    text-align: center;
+    align-items: center;
+
+    background-size: cover;
+    background-color: white;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+a{
+    text-decoration: none;
+}
+
+div#header{
+    height: 80px;;
+    width: 100%;
+
+    display: flex;
+    text-align: center;
+
+    align-items: center;
+
+    color: black;
+    background-color: rgb(36, 102, 36);
+}
+
+div#logo{
+    height: 100%;
+    width: 20%;
+
+    margin: auto 0;
+}
+
+header{
+    height: 100%;
+    width: 60%;
+
+    display: flex;
+    
+    justify-content: center;
+    
+    align-items: center;
+    text-align: center;
+
+    font-weight: 900;
+    font-size: 23pt;
+}
+
+div#right_top_header{
+    height: 100%;
+    width: 20%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    font-size: 15pt;
+}
+
+span#username{
+    margin-right: 25px;
+    font-weight: 800;
+}
+
+button#shop{
+    background-color: inherit;
+    cursor: pointer;
+
+    margin: 0px;
+    margin-left: 20px;
+    padding: 10px;
+}

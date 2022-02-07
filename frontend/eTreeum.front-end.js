@@ -131,7 +131,10 @@ function thenIsNewUser(newUser){
 
 }
 
-var userTrees = new Array();
+//var userTrees = new Array();
+var userTrees = [{"image":1, "rarity":3}, {"image":2, "rarity":1}, {"image":3, "rarity":2},
+            {"image":2, "rarity":1}, {"image":3, "rarity":3}, {"image":2, "rarity":2},];
+
 
 function thenPlantFreeSeed(freePlantedTree){
     userTrees.push(freePlantedTree)
@@ -263,7 +266,7 @@ async function joinTransaction () {
 async function setupPage(){
 
     var water, sun, seed, shop, rename, info, play_button;
-    var div_treeName, complete_body, infoRow, counter, tree_num, tot_trees;
+    var div_treeName, complete_body, infoRow, counter;
     var right_top_header;
 
     rename = document.getElementById("change_name");
@@ -279,16 +282,12 @@ async function setupPage(){
     complete_body = document.getElementById("complete_body");
     //plant = document.getElementById("tree");
     counter = document.getElementById("counting_tree");
-    tree_num = document.getElementById("tree_number");
-    tot_trees = document.getElementById("tot_trees");
     right_top_header = document.getElementById("right_top_header");
     
     div_treeName.style.display = "none";
     infoRow.style.display = "flex";
     complete_body.style.display = "flex";
 
-    tree_num.innerHTML = 1;
-    tot_trees.innerHTML = 1;
     counter.style.display = "flex";
     right_top_header.style.display = "flex";
 
@@ -310,12 +309,22 @@ async function setupPage(){
 
     if(infoNewUser){
 
-        var input_treeName, label_treeName, username;
+        var input_treeName, label_treeName, username, tree_num, tot_trees, tree_img;
 
         input_treeName = document.getElementById("input_treeName");
-        label_treeName = document.getElementById("nickName");
+        label_treeName = document.getElementById("treeName");
         username = document.getElementById("username");
+        tree_num = document.getElementById("tree_number");
+        tot_trees = document.getElementById("tot_trees");
+        div_tree = document.getElementById("tree");
 
+        tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
+        treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
+
+        div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+
+        tree_num.innerHTML = 1;
+        tot_trees.innerHTML = 1;
         label_treeName.innerHTML = input_treeName.value;
         input_treeName.innerHTML = "";
 
@@ -341,7 +350,7 @@ function changeName(){
     var water, sun, shop, rename, arrow, info;
     
     // divs and other elements
-    divRename = document.getElementById("nickName_change_div");
+    divRename = document.getElementById("treeName_change_div");
     complete_body = document.getElementById("complete_body");
     tot_trees = document.getElementById("tot_trees");
 
@@ -377,9 +386,9 @@ function submitNewName(){
     var water, sun, shop, rename, arrow, info;
 
     // divs and other elements
-    label = document.getElementById("nickName");
-    name = document.getElementById("newName");
-    divRename = document.getElementById("nickName_change_div");
+    label = document.getElementById("treeName");
+    name = document.getElementById("newTreeName");
+    divRename = document.getElementById("treeName_change_div");
     complete_body = document.getElementById("complete_body");
     tot_trees = document.getElementById("tot_trees");
 
@@ -416,7 +425,7 @@ function calculatePodium(){
     var podium, first, second, third;
     var username;
 
-    podium = ["A", "B", "UserName"];
+    podium = ["A", "B", "C"];
 
     first = document.getElementById("first_name");
     second = document.getElementById("second_name");
@@ -469,14 +478,11 @@ function printTrees(senderAddress){
     // button
     info = document.getElementById("info")
     
-    trees = [{"image":1, "rarity":3}, {"image":2, "rarity":1}, {"image":3, "rarity":2},
-            {"image":2, "rarity":1}, {"image":3, "rarity":3}, {"image":2, "rarity":2},];
-
     info.addEventListener("click", showInfo);
 
     arrow = document.getElementsByClassName("arrow")
 
-    if(trees.length > 1){
+    if(userTrees.length > 1){
     
         arrow[0].style.opacity = 1;
         arrow[1].style.opacity = 1;
@@ -496,10 +502,10 @@ function printTrees(senderAddress){
     }
 
     tree_num.innerHTML = 1;
-    tot_trees.innerHTML = trees.length;
+    tot_trees.innerHTML = userTrees.length;
 
-    tree_img = whichImage(trees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(trees[tree_num.innerHTML-1]["rarity"])
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -523,8 +529,8 @@ function goLeft(){
         tree_num.innerHTML--;
     }
 
-    tree_img = whichImage(trees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(trees[tree_num.innerHTML-1]["rarity"])
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -546,8 +552,8 @@ function goRight(){
         tree_num.innerHTML++;
     }
 
-    tree_img = whichImage(trees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(trees[tree_num.innerHTML-1]["rarity"])
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -582,17 +588,20 @@ function whichColor(value){
 }
 
 // function used to show the information (stat) of a tree
-function showInfo(value){
+function showInfo(){
 
-    var complete_body, stat_div, tot_trees, num_tree, stat_label;
+    var complete_body, stat_div, tot_trees, num_tree, tree_id;
     var water, sun, shop, rename, arrow, info;
+    var rarity, spiece;
     
     // divs and other elements
     stat_div = document.getElementById("treeStat");
     complete_body = document.getElementById("complete_body");
     num_tree = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
-    stat_label = document.getElementById("tree_id");
+    tree_id = document.getElementById("tree_id");
+    spiece = document.getElementById("spiece");
+    rarity = document.getElementById("rarity");
 
     // buttons
     rename = document.getElementById("change_name");
@@ -600,9 +609,12 @@ function showInfo(value){
     sun = document.getElementById("sun");
     shop = document.getElementById("shop");
     info = document.getElementById("info")
-    arrow = document.getElementsByClassName("arrow")
+    arrow = document.getElementsByClassName("arrow");
     
-    stat_label.innerHTML = num_tree.innerHTML;
+    tree_id.innerHTML = num_tree.innerHTML;
+    spiece.innerHTML = userTrees[num_tree.innerHTML-1]["image"];
+    rarity.innerHTML = userTrees[num_tree.innerHTML-1]["rarity"];
+
     stat_div.style.display = "flex";
     complete_body.style.opacity = 0.2;
 
