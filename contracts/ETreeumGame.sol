@@ -20,7 +20,7 @@ contract ETreeumGame is ERC721 {
     mapping (uint256 => Tree) trees;
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
-    address[] private playersAdresses;
+    address[] private playersAddresses;
     //mapping(address => )
 
     struct Species {
@@ -31,7 +31,7 @@ contract ETreeumGame is ERC721 {
     }
 
     struct Tree {
-        Species species;
+        Species specie;
         string nickname;
         uint16 waterGivenInAWeek;
         uint8 sunGivenInAWeek;
@@ -97,7 +97,7 @@ contract ETreeumGame is ERC721 {
     function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered() public returns (uint256) {
         require (isNewUser(msg.sender), "You're already playing");
         players[msg.sender].nickname = userNickname;
-        playersAdresses.push(msg.sender);
+        playersAddresses.push(msg.sender);
         return _plantSeed(msg.sender, treeNickname);
     }
 
@@ -125,9 +125,9 @@ contract ETreeumGame is ERC721 {
 
     function _growTree(Tree storage t) private returns (Stages) {
         if (t.startWeek > block.timestamp -1 weeks) {
-            if (t.stage != Stages.Secular && t.waterGivenInAWeek == t.species.waterNeededInAWeek && t.sunGivenInAWeek == t.species.sunNeededInAWeek) {
+            if (t.stage != Stages.Secular && t.waterGivenInAWeek == t.specie.waterNeededInAWeek && t.sunGivenInAWeek == t.specie.sunNeededInAWeek) {
                 t.stage = Stages(uint8(t.stage)+1);
-                t.value = _computeTreeValue(t.species.risk, t.stage);
+                t.value = _computeTreeValue(t.specie.risk, t.stage);
                 players[msg.sender].score = _computePlayerScore(msg.sender);
             }
         }
