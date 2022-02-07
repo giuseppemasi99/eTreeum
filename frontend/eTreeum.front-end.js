@@ -30,8 +30,7 @@ function start(){
 function isNewUser(senderAddress){
     
     // comment the return when working with the blockchain
-    //infoNewUser = Math.floor(Math.random() * 2)
-    //return infoNewUser;
+    //return Math.floor(Math.random() * 2);
 
     // remove comment when working with the blockchain
     contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
@@ -63,6 +62,7 @@ function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
 
 }
 
+//alert("Questo è un alert");
 
 /* BLOCKCHAIN INTERACTION - END */
 
@@ -133,7 +133,10 @@ function thenIsNewUser(newUser){
 
 }
 
+var userTrees = new Array();
+
 function thenPlantFreeSeed(freePlantedTree){
+    userTrees.push(freePlantedTree)
     //stampare albero free planted ever ok ciao Rocco
 }
 
@@ -256,7 +259,7 @@ function setupPage(){
     shop = document.getElementById("shop");
     info = document.getElementById("info");
 
-    infoRow = document.getElementById("info-row");
+    infoRow = document.getElementById("top");
     div_treeName = document.getElementById("select_treeName");
     complete_body = document.getElementById("complete_body");
     //plant = document.getElementById("tree");
@@ -301,6 +304,7 @@ function setupPage(){
         label_treeName.innerHTML = input_treeName.value;
         input_treeName.innerHTML = "";
 
+        // remove this comment when working with the blockchain
         plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
 
     }else{
@@ -315,7 +319,7 @@ function setupPage(){
     
 }
 // function that allow you to change the nickname of a plant
-// disply a div in wich you can input the new nickname
+// display a div in wich you can input the new nickname
 function changeName(){
 
     var complete_body, divRename, tot_trees;
@@ -394,16 +398,14 @@ function submitNewName(){
 // function that calculate the actual podium
 function calculatePodium(){
 
-    var podium, first, second, third, fourth, fifth;
+    var podium, first, second, third;
     var username;
 
-    podium = ["A", "B", "UserName", "D", "E"];
+    podium = ["A", "B", "UserName"];
 
     first = document.getElementById("first_name");
     second = document.getElementById("second_name");
     third = document.getElementById("third_name");
-    fourth = document.getElementById("fourth_name");
-    fifth = document.getElementById("fifth_name");
 
     username = document.getElementById("username");
 
@@ -420,16 +422,6 @@ function calculatePodium(){
     third.innerHTML = podium[2];
     if(third.innerHTML == username.innerHTML){
         third.innerHTML += " (you)";
-    }
-
-    fourth.innerHTML = podium[3];
-    if(fourth.innerHTML == username.innerHTML){
-        fourth.innerHTML += " (you)";
-    }
-
-    fifth.innerHTML = podium[4];
-    if(fifth.innerHTML == username.innerHTML){
-        fifth.innerHTML += " (you)";
     }
 
     if(!podium.includes(username.innerHTML)){
@@ -451,17 +443,19 @@ function printTrees(senderAddress){
     setupPage();
 
     var counter, tree_num, tot_trees, div_tree, tree_img;
-    var arrow, info;
+    var arrow, info, treeCard;
 
     counter = document.getElementById("counting_tree");
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
+    treeCard = document.getElementById("treeCard")
 
     // button
     info = document.getElementById("info")
     
-    trees = [1, 2, 3, 2, 1, 2];
+    trees = [{"image":1, "rarity":3}, {"image":2, "rarity":1}, {"image":3, "rarity":2},
+            {"image":2, "rarity":1}, {"image":3, "rarity":3}, {"image":2, "rarity":2},];
 
     info.addEventListener("click", showInfo);
 
@@ -489,7 +483,9 @@ function printTrees(senderAddress){
     tree_num.innerHTML = 1;
     tot_trees.innerHTML = trees.length;
 
-    tree_img = whichImage(trees[tree_num.innerHTML-1]);
+    tree_img = whichImage(trees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(trees[tree_num.innerHTML-1]["rarity"])
+
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
     counter.style.display = "flex";
@@ -499,11 +495,12 @@ function printTrees(senderAddress){
 // if you click on the left arrow you can see the tree on the left side
 function goLeft(){
 
-    var tree_num, tot_trees, div_tree, tree_img;
+    var tree_num, tot_trees, div_tree, tree_img, treeCard;
     
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
+    treeCard = document.getElementById("treeCard")
 
     if(tree_num.innerHTML == 1){
         tree_num.innerHTML = tot_trees.innerHTML;
@@ -511,7 +508,9 @@ function goLeft(){
         tree_num.innerHTML--;
     }
 
-    tree_img = whichImage(trees[tree_num.innerHTML-1]);
+    tree_img = whichImage(trees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(trees[tree_num.innerHTML-1]["rarity"])
+
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
 }
@@ -519,11 +518,12 @@ function goLeft(){
 // if you click on the right arrow you can see the tree on the right side
 function goRight(){
 
-    var tree_num, tot_trees, div_tree, tree_img;
+    var tree_num, tot_trees, div_tree, tree_img, treeCard;
     
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
+    treeCard = document.getElementById("treeCard")
     
     if(tree_num.innerHTML == tot_trees.innerHTML){
         tree_num.innerHTML = 1;
@@ -531,7 +531,9 @@ function goRight(){
         tree_num.innerHTML++;
     }
 
-    tree_img = whichImage(trees[tree_num.innerHTML-1]);
+    tree_img = whichImage(trees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(trees[tree_num.innerHTML-1]["rarity"])
+
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
 }
@@ -547,6 +549,20 @@ function whichImage(value){
             return "da9cc5efa7671200c3def8a880721db7.gif";
         default:
             return "seed.gif";
+    }
+}
+
+//function that given a value return the color to show in background
+function whichColor(value){
+    switch(value){
+        case 1:
+            return "rosybrown";
+        case 2:
+            return "#9400D3";
+        case 3:
+            return "#b9f2ff";
+        default:
+            return "rosybrown";
     }
 }
 
@@ -625,7 +641,7 @@ function exitStat(){
 }
 
 // timer used for water and sun button
-function startTimer(duration, display, msg) {
+function startTimer(duration, display, msg, type_button) {
 
     var timer = duration, minutes, seconds, intervalID;
         
@@ -641,8 +657,29 @@ function startTimer(duration, display, msg) {
             display.innerHTML = minutes + ":" + seconds;
 
             if (--timer < 0) {
-                //timer = duration;
+                
                 clearInterval(intervalID)
+
+                if(type_button == "sun"){
+                    sun_button_active = false;
+                }
+                else{
+                    water_button_active = false;
+                }
+
+                if(!sun_button_active && !water_button_active){
+                    
+                    var arrow;
+
+                    arrow = document.getElementsByClassName("arrow")
+                    
+                    arrow[0].style.cursor = "pointer";
+                    arrow[1].style.cursor = "pointer";
+
+                    arrow[0].addEventListener("click", goLeft);
+                    arrow[1].addEventListener("click", goRight);
+                }
+
                 display.disabled = false;
                 display.style.cursor = "pointer";
                 display.innerHTML = msg;
@@ -652,30 +689,61 @@ function startTimer(duration, display, msg) {
 
 }
 
+var sun_button_active
 // function that gives the sun to the tree
 function giveSun(){
 
     var counter, sun;
+
+    sun_button_active = true;
     counter = 60;
     sun = document.getElementById('sun');
 
     sun.disabled = true;
     sun.style.cursor = "not-allowed"
-    startTimer(counter, sun, "&#9728;");
+    startTimer(counter, sun, "&#9728;", "sun");
+
+    if(!water_button_active){
+                    
+        var arrow;
+
+        arrow = document.getElementsByClassName("arrow")
+        
+        arrow[0].style.cursor = "not-allowed";
+        arrow[1].style.cursor = "not-allowed";
+
+        arrow[0].removeEventListener("click", goLeft);
+        arrow[1].removeEventListener("click", goRight);
+    }
 
 }
 
+var water_button_active
 // function that gives the water to the tree
 function giveWater(){
 
     var counter, water;
+
+    water_button_active = true;
     counter = 30;
     water = document.getElementById('water');
 
     water.disabled = true;
     water.style.cursor = "not-allowed"
-    startTimer(counter, water, "&#128167;");
+    startTimer(counter, water, "&#128167;", "water");
 
+    if(!sun_button_active){
+                    
+        var arrow;
+
+        arrow = document.getElementsByClassName("arrow")
+        
+        arrow[0].style.cursor = "not-allowed";
+        arrow[1].style.cursor = "not-allowed";
+
+        arrow[0].removeEventListener("click", goLeft);
+        arrow[1].removeEventListener("click", goRight);
+    }
 }
 
 

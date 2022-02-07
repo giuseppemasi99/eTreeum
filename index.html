@@ -16,6 +16,7 @@
     </head>
 
     <body>
+
         <div id="header">
             <div id="logo">
                 <img id="_img" src="frontend/img/Treedom_Logo.jpg" alt="logo">
@@ -85,7 +86,8 @@
             </div>
         </div>
 
-        <div id= 'complete_body'>
+        <div id="complete_body">
+
             <div id="left_div">
                 <h2>Tree planted in the world:</h2>
                 <div id="counter">
@@ -94,19 +96,42 @@
                 <button id="find_out" type="button">Find out more</button>
             </div>
 
-            <div id= 'middle_div'> 
-                <div id="top">
-                    <img class="arrow" src="frontend/img/left-arrow.png" alt="left-arrow">
-                    <div id="tree">
-                        <div id="info-row">
-                            <span>
-                                <label id="nickName">TreeName</label>
-                                <button id="change_name" type="button"> ✏️</button>
-                            </span>
-                            <label id="info">&#8505;</label>
-                        </div> 
+            <div id="middle_div">
+
+                <div id="tree_body">
+
+                    <div id="left_arrow">
+                        <img class="arrow" src="frontend/img/left-arrow.png" alt="left-arrow">
                     </div>
-                    <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
+
+                    <div id="treeCard">
+
+                        <div id="top">
+                            <span class="info_row">
+                                <button id="change_name" type="button">✏️ </button>
+                                <label id="nickName">TreeName</label>
+                            </span>
+
+                            <label id="info">&#8505;</label>
+                        </div>
+
+                        <div id="center">
+                            <div id="tree">
+
+                            </div>
+                        </div>
+
+                        <div id="bottom">
+                            <button class="down-button" id="water" type="button">&#128167;</button>
+                            <button class="down-button" id="sun" type="button">&#9728;</button>
+                        </div>
+
+                    </div>
+
+                    <div id="right_arrow">
+                        <img class="arrow" src="frontend/img/right-arrow.png" alt="right-arrow">
+                    </div>
+
                 </div>
 
                 <div id="counting_tree">
@@ -116,14 +141,10 @@
                     </span>
                 </div>
 
-                <div id="bottom">
-                    <button class="down-button" id="water" type="button">&#128167;</button>
-                    <button class="down-button" id="sun" type="button">&#9728;</button>
-                </div>
             </div>
 
-            <div id= 'right_div'>
-                <div id= 'first_row'>Ranking</div>
+            <div id="right_div">
+                <h2>Ranking</h2>
 
                 <div id="podium">
                     <label class="podium" id="first">
@@ -135,12 +156,6 @@
                     </label>
                     <label class="podium" id="third">
                         3. <label id="third_name"></label>
-                    </label>
-                    <label class="podium" id="fourth">
-                        4. <label id="fourth_name"></label>
-                    </label>
-                    <label class="podium" id="fifth">
-                        5. <label id="fifth_name"></label>
                     </label>
                     <label class="podium" id="you">
                         <label id="position">N. </label>
