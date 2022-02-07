@@ -14,10 +14,10 @@ var contract = null;
 function start(){
 
     // remove comment when working with blockchain
-    //isNewUser(senderAddress);
+    isNewUser(senderAddress);
 
     // comment this line when working with blockchain
-    thenIsNewUser(isNewUser(senderAddress));
+    //thenIsNewUser(isNewUser(senderAddress));
 
 }
 
@@ -30,13 +30,13 @@ function start(){
 function isNewUser(senderAddress){
     
     // comment the return when working with the blockchain
-    return Math.floor(Math.random() * 2);
+    //return Math.floor(Math.random() * 2);
 
     // remove comment when working with the blockchain
-    //contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
-    //    console.log('isNewUser:'+ newUser);
-    //    thenIsNewUser(newUser);
-    //}); 
+    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
+        console.log('isNewUser:'+ newUser);
+        thenIsNewUser(newUser);
+    }); 
 
 }
 
@@ -305,7 +305,7 @@ function setupPage(){
         input_treeName.innerHTML = "";
 
         // remove this comment when working with the blockchain
-        //plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
+        plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
 
     }else{
 
@@ -319,7 +319,7 @@ function setupPage(){
     
 }
 // function that allow you to change the nickname of a plant
-// disply a div in wich you can input the new nickname
+// display a div in wich you can input the new nickname
 function changeName(){
 
     var complete_body, divRename, tot_trees;
@@ -751,7 +751,7 @@ function giveWater(){
 
 $(window).on('load', function() {
     // comment this code when working with blockchain
-    start();
+    //start();
 
     initialise(contractAddress);
 });
