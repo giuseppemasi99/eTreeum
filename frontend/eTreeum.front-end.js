@@ -74,13 +74,12 @@ function thenIsNewUser(newUser){
     console.log("CREATING");
     infoNewUser = newUser;
     
-    var water, sun, shop;
+    var water, sun;
     var seed, rename, submit_change, exit_stat;
     var username, rules, start_play;
 
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    shop = document.getElementById("shop");
 
     seed = document.getElementById("free_seed");
     username = document.getElementById("submit_username");
@@ -94,7 +93,10 @@ function thenIsNewUser(newUser){
     seed.addEventListener('click', setUsername);
     username.addEventListener('click', showRules);
     rules.addEventListener('click', setPlantName);
+    // remove the comment when working with the blockchain
     start_play.addEventListener('click', joinTransaction);
+    // comment when working with the blockchain
+    //start_play.addEventListener('click', setupPage);
 
     rename.addEventListener('click', changeName);
     submit_change.addEventListener('click', submitNewName);
@@ -106,7 +108,6 @@ function thenIsNewUser(newUser){
         
         water.disabled = true;
         sun.disabled = true;
-        shop.disabled = true;
         rename.disabled = true;
         username.disabled = true;
         rules.disabled = true;
@@ -118,7 +119,6 @@ function thenIsNewUser(newUser){
         
         water.disabled = false;
         sun.disabled = false;
-        shop.disabled = false;
         rename.disabled = false;
         
         rules.disabled = true;
@@ -265,7 +265,7 @@ async function joinTransaction () {
 // setting up all the necessary buttons and elements in the page
 async function setupPage(){
 
-    var water, sun, seed, shop, rename, info, play_button;
+    var water, sun, seed, rename, info, play_button;
     var div_treeName, complete_body, infoRow, counter;
     var right_top_header;
 
@@ -274,7 +274,6 @@ async function setupPage(){
     sun = document.getElementById("sun");
     seed = document.getElementById("free_seed");
     play_button = document.getElementById("start_play");
-    shop = document.getElementById("shop");
     info = document.getElementById("info");
 
     infoRow = document.getElementById("top");
@@ -293,14 +292,12 @@ async function setupPage(){
 
     water.style.cursor = "pointer";
     sun.style.cursor = "pointer";
-    shop.style.cursor = "pointer";
 
     seed.disabled = true;
     play_button.disabled = true;
     
     water.disabled = false;
     sun.disabled = false;
-    shop.disabled = false;
     rename.disabled = false;
 
     info.addEventListener("click", showInfo);
@@ -329,7 +326,7 @@ async function setupPage(){
         input_treeName.innerHTML = "";
 
         // remove this comment when working with the blockchain
-        //await plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
+        await plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
 
     }else{
 
@@ -347,7 +344,7 @@ async function setupPage(){
 function changeName(){
 
     var complete_body, divRename, tot_trees;
-    var water, sun, shop, rename, arrow, info;
+    var water, sun, rename, arrow, info;
     
     // divs and other elements
     divRename = document.getElementById("treeName_change_div");
@@ -358,7 +355,6 @@ function changeName(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    shop = document.getElementById("shop");
     info = document.getElementById("info")
     arrow = document.getElementsByClassName("arrow")
     
@@ -367,7 +363,6 @@ function changeName(){
 
     water.disabled = true;
     sun.disabled = true;
-    shop.disabled = true;
     rename.disabled = true;
 
     info.removeEventListener("click", showInfo);
@@ -383,7 +378,7 @@ function changeName(){
 function submitNewName(){
 
     var label, name, complete_body, divRename, tot_trees;
-    var water, sun, shop, rename, arrow, info;
+    var water, sun, rename, arrow, info;
 
     // divs and other elements
     label = document.getElementById("treeName");
@@ -396,7 +391,6 @@ function submitNewName(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    shop = document.getElementById("shop");
     arrow = document.getElementsByClassName("arrow")
     info = document.getElementById("info")
     
@@ -408,7 +402,6 @@ function submitNewName(){
 
     water.disabled = false;
     sun.disabled = false;
-    shop.disabled = false;
     rename.disabled = false;
     info.addEventListener("click", showInfo);
 
@@ -423,7 +416,6 @@ function submitNewName(){
 function calculatePodium(){
 
     var podium, first, second, third;
-    var username;
 
     podium = ["A", "B", "C"];
 
@@ -431,32 +423,9 @@ function calculatePodium(){
     second = document.getElementById("second_name");
     third = document.getElementById("third_name");
 
-    username = document.getElementById("username");
-
     first.innerHTML = podium[0];
-    if(first.innerHTML == username.innerHTML){
-        first.innerHTML += " (you)";
-    }
-
     second.innerHTML = podium[1];
-    if(second.innerHTML == username.innerHTML){
-        second.innerHTML += " (you)";
-    }
-
     third.innerHTML = podium[2];
-    if(third.innerHTML == username.innerHTML){
-        third.innerHTML += " (you)";
-    }
-
-    if(!podium.includes(username.innerHTML)){
-        var you, your_name;
-        
-        you = document.getElementById("you");
-        your_name = document.getElementById("your_name");
-
-        your_name.innerHTML = username.innerHTML;
-        you.style.display = "inline";
-    }
 
 }
 
@@ -591,7 +560,7 @@ function whichColor(value){
 function showInfo(){
 
     var complete_body, stat_div, tot_trees, num_tree, tree_id;
-    var water, sun, shop, rename, arrow, info;
+    var water, sun, rename, arrow, info;
     var rarity, spiece;
     
     // divs and other elements
@@ -607,7 +576,6 @@ function showInfo(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    shop = document.getElementById("shop");
     info = document.getElementById("info")
     arrow = document.getElementsByClassName("arrow");
     
@@ -620,7 +588,6 @@ function showInfo(){
 
     water.disabled = true;
     sun.disabled = true;
-    shop.disabled = true;
     rename.disabled = true;
 
     info.removeEventListener("click", showInfo);
@@ -636,7 +603,7 @@ function showInfo(){
 function exitStat(){
 
     var complete_body, stat_div, tot_trees;
-    var water, sun, shop, rename, arrow, info;
+    var water, sun, rename, arrow, info;
 
     // divs and other elements
     stat_div = document.getElementById("treeStat");
@@ -647,7 +614,6 @@ function exitStat(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    shop = document.getElementById("shop");
     arrow = document.getElementsByClassName("arrow")
     info = document.getElementById("info")
 
@@ -656,7 +622,6 @@ function exitStat(){
 
     water.disabled = false;
     sun.disabled = false;
-    shop.disabled = false;
     rename.disabled = false;
     info.addEventListener("click", showInfo);
 
@@ -716,61 +681,38 @@ function startTimer(duration, display, msg, type_button) {
 
 }
 
-var sun_button_active
+
 // function that gives the sun to the tree
 function giveSun(){
 
-    var counter, sun;
+    var coin;
 
-    sun_button_active = true;
-    counter = 60;
-    sun = document.getElementById('sun');
+    coin = Math.floor(Math.random() * 2);
 
-    sun.disabled = true;
-    sun.style.cursor = "not-allowed"
-    startTimer(counter, sun, "&#9728;", "sun");
-
-    if(!water_button_active){
-                    
-        var arrow;
-
-        arrow = document.getElementsByClassName("arrow")
-        
-        arrow[0].style.cursor = "not-allowed";
-        arrow[1].style.cursor = "not-allowed";
-
-        arrow[0].removeEventListener("click", goLeft);
-        arrow[1].removeEventListener("click", goRight);
+    if(coin){
+        var sun = prompt("How much sun you want to give to the plant?");
+        alert("Good job you gave "+sun+" hours of sun to your tree!");
+    }else{
+        alert("You gave too much sun to your tree, STOP IT!");
     }
 
 }
 
-var water_button_active
+
 // function that gives the water to the tree
 function giveWater(){
+    var coin;
 
-    var counter, water;
+    coin = Math.floor(Math.random() * 2);
 
-    water_button_active = true;
-    counter = 30;
-    water = document.getElementById('water');
-
-    water.disabled = true;
-    water.style.cursor = "not-allowed"
-    startTimer(counter, water, "&#128167;", "water");
-
-    if(!sun_button_active){
-                    
-        var arrow;
-
-        arrow = document.getElementsByClassName("arrow")
-        
-        arrow[0].style.cursor = "not-allowed";
-        arrow[1].style.cursor = "not-allowed";
-
-        arrow[0].removeEventListener("click", goLeft);
-        arrow[1].removeEventListener("click", goRight);
+    if(coin){
+        var water = prompt("How much water you want to give to the plant?");
+        alert("Good job you gave "+water+" liters of water to your tree!");
+    }else{
+        alert("You gave too much water to your tree, STOP IT!");
     }
+
+     
 }
 
 

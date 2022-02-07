@@ -20,15 +20,31 @@
         <div id="header">
             <div id="logo">
                 <a href="./index.html">
-                    <img id="_img" src="frontend/img/Treedom_Logo.jpg" alt="logo">
+                    <img id="_img" src="frontend/img/logo.png" alt="logo">
                 </a>
             </div>
+
             <header>Welcome into your CryptoGarden!</header>
+            
             <div id="right_top_header">
-                <a href="./frontend/shop.html">
-                    <button id="shop" type="button">&#128722;</button>
-                </a>
-                <span id="username">UserName</span>
+
+                <div id="menu">
+                    <ul> 
+                        <li id="shop_chart">
+                            <a href="#">&#128722;</a> 
+                            <ul>
+                                <li><a href="./frontend/shop.html">Buy a tree</a></li>
+                                <li><a href="#">Buy a seed</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="user_info">
+                    <span id="username">UserName</span>
+                    <span id="user_score">500</span>
+                </div>
+
             </div>
         </div>
 
@@ -148,22 +164,17 @@
             </div>
 
             <div id="right_div">
-                <h2>Ranking</h2>
+                <h2>Kings of the forest</h2>
 
                 <div id="podium">
                     <label class="podium" id="first">
-                        1. <img src="frontend/img/first.png" alt="first place">
-                        <label id="first_name"></label>
+                        1.<label id="first_name"></label>
                     </label>
                     <label class="podium" id="second">
                         2. <label id="second_name"></label>
                     </label>
                     <label class="podium" id="third">
                         3. <label id="third_name"></label>
-                    </label>
-                    <label class="podium" id="you">
-                        <label id="position">N. </label>
-                        <label id="your_name"></label>
                     </label>
                 </div>
             </div>

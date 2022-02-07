@@ -31,7 +31,7 @@ a{
 /* CSS FOR THE HEADER*/
 
 div#header{
-    height: 80px;;
+    height: 80px;
     width: 100%;
 
     display: flex;
@@ -45,14 +45,19 @@ div#header{
 
 div#logo{
     height: 100%;
-    width: 20%;
+    width: 15%;
 
     margin: auto 0;
+    padding-left: 15px;
+
+    display: flex;
+    align-items: center;
+
 }
 
 header{
     height: 100%;
-    width: 60%;
+    width: 70%;
 
     display: flex;
     
@@ -76,19 +81,63 @@ div#right_top_header{
     font-size: 15pt;
 }
 
-span#username{
+div#user_info{
     margin-right: 25px;
     font-weight: 800;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-button#shop{
-    background-color: inherit;
-    cursor: pointer;
+/*CSS FOR THE SHOP MENU*/
 
-    margin: 0px;
-    margin-left: 20px;
-    padding: 10px;
+div#menu ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 }
+
+li#shop_chart{
+    display: flex;
+    align-items: center;
+
+    height: 80px;
+}
+
+div#menu li ul{
+    display: none
+}
+
+div#menu li:hover ul{
+    display: block;
+
+    position: absolute;
+    top: 78px;
+
+    z-index:1;
+
+    color: black;
+    background-color: rgb(36, 102, 36);
+}
+
+div#menu ul li ul{
+    text-align: left;
+    border-radius: 5px;
+}
+
+div#menu ul li ul li a{
+    color: black;
+    font-weight: 600;
+    padding: 5px;
+
+}
+
+div#menu ul li ul li:hover{
+    background-color: rgb(28, 75, 17);
+    border-radius: 5px;
+}
+
 
 div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat{
     position: absolute;
@@ -235,18 +284,19 @@ div#complete_body{
 /* CSS FOR THE LEFT BODY OF THE PAGE*/
 div#left_div{
     width: 20%;
-    height: 60%;
+    height: 100%;
 
     margin-right: 2.5%;
 
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
 }
 
 div#counter{
     margin-top: 30px;
-    font-size: 25pt;
+    font-size: 35pt;
     font-weight: 800;
 }
 
@@ -259,7 +309,7 @@ div.counter-value{
 button#find_out{
     cursor: pointer;
 
-    margin-top: 50px;
+    margin-top: 100px;
 }
 
 
@@ -439,15 +489,13 @@ div#first_row{
     text-align: center;
 }
 
-
-
 div#podium{
-    height: 75%;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: justify;
+
+    margin-top: 30px;
 }
 
 label.podium{
