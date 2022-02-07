@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xd69B306320Bf1DE550BC7f6b64D11b2c3eD2B23c';
+var contractAddress = '0xf6CABd014fe2F29c5A5d047C1E07C902Fbd02Da8';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -40,25 +40,22 @@ function isNewUser(senderAddress){
 
 }
 
-function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
+async function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
 
      // Subscribe to all PlantedFreeSeed events
     contract.events.JoinedGame(
         function(error, event){
-                if (!error) {
-                    if (event.returnValues["owner"] == senderAddress) {
-                        console.log('FREE PLANTED TREE');
-                        console.log(event.returnValues['plantedFreeTree']);
-                        freePlantedTree = event.returnValues['plantedFreeTree'];
-                        thenPlantFreeSeed(freePlantedTree);
-                    }
-                }
+            if (!error) {
+                setupPage();
+                console.log('FREE PLANTED TREE');
+                console.log(event.returnValues['plantedFreeTree']);
+                plantedSeed = event.returnValues['plantedFreeTree'];
+                thenPlantFreeSeed(plantedSeed);
             }
-      );
+        }
+    );
 
-    contract.methods.joinGame(nicknameUser, nicknameTree).send({from:senderAddress, gas: 1500000}).on('receipt', function(transaction) {
-        console.log(transaction);        
-    });
+    contract.methods.joinGame(nicknameUser, nicknameTree).send({from:senderAddress, gas: 1500000});
 
 }
 
@@ -74,6 +71,7 @@ function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
 
 function thenIsNewUser(newUser){
 
+    console.log("CREATING");
     infoNewUser = newUser;
     
     var water, sun, shop;
@@ -96,7 +94,7 @@ function thenIsNewUser(newUser){
     seed.addEventListener('click', setUsername);
     username.addEventListener('click', showRules);
     rules.addEventListener('click', setPlantName);
-    start_play.addEventListener('click', setupPage);
+    start_play.addEventListener('click', joinTransaction);
 
     rename.addEventListener('click', changeName);
     submit_change.addEventListener('click', submitNewName);
@@ -244,8 +242,25 @@ function setPlantName(){
 
 }
 
+async function joinTransaction () {
+    if(infoNewUser){
+
+        var input_treeName, label_treeName, username;
+
+        input_treeName = document.getElementById("input_treeName");
+        label_treeName = document.getElementById("nickName");
+        username = document.getElementById("username");
+
+        label_treeName.innerHTML = input_treeName.value;
+        input_treeName.innerHTML = "";
+
+        plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
+        //else show error
+    }
+}
+
 // setting up all the necessary buttons and elements in the page
-function setupPage(){
+async function setupPage(){
 
     var water, sun, seed, shop, rename, info, play_button;
     var div_treeName, complete_body, infoRow, counter, tree_num, tot_trees;
@@ -305,7 +320,7 @@ function setupPage(){
         input_treeName.innerHTML = "";
 
         // remove this comment when working with the blockchain
-        plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
+        //await plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
 
     }else{
 
