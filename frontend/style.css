@@ -25,16 +25,15 @@ img {
 }
 
 div#header{
-    height: 15%;
+    height: 80px;;
     width: 100%;
 
     display: flex;
-    /*
-    justify-content: center;
-    remove this comment when showing the username
-    */
-    align-items: center;
     text-align: center;
+    /*justify-content: space-between;
+    justify-content: center;*/
+
+    align-items: center;
 
     color: black;
     background-color: rgb(36, 102, 36);
@@ -44,22 +43,22 @@ div#logo{
     height: 100%;
     width: 20%;
 
+    margin: auto 0;
+
     /*
     margin-right: 14.8%;
     remove this comment when showing the username
     */
-    margin-right: 11%;
 }
 
 header{
     height: 100%;
-    width: 50%;
+    width: 60%;
 
     display: flex;
-    /*
+    
     justify-content: center;
-    remove this comment when showing the username
-    */
+    
     align-items: center;
     text-align: center;
 
@@ -70,12 +69,10 @@ header{
 div#right_top_header{
     height: 100%;
     width: 20%;
-    
-    margin-left: 14.8%;
 
     display: none;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
 
     font-size: 15pt;
 }
@@ -119,12 +116,14 @@ div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#n
 
 /*CSS FOR THE DIVS USED FOR NEW USERS*/
 div#initial_div, div#insert_username, div#game_rules, div#select_treeName{
-    top: 15%;
+    top: 80px;
     left: 0%;
     border: none;
+    border-radius: 0px;
 
     height: 85%;
     width: 100%;
+
 }
 
 div#insert_username, div#game_rules, div#select_treeName{
@@ -174,6 +173,7 @@ div#treeStat{
 }
 
 /* CSS FOR THE HEADER*/
+
 div#stat_header{
     display: flex;
     align-items: center;
@@ -261,15 +261,28 @@ button#find_out{
 /* CSS FOR THE MIDDLE BODY OF THE PAGE*/
 div#middle_div{
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     flex-direction: column;
 
     width: 50%;
     height: 100%;
+    margin-top: 7.5%;
+}
+
+div#tree_body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 80%;
+}
+
+div#left_arrow, div#right_arrow{
+    width: 10%;
 }
 
 img.arrow{
-    max-width: 15%;
+    max-width: 50%;
     max-height: 50%;
     border-radius: none;
 
@@ -277,35 +290,30 @@ img.arrow{
     opacity: 0.55;
 }
 
-div#top{
-    height: 85%;
+div#treeCard{
+    height: 100%;
+    width: 70%;
+
+    background-color: rosybrown;
+    border-radius: 20px;
 
     display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+div#top{
+    height: 10%;
+    width: 100%;
+
+    display: none;
     justify-content: center;
     align-items: center;
 }
 
-div#tree{
-    border-radius: 20px;
-    height: 100%;
-    width: 100%;
-
-    background-image: url(img/seed.gif);
-    background-size: contain;                 
-    background-repeat: no-repeat;
-    background-position: center center; 
-}
-
-div#info-row{
-    display: none;
-    place-content: space-between;
-    margin: 5px 10px;
-
-}
-
-span{
-    display: flex;
+span.info_row{
     align-items: center;
+    margin-left: auto;
 }
 
 button#change_name{
@@ -330,14 +338,24 @@ label#info{
     padding: 1px 3px;
     
     cursor: pointer;
+    margin-left: auto;
+    margin-right: 10px;
 }
 
-div#counting_tree{
-    display: none;
-    justify-content: center;
-    margin-top: 5px;
-    font-size: 15pt;
-    font-weight: 700;
+div#center{
+    width: 100%;
+    height: 60%;
+}
+
+div#tree{
+    border-radius: 20px;
+    height: 100%;
+    width: 100%;
+
+    background-image: url(img/seed.gif);
+    background-size: contain;                 
+    background-repeat: no-repeat;
+    background-position: center center; 
 }
 
 div#bottom{
@@ -346,21 +364,25 @@ div#bottom{
     align-items: center;
 
     height: 10%;
+    width: 100%;
 
     margin-top: 10px;
 }
 
 button.down-button{
+    margin-top: 0px;
+    margin-bottom: 10px;
     margin-right: 10px;
     margin-left: 10px;
 
-    padding: 15px;
+    padding: 7px 15px;
+
 
     background-color: #664526;
 
     cursor: not-allowed;
 
-    font-size: 15pt;
+    font-size: 80%;
 }
 
 button#water{
@@ -369,6 +391,20 @@ button#water{
 
 button#sun{
     color: #f9d71c;
+}
+
+
+div#counting_tree{
+    width: 100%;
+    height: 5%;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 5px;
+    font-size: 15pt;
+    font-weight: 700;
 }
 
 /* CSS FOR THE RIGHT BODY OF THE PAGE*/
