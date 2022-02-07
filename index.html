@@ -19,11 +19,15 @@
 
         <div id="header">
             <div id="logo">
-                <img id="_img" src="frontend/img/Treedom_Logo.jpg" alt="logo">
+                <a href="./index.html">
+                    <img id="_img" src="frontend/img/Treedom_Logo.jpg" alt="logo">
+                </a>
             </div>
             <header>Welcome into your CryptoGarden!</header>
             <div id="right_top_header">
-                <button id="shop" type="button">&#128722;</button>
+                <a href="./frontend/shop.html">
+                    <button id="shop" type="button">&#128722;</button>
+                </a>
                 <span id="username">UserName</span>
             </div>
         </div>
@@ -63,8 +67,8 @@
             <button id="start_play" type="button">Start playing!</button>
         </div>
 
-        <div id="nickName_change_div">
-            Enter a NickName for your plant: <input type="text" id="newName" value="" />
+        <div id="treeName_change_div">
+            Enter a NickName for your plant: <input type="text" id="newTreeName" value="" />
             <button id="submit_change_name" type="button">Change NickName</button>
         </div>
 
@@ -77,11 +81,11 @@
                 <span class="stat">Tree ID: 
                     <label class="stat" id="tree_id"></label>
                 </span>
-                <span class="stat">Water needed: 
-                    <label class="stat" id="tree_water"></label>
+                <span class="stat">Spiece: 
+                    <label class="stat" id="spiece"></label>
                 </span>
-                <span class="stat">Sun needed: 
-                    <label class="stat" id="tree_sun"></label>
+                <span class="stat">Rarity: 
+                    <label class="stat" id="rarity"></label>
                 </span>
             </div>
         </div>
@@ -109,7 +113,7 @@
                         <div id="top">
                             <span class="info_row">
                                 <button id="change_name" type="button">✏️ </button>
-                                <label id="nickName">TreeName</label>
+                                <label id="treeName">TreeName</label>
                             </span>
 
                             <label id="info">&#8505;</label>

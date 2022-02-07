@@ -24,14 +24,18 @@ img {
     max-height: 100%;
 }
 
+a{
+    text-decoration: none;
+}
+
+/* CSS FOR THE HEADER*/
+
 div#header{
     height: 80px;;
     width: 100%;
 
     display: flex;
     text-align: center;
-    /*justify-content: space-between;
-    justify-content: center;*/
 
     align-items: center;
 
@@ -44,11 +48,6 @@ div#logo{
     width: 20%;
 
     margin: auto 0;
-
-    /*
-    margin-right: 14.8%;
-    remove this comment when showing the username
-    */
 }
 
 header{
@@ -91,7 +90,7 @@ button#shop{
     padding: 10px;
 }
 
-div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#nickName_change_div, div#treeStat{
+div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat{
     position: absolute;
     z-index: 10;
 
@@ -150,7 +149,7 @@ button#free_seed, button#submit_username, button#rules_observed, button#start_pl
 
 /*CSS FOR THE DIV USED TO CHANGE THE NICKNAME OF THE PLANT*/
 
-div#nickName_change_div, div#treeStat{
+div#treeName_change_div, div#treeStat{
     display: none;
     z-index: 11;
 
@@ -158,7 +157,7 @@ div#nickName_change_div, div#treeStat{
     font-weight: 700;
 }
 
-input#newName{
+input#newTreeName{
     margin-top: 10px;
 }
 
@@ -168,11 +167,12 @@ button#submit_change_name{
     padding-bottom: 5px;
 }
 
+
+/*CSS FOR THE STATS OF THE TREE*/
+
 div#treeStat{
     padding: 0px;
 }
-
-/* CSS FOR THE HEADER*/
 
 div#stat_header{
     display: flex;
@@ -207,9 +207,14 @@ div#tree_properties{
     width: 100%;
     height: 75%;
 
-    padding: 0px 5px;
+    padding: 5px;
     padding-bottom: 7px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
+
 
 label.stat{
     margin-left: 8px;
@@ -328,7 +333,7 @@ button#change_name{
     display: inline;
 }
 
-label#nickName{
+label#treeName{
     font-weight: 600;
 }
 
