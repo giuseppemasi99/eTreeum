@@ -116,6 +116,10 @@ contract ETreeumGame is ERC721 {
         return !(bytes(players[userAddress].nickname).length > 0);
     }
 
+    /*function getTrees() public view returns (Tree[] memory trees) {
+        return players[msg.sender].ownedTrees;
+    }*/
+
     function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256) {
         uint256 treeId = treeCounter;
         _safeMint(owner, treeId);
@@ -144,6 +148,10 @@ contract ETreeumGame is ERC721 {
         }
         else { t.startWeek = block.timestamp; }
         return t.stage;
+    }
+
+    function renameTree(uint64 id, string calldata newNickname) MustOwnTree(id) public {
+        trees[id].nickname = newNickname;
     }
 
     function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public returns (Stages) {
@@ -178,6 +186,7 @@ contract ETreeumGame is ERC721 {
         require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
         require(shop[treeId] == 0, "This tree is already in the shop");
         require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
+        shop[treeId] = price;
     }
 
     function buyTree(uint256 treeId, uint256 index) public payable SetLastEntered {
