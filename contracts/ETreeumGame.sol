@@ -9,6 +9,9 @@ contract ETreeumGame is ERC721 {
     enum Stages {Seed, Bush, Adult, Majestic, Secular}
 
     uint constant public SEED_PRICE = 1e15;
+    uint16 constant MAX_WATER = 200;
+    uint8 constant MAX_SUN = 3;
+    uint8 constant PERCENTAGE_FOR_REAL_PLANT = 1;
     uint256 public treeCounter;
     address payable private _gardener;
     //fake address
@@ -21,7 +24,8 @@ contract ETreeumGame is ERC721 {
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
     address[] private playersAddresses;
-    //mapping(address => )
+    mapping(uint256 => uint8) private shop;
+    Player[3] private ranking;
 
     struct Species {
         string name; 
@@ -61,11 +65,14 @@ contract ETreeumGame is ERC721 {
 
     modifier UpdatePlayerScore (address player) {
         _;
+        uint32 oldScore = players[player].score;
         players[player].score = _computePlayerScore(player);
+        if (oldScore != players[player].score) computeRanking();
     }
 
     // event to be emitted when the free seed is planted
-    event JoinedGame(address owner, Tree plantedFreeTree);
+    event JoinedGame(Tree t);
+    event RankingChanged(Player[3] ranking);
 
     constructor () ERC721 ("Tree", "T"){
         treeCounter = 0;
@@ -83,7 +90,7 @@ contract ETreeumGame is ERC721 {
     }
 
     function addSpecies(string memory speciesName, ExtinctionRisk risk, uint16 waterNeeded, uint8 sunNeeded) public {
-        require(msg.sender == _gardener, "Only the gardener can set the rules of the game");
+        require(msg.sender == _gardener, "You cannot set the rules of the game");
         require(bytes(speciesName).length > 0, "The name cannot be empty");
         require(!_existsSpecies(speciesName), "This species already exists");
         gameSpecies.push(Species(speciesName, risk, waterNeeded, sunNeeded));
@@ -99,10 +106,10 @@ contract ETreeumGame is ERC721 {
 
     function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered() public {
         require (isNewUser(msg.sender), "You're already playing");
-        players[msg.sender].nickname = userNickname;
+        players[msg.sender].nickname = bytes(userNickname).length > 0 ? userNickname : "Player"; 
         playersAddresses.push(msg.sender);
         uint256 treeId = _plantSeed(msg.sender, treeNickname);
-        emit JoinedGame(msg.sender, trees[treeId]);
+        emit JoinedGame(trees[treeId]);
     }
 
     function isNewUser(address userAddress) public view returns (bool) {
@@ -129,7 +136,7 @@ contract ETreeumGame is ERC721 {
 
     function _growTree(Tree storage t) private returns (Stages) {
         if (t.startWeek > block.timestamp -1 weeks) {
-            if (t.stage != Stages.Secular && t.waterGivenInAWeek == t.specie.waterNeededInAWeek && t.sunGivenInAWeek == t.specie.sunNeededInAWeek) {
+            if (t.stage != Stages.Secular && t.waterGivenInAWeek >= t.specie.waterNeededInAWeek && t.sunGivenInAWeek >= t.specie.sunNeededInAWeek) {
                 t.stage = Stages(uint8(t.stage)+1);
                 t.value = _computeTreeValue(t.specie.risk, t.stage);
                 players[msg.sender].score = _computePlayerScore(msg.sender);
@@ -140,6 +147,7 @@ contract ETreeumGame is ERC721 {
     }
 
     function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public returns (Stages) {
+        require(waterAmount <= MAX_WATER, "Too much water");
         Tree storage t = trees[id];
         require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
         t.waterGivenInAWeek += waterAmount;
@@ -148,6 +156,7 @@ contract ETreeumGame is ERC721 {
     }
 
     function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public returns (Stages) {
+        require(sunHours <= MAX_SUN, "Too much sun");
         Tree storage t = trees[id];
         require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
         t.sunGivenInAWeek += sunHours;
@@ -164,6 +173,40 @@ contract ETreeumGame is ERC721 {
         _plantSeed(msg.sender, treeNickname);
     }
 
+    function sellTree(uint256 treeId, uint8 price) MustOwnTree(treeId) SetLastEntered public {
+        Tree storage t = trees[treeId];
+        require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
+        require(shop[treeId] == 0, "This tree is already in the shop");
+        require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
+    }
+
+    function buyTree(uint256 treeId, uint256 index) public payable SetLastEntered {
+        require(!_ownsTree(msg.sender, treeId), "You can't buy your own trees");
+        require(shop[treeId] != 0, "This tree is not up for sale");
+        uint8 price = shop[treeId];
+        require(msg.value >= price, "You are not paying enough");
+        address oldOwner = ERC721.ownerOf(treeId);
+        require (players[oldOwner].treeOwned[index] == treeId, "You are selecting the wrong tree");
+        uint8 percentage = price / 100;
+        price = price - percentage;
+        planter.transfer(percentage);
+        ERC721.safeTransferFrom(oldOwner, msg.sender, treeId);
+        payable(oldOwner).transfer(price);
+        _afterSelling(oldOwner, msg.sender, treeId, index);
+    }
+
+    function _afterSelling(address oldOwner, address newOwner, uint256 treeId, uint256 index) private UpdatePlayerScore(newOwner) UpdatePlayerScore(oldOwner) {
+        shop[treeId] = 0;
+        players[oldOwner].treeOwned[index] = players[oldOwner].treeOwned[players[oldOwner].treeOwned.length -1];
+        players[oldOwner].treeOwned.pop();
+        players[msg.sender].treeOwned.push(treeId);
+    }
+
+    function _checkTreePrice(uint256 value, uint8 price) pure private returns (bool) {
+        uint256 percentage = value/100;
+        return price >= value - percentage && price <= value + percentage;
+    }
+
     function _computeTreeValue(ExtinctionRisk risk, Stages stage) pure private returns (uint8) {
         uint8 value;
         if (risk == ExtinctionRisk.CriticallyEndangered) value = 50;
@@ -176,6 +219,10 @@ contract ETreeumGame is ERC721 {
         return value;
     }
 
+    function getPlayerScore(address player) view public returns (uint32) {
+        return players[player].score;
+    }
+
     function _computePlayerScore(address player) view private returns (uint32) {
         uint256[] storage ids = players[player].treeOwned;
         uint32 score = 0;
@@ -185,6 +232,33 @@ contract ETreeumGame is ERC721 {
         return score;
     }
 
-    function computeRanking() view public {
+    function getRanking() view public returns (Player[3] memory) {
+        return ranking;
+    }
+
+    function computeRanking() public {
+        bool changed = false;
+        for(uint i=0; i<playersAddresses.length; i++) {
+            Player memory p = players[playersAddresses[i]];
+            //first place
+            if (p.score > ranking[0].score) {
+                ranking[2] = ranking[1];
+                ranking[1] = ranking[0];
+                ranking[0] = p;
+                changed = true;
+            }
+            else if (p.score > ranking[1].score) {
+                ranking[2] = ranking[1];
+                ranking[1] = p;
+                changed = true;
+            }
+            else if (p.score > ranking[2].score) {
+                ranking[2] = p;
+                changed = true;
+            }
+        }
+        if (changed) {
+            emit RankingChanged(ranking);
+        }
     }
 }
