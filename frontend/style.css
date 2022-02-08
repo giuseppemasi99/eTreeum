@@ -172,11 +172,15 @@ div#initial_div, div#insert_username, div#game_rules, div#select_treeName{
     height: 85%;
     width: 100%;
 
+    display: none;
+
 }
 
+/*
 div#insert_username, div#game_rules, div#select_treeName{
     display: none;
 }
+*/
 
 h2{
     margin-bottom: 0px;

@@ -33,11 +33,16 @@ async function start(){
 function registerPlayer() {
     
     var join, username, rules, start_play;
+    var initial_div;
 
     join = document.getElementById("join");
     username = document.getElementById("submit_username");
     rules = document.getElementById("okrules_clicked");
     start_play = document.getElementById("start_play");
+
+    initial_div = document.getElementById("initial_div");
+
+    initial_div.style.display = "flex";
 
     join.addEventListener('click', setUsername);
     username.addEventListener('click', showRules);
@@ -72,8 +77,7 @@ async function login() {
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
-        console.log("ERROR", errorMessage);
-        //ALERT
+        alert("Something went wrong: " + errorMessage);
     }
 }
 
@@ -337,7 +341,7 @@ async function joinGame () {
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
-        console.log("ERROR", errorMessage);
+        alert("Something went wrong: "+errorMessage);
         //ALERT
     }
     
