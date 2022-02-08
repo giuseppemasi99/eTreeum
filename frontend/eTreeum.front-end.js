@@ -14,10 +14,10 @@ var contract = null;
 function start(){
 
     // remove comment when working with blockchain
-    isNewUser(senderAddress);
+    //isNewUser(senderAddress);
 
     // comment this line when working with blockchain
-    //thenIsNewUser(isNewUser(senderAddress));
+    thenIsNewUser(isNewUser(senderAddress));
 
 }
 
@@ -30,13 +30,13 @@ function start(){
 function isNewUser(senderAddress){
     
     // comment the return when working with the blockchain
-    //return Math.floor(Math.random() * 2);
+    return Math.floor(Math.random() * 2);
 
     // remove comment when working with the blockchain
-    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
-        console.log('isNewUser:'+ newUser);
-        thenIsNewUser(newUser);
-    }); 
+    //contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
+    //    console.log('isNewUser:'+ newUser);
+    //    thenIsNewUser(newUser);
+    //}); 
 
 }
 
@@ -58,8 +58,6 @@ async function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
     contract.methods.joinGame(nicknameUser, nicknameTree).send({from:senderAddress, gas: 1500000});
 
 }
-
-//alert("Questo è un alert");
 
 /* BLOCKCHAIN INTERACTION - END */
 
@@ -94,9 +92,9 @@ function thenIsNewUser(newUser){
     username.addEventListener('click', showRules);
     rules.addEventListener('click', setPlantName);
     // remove the comment when working with the blockchain
-    start_play.addEventListener('click', joinTransaction);
+    //start_play.addEventListener('click', joinTransaction);
     // comment when working with the blockchain
-    //start_play.addEventListener('click', setupPage);
+    start_play.addEventListener('click', setupPage);
 
     rename.addEventListener('click', changeName);
     submit_change.addEventListener('click', submitNewName);
@@ -265,17 +263,20 @@ async function joinTransaction () {
 // setting up all the necessary buttons and elements in the page
 async function setupPage(){
 
-    var water, sun, seed, rename, info, play_button;
+    var water, sun, seed, rename, info, play_button, find_out_button;
     var div_treeName, complete_body, infoRow, counter;
     var right_top_header;
 
+    // buttons
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     seed = document.getElementById("free_seed");
     play_button = document.getElementById("start_play");
     info = document.getElementById("info");
+    find_out_button = document.getElementById("find_out");
 
+    // divs
     infoRow = document.getElementById("top");
     div_treeName = document.getElementById("select_treeName");
     complete_body = document.getElementById("complete_body");
@@ -283,6 +284,9 @@ async function setupPage(){
     counter = document.getElementById("counting_tree");
     right_top_header = document.getElementById("right_top_header");
     
+
+    find_out_button.style.display = "block";
+
     div_treeName.style.display = "none";
     infoRow.style.display = "flex";
     complete_body.style.display = "flex";
@@ -326,7 +330,7 @@ async function setupPage(){
         input_treeName.innerHTML = "";
 
         // remove this comment when working with the blockchain
-        await plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
+        //await plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
 
     }else{
 
@@ -720,7 +724,7 @@ function giveWater(){
 
 $(window).on('load', function() {
     // comment this code when working with blockchain
-    //start();
+    start();
 
     initialise(contractAddress);
 });
