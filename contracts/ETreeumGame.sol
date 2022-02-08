@@ -72,6 +72,7 @@ contract ETreeumGame is ERC721 {
 
     event JoinedGame(address a, uint256 treeId);
     event RankingChanged(Player[3] ranking);
+    event TreeGrown(address a, uint256 treeId, Stages stage);
 
     constructor () ERC721 ("Tree", "T"){
         treeCounter = 0;
@@ -150,12 +151,13 @@ contract ETreeumGame is ERC721 {
         return ERC721.ownerOf(id) == player;
     }
 
-    function _growTree(Tree storage t) private returns (Stages) {
+    function _growTree(uint256 id, Tree storage t) private returns (Stages) {
         if (t.startWeek > block.timestamp -1 weeks) {
             if (t.stage != Stages.Secular && t.waterGivenInAWeek >= t.specie.waterNeededInAWeek && t.sunGivenInAWeek >= t.specie.sunNeededInAWeek) {
                 t.stage = Stages(uint8(t.stage)+1);
                 t.value = _computeTreeValue(t.specie.risk, t.stage);
                 players[msg.sender].score = _computePlayerScore(msg.sender);
+                emit TreeGrown(ERC721.ownerOf(id), id, t.stage);
             }
         }
         else { t.startWeek = block.timestamp; }
@@ -172,7 +174,7 @@ contract ETreeumGame is ERC721 {
         require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
         t.waterGivenInAWeek += waterAmount;
         t.lastWater = block.timestamp;
-        return _growTree(t);
+        return _growTree(id, t);
     }
 
     function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public returns (Stages) {
@@ -180,7 +182,7 @@ contract ETreeumGame is ERC721 {
         Tree storage t = trees[id];
         require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
         t.sunGivenInAWeek += sunHours;
-        return _growTree(t);
+        return _growTree(id, t);
     }
 
     /*function resetStartWeek(Tree storage t) private {
