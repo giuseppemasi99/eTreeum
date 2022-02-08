@@ -15,7 +15,7 @@ contract ETreeumGame is ERC721 {
     uint256 public treeCounter;
     address payable private _gardener;
     //fake address
-    address payable constant public planter = payable(0x6A503fbe59Aac4C52a812A5F96876d5B71f4e7aA);
+    address payable constant public planter = payable(0x143BF2ec01983862Ab7b75c630D8De941905aE10);
     Species[] private gameSpecies;
     uint8[] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5];        
     //number of plants in the world: about 390000

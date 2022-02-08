@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xf6CABd014fe2F29c5A5d047C1E07C902Fbd02Da8';
+var contractAddress = '0x9C0D80DA58EAED7a2D688D3D2Ba24Ed932D01778';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -14,10 +14,10 @@ var contract = null;
 function start(){
 
     // remove comment when working with blockchain
-    //isNewUser(senderAddress);
+    isNewUser(senderAddress);
 
     // comment this line when working with blockchain
-    thenIsNewUser(isNewUser(senderAddress));
+    //thenIsNewUser(isNewUser(senderAddress));
 
 }
 
@@ -30,13 +30,13 @@ function start(){
 function isNewUser(senderAddress){
     
     // comment the return when working with the blockchain
-    return Math.floor(Math.random() * 2);
+    //return Math.floor(Math.random() * 2);
 
     // remove comment when working with the blockchain
-    //contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
-    //    console.log('isNewUser:'+ newUser);
-    //    thenIsNewUser(newUser);
-    //}); 
+    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
+        console.log('isNewUser:'+ newUser);
+        thenIsNewUser(newUser);
+    }); 
 
 }
 
@@ -92,9 +92,9 @@ function thenIsNewUser(newUser){
     username.addEventListener('click', showRules);
     rules.addEventListener('click', setPlantName);
     // remove the comment when working with the blockchain
-    //start_play.addEventListener('click', joinTransaction);
+    start_play.addEventListener('click', joinTransaction);
     // comment when working with the blockchain
-    start_play.addEventListener('click', setupPage);
+    //start_play.addEventListener('click', setupPage);
 
     rename.addEventListener('click', changeName);
     submit_change.addEventListener('click', submitNewName);
@@ -249,7 +249,7 @@ async function joinTransaction () {
         var input_treeName, label_treeName, username;
 
         input_treeName = document.getElementById("input_treeName");
-        label_treeName = document.getElementById("nickName");
+        label_treeName = document.getElementById("input_username");
         username = document.getElementById("username");
 
         label_treeName.innerHTML = input_treeName.value;
@@ -724,7 +724,7 @@ function giveWater(){
 
 $(window).on('load', function() {
     // comment this code when working with blockchain
-    start();
+    //start();
 
     initialise(contractAddress);
 });
@@ -758,8 +758,8 @@ async function initialise(contractAddress) {
 
     // Set the address from which transactions are sent
     accounts = await web3.eth.getAccounts();
-    senderAddress = accounts[0]
-    console.log("Sender address set: " + senderAddress)
+    senderAddress = accounts[0];
+    console.log("Sender address set: " + senderAddress);
 
     start();
 
