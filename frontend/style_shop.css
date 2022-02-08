@@ -33,6 +33,37 @@ a{
     text-decoration: none;
 }
 
+div#buy_options{
+    position: absolute;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    top: 35%;
+    left: 37.5%;
+    width: 25%;
+    border-radius: 10px;
+
+    border: #664526 solid 2px;
+    padding: 15px;
+
+    background-color: white;
+
+    font-size: 17pt;
+    font-weight: 700;
+
+}
+
+div#buy_options{
+    display: none;
+    z-index: 11;
+
+    font-size: 12pt;
+    font-weight: 700;
+}
+
 /* CSS FOR THE HEADER*/
 
 div#header{

@@ -17,9 +17,9 @@ $(window).on('load', function() {
 
 });
 
-var sellingTrees = [{"image":1, "rarity":1, "price":12}, {"image":2, "rarity":1, "price":12}, 
-{"image":1, "rarity":2, "price":12}, {"image":3, "rarity":1, "price":12}, {"image":2, "rarity":3, "price":12},
-{"image":1, "rarity":3, "price":12}, {"image":3, "rarity":1, "price":12}, {"image":1, "rarity":2, "price":12}]
+var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "rarity":1, "price":12, "id":2}, 
+{"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":3, "price":12, "id":5},
+{"image":1, "rarity":3, "price":12, "id":6}, {"image":3, "rarity":1, "price":12, "id":7}, {"image":1, "rarity":2, "price":12, "id":8}]
 
 
 function showSellingTrees(){
@@ -48,6 +48,9 @@ function showSellingTrees(){
         tree_div.className = "tree_logo";
         img.className = "tree_img";
         eth.className = "eth_value";
+        eth.id = sellingTrees[i]["id"];
+
+        eth.addEventListener('click', buyOptions);
 
         container.appendChild(tree_row);
         tree_row.appendChild(tree_name_div);
@@ -92,4 +95,25 @@ function whichColor(value){
         default:
             return "rosybrown";
     }
+}
+
+function buyOptions(){
+    var buy_option_div;
+    var cancel_button;
+
+    buy_option_div = document.getElementById("buy_options");
+    cancel_button = document.getElementById("cancel");
+
+    buy_option_div.style.display = "flex";
+
+    cancel_button.addEventListener('click', cancelOption);
+
+}
+
+function cancelOption(){
+    var buy_option_div;
+
+    buy_option_div = document.getElementById("buy_options");
+
+    buy_option_div.style.display = "none";
 }
