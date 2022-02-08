@@ -190,7 +190,7 @@ input#input_username, input#input_treeName{
     margin-top: 30px;
 }
 
-button#free_seed, button#submit_username, button#rules_observed, button#start_play{
+button#join, button#submit_username, button#okrules_clicked, button#start_play{
     max-width: max-content;
     cursor: pointer;
     margin-top: 30px;
@@ -276,7 +276,7 @@ div#complete_body{
     height: 70%;
     width: 100%;
     
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
 }

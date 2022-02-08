@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x9C0D80DA58EAED7a2D688D3D2Ba24Ed932D01778';
+var contractAddress = '0x1c3d4481eCB58a168dd7d94cF439a2Ff4442687d';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -10,15 +10,71 @@ var senderAddress = '0x0';
 
 // Set contract ABI and the contract
 var contract = null;
+var isNewUser = undefined;
+var userTrees = [];
 
-function start(){
 
-    // remove comment when working with blockchain
-    isNewUser(senderAddress);
+async function start(){
 
-    // comment this line when working with blockchain
-    //thenIsNewUser(isNewUser(senderAddress));
+    //Check is new user --> return
+    if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
+    console.log('isNewUser:'+ isNewUser);
 
+    if (isNewUser) {
+        registerPlayer();
+    }
+
+    else {
+        login();
+    }
+
+}
+
+function registerPlayer() {
+    
+    var join, username, rules, start_play;
+
+    join = document.getElementById("join");
+    username = document.getElementById("submit_username");
+    rules = document.getElementById("okrules_clicked");
+    start_play = document.getElementById("start_play");
+
+    join.addEventListener('click', setUsername);
+    username.addEventListener('click', showRules);
+    rules.addEventListener('click', setPlantName);
+    //LEAVE with blockchain
+    start_play.addEventListener('click', joinGame);
+    //REMOVE without blockchain
+    //start_play.addEventListener('click', setupPage);
+
+    username.disabled = true;
+    rules.disabled = true;
+    start_play.disabled = true;
+    join.disabled = false;    
+}
+
+function getErrorMessage(msg) {
+    var errorMessage = msg;
+    var index = msg.indexOf("reason\":\"");
+    if (index != -1) {
+        errorMessage = msg.substring(index + 9);
+        errorMessage = errorMessage.substring(0, errorMessage.indexOf("\"}"));
+    }
+    return errorMessage;
+}
+
+async function login() {
+
+    try {
+        userTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1200000});
+        console.log("TREES", userTrees);
+        printTrees();
+    }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        console.log("ERROR", errorMessage);
+        //ALERT
+    }
 }
 
 
@@ -27,7 +83,7 @@ function start(){
 
 
 // function that check if you are or not a new user
-function isNewUser(senderAddress){
+/*function isNewUser(senderAddress){
     
     // comment the return when working with the blockchain
     //return Math.floor(Math.random() * 2);
@@ -38,26 +94,26 @@ function isNewUser(senderAddress){
         thenIsNewUser(newUser);
     }); 
 
-}
+}*/
 
-async function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
+/*async function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
 
      // Subscribe to all PlantedFreeSeed events
     contract.events.JoinedGame(
-        function(error, event){
+        async function(error, event){
             if (!error) {
                 setupPage();
                 console.log('FREE PLANTED TREE');
-                console.log(event.returnValues['plantedFreeTree']);
-                plantedSeed = event.returnValues['plantedFreeTree'];
+                console.log(event.returnValues['a']);
+                console.log(event.returnValues['treeId']);
+                plantedSeed = event.returnValues['treeId'];
+                //HERE WE SHOULD CHECK FOR THE ADDRESS
                 thenPlantFreeSeed(plantedSeed);
             }
         }
     );
-
-    contract.methods.joinGame(nicknameUser, nicknameTree).send({from:senderAddress, gas: 1500000});
-
-}
+    //contract.methods.joinGame(nicknameUser, nicknameTree).send({from:senderAddress, gas: 1500000});
+}*/
 
 /* BLOCKCHAIN INTERACTION - END */
 
@@ -67,9 +123,8 @@ async function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
 
 //var infoNewUser;
 
-function thenIsNewUser(newUser){
+/*async function thenIsNewUser(newUser){
 
-    console.log("CREATING");
     infoNewUser = newUser;
     
     var water, sun;
@@ -79,9 +134,9 @@ function thenIsNewUser(newUser){
     water = document.getElementById("water");
     sun = document.getElementById("sun");
 
-    seed = document.getElementById("free_seed");
+    seed = document.getElementById("join");
     username = document.getElementById("submit_username");
-    rules = document.getElementById("rules_observed");
+    rules = document.getElementById("okrules_clicked");
     start_play = document.getElementById("start_play");
     
     rename = document.getElementById("change_name");
@@ -92,7 +147,7 @@ function thenIsNewUser(newUser){
     username.addEventListener('click', showRules);
     rules.addEventListener('click', setPlantName);
     // remove the comment when working with the blockchain
-    start_play.addEventListener('click', joinTransaction);
+    start_play.addEventListener('click', joinGame);
     // comment when working with the blockchain
     //start_play.addEventListener('click', setupPage);
 
@@ -125,14 +180,19 @@ function thenIsNewUser(newUser){
         seed.disabled = true;
         printTrees(senderAddress);
 
+
+        console.log('CALLING GET TREES');
+        response = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 120000});
+        console.log('RESPONSE', response);
+
     }
 
-}
+}*/
 
 //var userTrees = new Array();
-var userTrees = [{"image":1, "rarity":3}, {"image":2, "rarity":1}, {"image":3, "rarity":2},
+/*var userTrees = [{"image":1, "rarity":3}, {"image":2, "rarity":1}, {"image":3, "rarity":2},
             {"image":2, "rarity":1}, {"image":3, "rarity":3}, {"image":2, "rarity":2},];
-
+*/
 
 function thenPlantFreeSeed(freePlantedTree){
     userTrees.push(freePlantedTree)
@@ -179,21 +239,20 @@ function startTreeCounter(){
 // function that set the username for a new user
 function setUsername(){
     var initial_div, div_username;
-    var seed, username;
+    var join, username;
 
     initial_div = document.getElementById("initial_div");
     div_username = document.getElementById("insert_username");
 
     //  buttons
     username = document.getElementById("submit_username");
-    seed = document.getElementById("free_seed");
+    join = document.getElementById("join");
     
     initial_div.style.display = "none";
     div_username.style.display = "flex";
 
     username.disabled = false;
-    
-    seed.disabled = true;
+    join.disabled = true;
 }
 
 // function that show the rules of the game
@@ -209,7 +268,7 @@ function showRules(){
 
     //  buttons
     username_button = document.getElementById("submit_username");
-    rules_button = document.getElementById("rules_observed");
+    rules_button = document.getElementById("okrules_clicked");
     
     span.innerHTML = username.value;
     username.innerHTML = "";
@@ -219,7 +278,6 @@ function showRules(){
 
     username_button.disabled = true;
     rules_button.disabled = false;
-    
 }
 
 // function that set the plant name for a new user
@@ -233,7 +291,7 @@ function setPlantName(){
 
     //  buttons
     start_play = document.getElementById("start_play");
-    rules_button = document.getElementById("rules_observed");
+    rules_button = document.getElementById("okrules_clicked");
     
     rules_div.style.display = "none";
     div_plantName.style.display = "flex";
@@ -243,48 +301,77 @@ function setPlantName(){
 
 }
 
-async function joinTransaction () {
-    if(infoNewUser){
+async function joinGame () {
 
-        var input_treeName, label_treeName, username;
+    var input_treeName, username, treename;
 
-        input_treeName = document.getElementById("input_treeName");
-        label_treeName = document.getElementById("input_username");
-        username = document.getElementById("username");
+    input_treeName = document.getElementById("input_treeName");
+    username = document.getElementById("username").innerHTML;
 
-        label_treeName.innerHTML = input_treeName.value;
-        input_treeName.innerHTML = "";
+    input_treeName.innerHTML = "";
+    treename = input_treeName.value;
 
-        plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
-        //else show error
+    contract.events.JoinedGame(
+        async function(error, event){
+            if (!error) {
+                setupPage();
+                console.log(event.returnValues['a']);
+                console.log(event.returnValues['treeId']);
+                plantedSeed = event.returnValues['treeId'];
+                if (senderAddress == event.returnValues.a) {
+                    //DA RIPENSARCI
+                    //window.reload();
+                }
+                //thenPlantFreeSeed(plantedSeed);
+                //HERE WE SHOULD CHECK FOR THE ADDRESS
+                //thenPlantFreeSeed(plantedSeed);
+            }
+        }
+    );
+
+    try {
+        var transaction = await contract.methods.joinGame(username, treename).send({from:senderAddress, gas: 1500000});
+        console.log("TRANSACTION", transaction);
+        
+        //plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
     }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        console.log("ERROR", errorMessage);
+        //ALERT
+    }
+    
 }
 
 // setting up all the necessary buttons and elements in the page
 async function setupPage(){
 
-    var water, sun, seed, rename, info, play_button, find_out_button;
-    var div_treeName, complete_body, infoRow, counter;
-    var right_top_header;
+    var water, sun, rename, info, find_out_button, exit_stat, submit_change;
+    var div_treeName, complete_body, infoRow, counter, right_top_header;
 
     // buttons
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    seed = document.getElementById("free_seed");
-    play_button = document.getElementById("start_play");
     info = document.getElementById("info");
     find_out_button = document.getElementById("find_out");
+    exit_stat = document.getElementById("exit");
+    submit_change = document.getElementById("submit_change_name");
 
     // divs
     infoRow = document.getElementById("top");
     div_treeName = document.getElementById("select_treeName");
     complete_body = document.getElementById("complete_body");
-    //plant = document.getElementById("tree");
     counter = document.getElementById("counting_tree");
     right_top_header = document.getElementById("right_top_header");
-    
 
+    rename.addEventListener('click', changeName);
+    submit_change.addEventListener('click', submitNewName);
+    exit_stat.addEventListener('click', exitStat);
+    info.addEventListener("click", showInfo);
+    sun.addEventListener('click', giveSun);
+    water.addEventListener('click', giveWater);
+    
     find_out_button.style.display = "block";
 
     div_treeName.style.display = "none";
@@ -296,19 +383,14 @@ async function setupPage(){
 
     water.style.cursor = "pointer";
     sun.style.cursor = "pointer";
-
-    seed.disabled = true;
-    play_button.disabled = true;
     
     water.disabled = false;
     sun.disabled = false;
     rename.disabled = false;
 
-    info.addEventListener("click", showInfo);
-
     startTreeCounter();
 
-    if(infoNewUser){
+    /*if(infoNewUser){
 
         var input_treeName, label_treeName, username, tree_num, tot_trees, tree_img;
 
@@ -338,7 +420,7 @@ async function setupPage(){
         initial_div = document.getElementById("initial_div");
         initial_div.style.display = "none";
 
-    }
+    }*/
 
     calculatePodium();
     
@@ -417,29 +499,36 @@ function submitNewName(){
 }
 
 // function that calculate the actual podium
-function calculatePodium(){
+async function calculatePodium(){
 
-    var podium, first, second, third;
-
-    podium = ["A", "B", "C"];
+    var first, second, third;
 
     first = document.getElementById("first_name");
     second = document.getElementById("second_name");
     third = document.getElementById("third_name");
 
-    first.innerHTML = podium[0];
-    second.innerHTML = podium[1];
-    third.innerHTML = podium[2];
+    try {
+        var ranking = await contract.methods.getRanking().call({from:senderAddress, gas: 120000});
+        console.log("RANKING", ranking);
+        first.innerHTML = ranking[0].nickname + ": " + ranking[0].score;
+        second.innerHTML = ranking[1].nickname + ": " + ranking[1].score;;
+        third.innerHTML = ranking[2].nickname + ": " + ranking[2].score;;
+    }
+    catch(e) {
+        getErrorMessage(e.message);
+    }
 
 }
 
 // function that show all the owned trees with the respective info and the user nickname
-function printTrees(senderAddress){
-    //web3.eth.getTreesByAddress(senderAddress).then(function(trees){});
-    // qui mi ritornerà l'informazione relativa a tutti i gli alberi che ho
+function printTrees(){
     setupPage();
 
-    var counter, tree_num, tot_trees, div_tree, tree_img;
+    var initial_div;
+    initial_div = document.getElementById("initial_div");
+    initial_div.style.display = "none";
+
+    var counter, tree_num, tot_trees, div_tree, tree_img, tree_name;
     var arrow, info, treeCard;
 
     counter = document.getElementById("counting_tree");
@@ -447,6 +536,7 @@ function printTrees(senderAddress){
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
     treeCard = document.getElementById("treeCard")
+    tree_name = document.getElementById("treeName");
 
     // button
     info = document.getElementById("info")
@@ -478,7 +568,9 @@ function printTrees(senderAddress){
     tot_trees.innerHTML = userTrees.length;
 
     tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"]);
+    
+    tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 

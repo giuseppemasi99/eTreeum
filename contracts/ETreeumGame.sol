@@ -185,10 +185,6 @@ contract ETreeumGame is ERC721 {
         return _growTree(id, t);
     }
 
-    /*function resetStartWeek(Tree storage t) private {
-        t.startWeek = block.timestamp;
-    }*/
-
     function buySeed(string calldata treeNickname) SetLastEntered public payable {
         require(msg.value >= SEED_PRICE, "Not enough money for a seed");
         planter.transfer(msg.value);
@@ -203,7 +199,7 @@ contract ETreeumGame is ERC721 {
         shop[treeId] = price;
     }
 
-    function buyTree(uint256 treeId, uint256 index) public payable SetLastEntered {
+    function buyTree(uint256 treeId, uint256 index) public payable SetLastEntered { //UpdatePlayerScore(msg.sender){
         require(!_ownsTree(msg.sender, treeId), "You can't buy your own trees");
         require(shop[treeId] != 0, "This tree is not up for sale");
         uint8 price = shop[treeId];
@@ -225,9 +221,11 @@ contract ETreeumGame is ERC721 {
         players[msg.sender].treeOwned.push(treeId);
     }
 
+    //ADD GET SHOP
+
     function _checkTreePrice(uint256 value, uint8 price) pure private returns (bool) {
         uint256 percentage = value/100;
-        return price >= value - percentage && price <= value + percentage;
+        return price >= value - percentage && price <= value + percentage && price != 0;
     }
 
     function _computeTreeValue(ExtinctionRisk risk, Stages stage) pure private returns (uint8) {
