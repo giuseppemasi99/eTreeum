@@ -15,7 +15,7 @@ contract ETreeumGame is ERC721 {
     uint256 public treeCounter;
     address payable private _gardener;
     //fake address
-    address payable constant public planter = payable(0x143BF2ec01983862Ab7b75c630D8De941905aE10);
+    address payable constant public planter = payable(0x335Ebf7EBd5e7e1318D75f8914CEA6e334cB92b7);
     Species[] private gameSpecies;
     uint8[] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5];        
     //number of plants in the world: about 390000
@@ -70,8 +70,7 @@ contract ETreeumGame is ERC721 {
         if (oldScore != players[player].score) computeRanking();
     }
 
-    // event to be emitted when the free seed is planted
-    event JoinedGame(Tree t);
+    event JoinedGame(address a, uint256 treeId);
     event RankingChanged(Player[3] ranking);
 
     constructor () ERC721 ("Tree", "T"){
@@ -109,16 +108,27 @@ contract ETreeumGame is ERC721 {
         players[msg.sender].nickname = bytes(userNickname).length > 0 ? userNickname : "Player"; 
         playersAddresses.push(msg.sender);
         uint256 treeId = _plantSeed(msg.sender, treeNickname);
-        emit JoinedGame(trees[treeId]);
+        emit JoinedGame(msg.sender, treeId);
     }
 
-    function isNewUser(address userAddress) public view returns (bool) {
-        return !(bytes(players[userAddress].nickname).length > 0);
+    function isNewUser(address playerAddress) public view returns (bool) {
+        return !(bytes(players[playerAddress].nickname).length > 0);
     }
 
-    /*function getTrees() public view returns (Tree[] memory trees) {
-        return players[msg.sender].ownedTrees;
-    }*/
+    function getPlayerTrees(address playerAddress) public view returns (Tree[] memory) {
+        require (!isNewUser(playerAddress), "This user is not playing yet");
+        uint256[] memory treeIds = players[playerAddress].treeOwned;
+        Tree[] memory playerTrees = new Tree[](treeIds.length);
+        for (uint i=0; i<treeIds.length; i++) {
+            playerTrees[i] = trees[treeIds[i]];
+        }
+        return playerTrees;
+    }
+
+    function getTree(uint256 treeId) public view returns (Tree memory) {
+        require(ERC721._exists(treeId), "This tree doesn't exist");
+        return trees[treeId];
+    }
 
     function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256) {
         uint256 treeId = treeCounter;
@@ -128,8 +138,10 @@ contract ETreeumGame is ERC721 {
         ExtinctionRisk risk = ExtinctionRisk(probabilitiesDitribution[random % probabilitiesDitribution.length]);
         uint32[] memory speciesAtRisk = risksIndexes[risk];
         uint32 speciesIndex = speciesAtRisk[random % speciesAtRisk.length];
-        trees[treeId] = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _computeTreeValue(risk, Stages.Seed), 0, 0, 0);
+        Tree memory t = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _computeTreeValue(risk, Stages.Seed), 0, 0, 0);
+        trees[treeId] = t;
         players[owner].treeOwned.push(treeId);
+        trees[treeId] = t;
         treeCounter = treeCounter + 1;
         return treeId;
     }
