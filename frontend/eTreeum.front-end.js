@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x30236694D6023229Cf777B6CCb509A9dB7DD39f8';
+var contractAddress = '0xbA4a95BEDd82911a3Ac01605fE8e119723caeF7f';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -70,7 +70,7 @@ function getErrorMessage(msg) {
 async function login() {
 
     try {
-        userTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1200000});
+        userTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
         console.log("TREES", userTrees);
         printTrees();
     }
@@ -783,35 +783,71 @@ function startTimer(duration, display, msg, type_button) {
 
 
 // function that gives the sun to the tree
-function giveSun(){
+function giveSun(treeId, sunHours){
 
-    var coin;
+    contract.events.TreeGrown(
+        async function(error, event){
+            if (!error) {
+                console.log('TreeGrown event, returnValues: ' + event.returnValues);
+            }
+        }
+    );
 
-    coin = Math.floor(Math.random() * 2);
-
-    if(coin){
-        var sun = prompt("How much sun you want to give to the plant?");
-        alert("Good job you gave "+sun+" hours of sun to your tree!");
-    }else{
-        alert("You gave too much sun to your tree, STOP IT!");
+    try {
+        var transaction = await contract.methods.giveSun(treeId, sunHours).send({from:senderAddress, gas: 1500000});
+        console.log("Transaction giveSun: ", transaction);
     }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+        //ALERT
+    }
+
+    // var coin;
+
+    // coin = Math.floor(Math.random() * 2);
+
+    // if(coin){
+    //     var sun = prompt("How much sun you want to give to the plant?");
+    //     alert("Good job you gave "+sun+" hours of sun to your tree!");
+    // }else{
+    //     alert("You gave too much sun to your tree, STOP IT!");
+    // }
 
 }
 
 
 // function that gives the water to the tree
-function giveWater(){
+async function giveWater(treeId, waterAmount){
     
-    var coin;
+    contract.events.TreeGrown(
+        async function(error, event){
+            if (!error) {
+                console.log('TreeGrown event, returnValues: ' + event.returnValues);
+            }
+        }
+    );
 
-    coin = Math.floor(Math.random() * 2);
-
-    if(coin){
-        var water = prompt("How much water you want to give to the plant?");
-        alert("Good job you gave "+water+" liters of water to your tree!");
-    }else{
-        alert("You gave too much water to your tree, STOP IT!");
+    try {
+        var transaction = await contract.methods.giveWater(treeId, waterAmount).send({from:senderAddress, gas: 1500000});
+        console.log("Transaction giveWater: ", transaction);
     }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+        //ALERT
+    }
+
+    // var coin;
+
+    // coin = Math.floor(Math.random() * 2);
+
+    // if(coin){
+    //     var water = prompt("How much water you want to give to the plant?");
+    //     alert("Good job you gave "+water+" liters of water to your tree!");
+    // }else{
+    //     alert("You gave too much water to your tree, STOP IT!");
+    // }
 
      
 }

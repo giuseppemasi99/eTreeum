@@ -116,14 +116,14 @@ contract ETreeumGame is ERC721 {
         return !(bytes(players[playerAddress].nickname).length > 0);
     }
 
-    function getPlayerTrees(address playerAddress) public view returns (Tree[] memory) {
+    function getPlayerTrees(address playerAddress) public view returns (uint256[] memory, Tree[] memory) {
         require (!isNewUser(playerAddress), "This user is not playing yet");
         uint256[] memory treeIds = players[playerAddress].treeOwned;
         Tree[] memory playerTrees = new Tree[](treeIds.length);
         for (uint i=0; i<treeIds.length; i++) {
             playerTrees[i] = trees[treeIds[i]];
         }
-        return playerTrees;
+        return (treeIds, playerTrees);
     }
 
     function getTree(uint256 treeId) public view returns (Tree memory) {
