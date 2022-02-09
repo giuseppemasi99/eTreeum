@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x42A279aCe6a96134a67B65E731faB11105F260de';
+var contractAddress = '0x96D282D59e086FB75327289de124C726ac4832Ef';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -512,15 +512,15 @@ function goRight(){
 //function that given a value return the type of image to show
 function whichImage(value){
     switch(value){
-        case 0:
+        case '0':
             return "seed.gif";
-        case 1:
+        case '1':
             return "little_tree.gif";
-        case 2:
+        case '2':
             return "da9cc5efa7671200c3def8a880721db7.gif";
-        case 3:
+        case '3':
             return "da9cc5efa7671200c3def8a880721db7.gif";
-        case 4:
+        case '4':
             return "da9cc5efa7671200c3def8a880721db7.gif";
         default:
             return "seed.gif";
@@ -530,17 +530,17 @@ function whichImage(value){
 //function that given a value return the color to show in background
 function whichColor(value){
     switch(value){
-        case 0:
+        case '0':
             return "rosybrown";
-        case 1:
+        case '1':
             return "#9400D3";
-        case 2:
+        case '2':
             return "#b9f2ff";
-        case 3:
+        case '3':
             return "#FFD700";
-        case 4:
+        case '4':
             return "#CD853F";
-        case 5:
+        case '5':
             return "#FF8C00";
         
         default:
@@ -553,17 +553,17 @@ function whichRisk(value){
     console.log("WHICKRISK", value);
 
     switch(value){
-        case 0:
+        case '0':
             return "Least Concern";
-        case 1:
+        case '1':
             return "Conservation Dependent";
-        case 2:
+        case '2':
             return "Near Threatened";
-        case 3:
+        case '3':
             return "Vulnerable";
-        case 4:
+        case '4':
             return "Endangered";
-        case 5:
+        case '5':
             return "Critically Endangered";
                
         default:
@@ -573,15 +573,15 @@ function whichRisk(value){
 
 function whichStage(value){
     switch(value){
-        case 0:
+        case '0':
             return "Seed";
-        case 1:
+        case '1':
             return "Bush";
-        case 2:
+        case '2':
             return "Adult";
-        case 3:
+        case '3':
             return "Majestic";
-        case 4:
+        case '4':
             return "Secular";
         default:
             return "Undefined";
