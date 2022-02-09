@@ -20,12 +20,13 @@ contract ETreeumGame is ERC721 {
     uint8[] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5];        
     //number of plants in the world: about 390000
     mapping (ExtinctionRisk => uint32[]) private risksIndexes;
+    mapping (ExtinctionRisk => uint8[5]) private valuesForStage;
     mapping (uint256 => Tree) trees;
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
     address[] private playersAddresses;
     mapping(uint256 => uint8) private shop;
-    Player[3] private ranking;
+    PlayerInRanking[3] private ranking;
 
     struct Species {
         string name; 
@@ -44,6 +45,12 @@ contract ETreeumGame is ERC721 {
         uint256 startWeek;
         uint256 lastWater;
         uint256 lastSun;
+    }
+
+    struct PlayerInRanking {
+        string nickname;
+        uint32 score;
+        address playerAddress;
     }
 
     struct Player {
@@ -71,22 +78,28 @@ contract ETreeumGame is ERC721 {
     }
 
     event JoinedGame(address a, uint256 id, Tree tree);
-    event RankingChanged(Player[3] ranking);
+    event RankingChanged(PlayerInRanking[3] ranking);
     event TreeGrown(address a, uint256 treeId, Stages stage);
 
     constructor() ERC721("Tree", "T"){
         treeCounter = 0;
         _gardener = payable(msg.sender);
-        addSpecies("AbiesNebrodensis", ExtinctionRisk.CriticallyEndangered, 1000, 10);
-        addSpecies("CallitrisPancheri", ExtinctionRisk.Endangered, 1000, 10);
-        addSpecies("AfzeliaAfricana", ExtinctionRisk.Vulnerable, 1000, 10);
-        addSpecies("AloeSquarrosa", ExtinctionRisk.Vulnerable, 1000, 10);
-        addSpecies("CanariumZeylanicum", ExtinctionRisk.Vulnerable, 1000, 10);
-        addSpecies("PinusLatteri", ExtinctionRisk.NearThreatened, 1000, 10);
-        addSpecies("BaccaureaPolyneura", ExtinctionRisk.ConservationDependent, 1000, 10);
-        addSpecies("MalusDomestica", ExtinctionRisk.LeastConcern, 1000, 10);
-        addSpecies("PinusSylvestris", ExtinctionRisk.LeastConcern, 1000, 10);
-        addSpecies("TheobromaCacao", ExtinctionRisk.LeastConcern, 1000, 10);
+        addSpecies("Abies Nebrodensis", ExtinctionRisk.CriticallyEndangered, 1000, 10);
+        addSpecies("Callitris Pancheri", ExtinctionRisk.Endangered, 1000, 10);
+        addSpecies("Afzelia Africana", ExtinctionRisk.Vulnerable, 1000, 10);
+        addSpecies("Aloe Squarrosa", ExtinctionRisk.Vulnerable, 1000, 10);
+        addSpecies("Canarium Zeylanicum", ExtinctionRisk.Vulnerable, 1000, 10);
+        addSpecies("Pinus Latteri", ExtinctionRisk.NearThreatened, 1000, 10);
+        addSpecies("Baccaurea Polyneura", ExtinctionRisk.ConservationDependent, 1000, 10);
+        addSpecies("Malus Domestica", ExtinctionRisk.LeastConcern, 1000, 10);
+        addSpecies("Pinus Sylvestris", ExtinctionRisk.LeastConcern, 1000, 10);
+        addSpecies("Theobroma Cacao", ExtinctionRisk.LeastConcern, 1000, 10);
+        valuesForStage[ExtinctionRisk.CriticallyEndangered] = [40, 45, 55, 65, 80];
+        valuesForStage[ExtinctionRisk.Endangered] = [30, 35, 45, 55, 65];
+        valuesForStage[ExtinctionRisk.Vulnerable] = [25, 30, 40, 50, 60];
+        valuesForStage[ExtinctionRisk.NearThreatened] = [15, 20, 30, 35, 45];
+        valuesForStage[ExtinctionRisk.ConservationDependent] = [5, 10, 15, 25, 35];
+        valuesForStage[ExtinctionRisk.LeastConcern] = [1, 5, 10, 15, 25];
     }
 
     function addSpecies(string memory speciesName, ExtinctionRisk risk, uint16 waterNeeded, uint8 sunNeeded) public {
@@ -102,6 +115,11 @@ contract ETreeumGame is ERC721 {
             if (keccak256(bytes(gameSpecies[i].name)) == keccak256(bytes(speciesName))) return true;
         }
         return false;
+    }
+
+    function changeValuesForStage(ExtinctionRisk risk, uint8[5] calldata values) public {
+        require(msg.sender == _gardener, "You cannot set the rules of the game");
+        valuesForStage[risk] = values;
     }
 
     function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered public {
@@ -142,7 +160,6 @@ contract ETreeumGame is ERC721 {
         Tree memory t = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _computeTreeValue(risk, Stages.Seed), 0, 0, 0);
         trees[treeId] = t;
         players[owner].treeOwned.push(treeId);
-        trees[treeId] = t;
         treeCounter = treeCounter + 1;
         return (treeId, t);
     }
@@ -227,8 +244,8 @@ contract ETreeumGame is ERC721 {
         return price >= value - percentage && price <= value + percentage && price != 0;
     }
 
-    function _computeTreeValue(ExtinctionRisk risk, Stages stage) pure private returns (uint8) {
-        uint8 value;
+    function _computeTreeValue(ExtinctionRisk risk, Stages stage) view private returns (uint8) {
+        /*uint8 value;
         if (risk == ExtinctionRisk.CriticallyEndangered) value = 50;
         else if (risk == ExtinctionRisk.Endangered) value = 40;
         else if (risk == ExtinctionRisk.Vulnerable) value = 30;
@@ -236,10 +253,11 @@ contract ETreeumGame is ERC721 {
         else if (risk == ExtinctionRisk.ConservationDependent) value = 5;
         else if (risk == ExtinctionRisk.LeastConcern) value = 1;
         value += (uint8(stage)+1) * 5;
-        return value;
+        return value;*/
+        return valuesForStage[risk][uint8(stage)];
     }
 
-    function getPlayerNicknameAndScore(address player) view public returns (string memory, uint32) {
+    function getPlayerInfo(address player) view public returns (string memory, uint32) {
         return (players[player].nickname, players[player].score);
     }
 
@@ -252,7 +270,7 @@ contract ETreeumGame is ERC721 {
         return score;
     }
 
-    function getRanking() view public returns (Player[3] memory) {
+    function getRanking() view public returns (PlayerInRanking[3] memory) {
         return ranking;
     }
 
@@ -264,17 +282,19 @@ contract ETreeumGame is ERC721 {
             if (p.score > ranking[0].score) {
                 ranking[2] = ranking[1];
                 ranking[1] = ranking[0];
-                ranking[0] = p;
+                ranking[0] = PlayerInRanking(p.nickname, p.score, playersAddresses[i]);
                 changed = true;
             }
-            else if (p.score > ranking[1].score) {
-                ranking[2] = ranking[1];
-                ranking[1] = p;
-                changed = true;
-            }
-            else if (p.score > ranking[2].score) {
-                ranking[2] = p;
-                changed = true;
+            else if (ranking[0].playerAddress != playersAddresses[i]) {
+                if (p.score > ranking[1].score) {
+                    ranking[2] = ranking[1];
+                    ranking[1] = PlayerInRanking(p.nickname, p.score, playersAddresses[i]);
+                    changed = true;
+                }
+                else if (ranking[1].playerAddress != playersAddresses[i] && p.score > ranking[2].score) {
+                    ranking[2] = PlayerInRanking(p.nickname, p.score, playersAddresses[i]);
+                    changed = true;
+                }
             }
         }
         if (changed) {

@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xE70644102739Cd75847379F62E1937b28d9cDB8b';
+var contractAddress = '0x42A279aCe6a96134a67B65E731faB11105F260de';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -16,7 +16,6 @@ var userIdsOfTrees = [];
 
 
 async function start(){
-
     //Check is new user --> return
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
     console.log('isNewUser:'+ isNewUser);
@@ -26,7 +25,6 @@ async function start(){
     } else {
         login();
     }
-
 }
 
 function registerPlayer() {
@@ -74,7 +72,7 @@ async function login() {
         console.log("userIdsOfTrees", userIdsOfTrees);
         console.log("userTrees", userTrees);
         printTrees();
-        getPlayerNicknameAndScore();
+        getPlayer();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -202,10 +200,11 @@ async function joinGame () {
                 let freeTreeId = event.returnValues['id'];
                 let freeTree = event.returnValues['tree'];
                 if (senderAddress == event.returnValues.a) {
+                    isNewUser = false;
                     userIdsOfTrees.push(freeTreeId);
                     userTrees.push(freeTree);
                     printTrees();
-                    getPlayerNicknameAndScore();
+                    getPlayer();
                 }
             }
         }
@@ -222,10 +221,10 @@ async function joinGame () {
     
 }
 
-async function getPlayerNicknameAndScore(){
+async function getPlayer(){
 
     try {
-        var nickname_score = await contract.methods.getPlayerNicknameAndScore(senderAddress).call({from:senderAddress, gas: 1500000});
+        var nickname_score = await contract.methods.getPlayerInfo(senderAddress).call({from:senderAddress, gas: 1500000});
         let username = nickname_score[0];
         let score = nickname_score[1];
         // console.log("nickname_score");
@@ -559,22 +558,24 @@ function whichColor(value){
 
 function whichRisk(value){
 
+    console.log("WHICKRISK", value);
+
     switch(value){
         case 0:
-            return "LeastConcern";
+            return "Least Concern";
         case 1:
-            return "ConservationDependent";
+            return "Conservation Dependent";
         case 2:
-            return "NearThreatened";
+            return "Near Threatened";
         case 3:
             return "Vulnerable";
         case 4:
             return "Endangered";
         case 5:
-            return "CriticallyEndangered";
+            return "Critically Endangered";
                
         default:
-            return "LeastConcern";
+            return "Least Concern";
     }
 }
 
