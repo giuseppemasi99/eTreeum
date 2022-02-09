@@ -452,8 +452,8 @@ function printTrees(){
     tree_num.innerHTML = 1;
     tot_trees.innerHTML = userTrees.length;
 
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"]);
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
     
     tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
 
@@ -479,8 +479,8 @@ function goLeft(){
         tree_num.innerHTML--;
     }
 
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"]);
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -502,8 +502,8 @@ function goRight(){
         tree_num.innerHTML++;
     }
 
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"])
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"])
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -530,26 +530,18 @@ function whichImage(value){
 //function that given a value return the color to show in background
 function whichColor(value){
     switch(value){
-        case "AbiesNebrodensis":
+        case 0:
             return "rosybrown";
-        case "CallitrisPancheri":
+        case 1:
             return "#9400D3";
-        case "AfzeliaAfricana":
+        case 2:
             return "#b9f2ff";
-        case "AloeSquarrosa":
+        case 3:
             return "#FFD700";
-        case "CanariumZeylanicum":
+        case 4:
             return "#CD853F";
-        case "PinusLatteri":
+        case 5:
             return "#FF8C00";
-        case "BaccaureaPolyneura":
-            return "#C0C0C0";
-        case "MalusDomestica":
-            return "#CD7F32";
-        case "PinusSylvestris":
-            return "#87CEEB";
-        case "TheobromaCacao":
-            return "#E4A598";
         
         default:
             return "rosybrown";
@@ -575,7 +567,7 @@ function whichRisk(value){
             return "Critically Endangered";
                
         default:
-            return "Least Concern";
+            return "Undefined";
     }
 }
 
@@ -592,7 +584,7 @@ function whichStage(value){
         case 4:
             return "Secular";
         default:
-            return "Seed";
+            return "Undefined";
     }
 }
 
