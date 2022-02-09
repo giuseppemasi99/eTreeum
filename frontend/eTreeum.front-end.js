@@ -504,11 +504,15 @@ function goRight(){
 //function that given a value return the type of image to show
 function whichImage(value){
     switch(value){
-        case 1:
+        case 0:
             return "seed.gif";
-        case 2:
+        case 1:
             return "little_tree.gif";
+        case 2:
+            return "da9cc5efa7671200c3def8a880721db7.gif";
         case 3:
+            return "da9cc5efa7671200c3def8a880721db7.gif";
+        case 4:
             return "da9cc5efa7671200c3def8a880721db7.gif";
         default:
             return "seed.gif";
@@ -518,12 +522,27 @@ function whichImage(value){
 //function that given a value return the color to show in background
 function whichColor(value){
     switch(value){
-        case 1:
+        case "AbiesNebrodensis":
             return "rosybrown";
-        case 2:
+        case "CallitrisPancheri":
             return "#9400D3";
-        case 3:
+        case "AfzeliaAfricana":
             return "#b9f2ff";
+        case "AloeSquarrosa":
+            return "#FFD700";
+        case "CanariumZeylanicum":
+            return "#CD853F";
+        case "PinusLatteri":
+            return "#FF8C00";
+        case "BaccaureaPolyneura":
+            return "#C0C0C0";
+        case "MalusDomestica":
+            return "#CD7F32";
+        case "PinusSylvestris":
+            return "#87CEEB";
+        case "TheobromaCacao":
+            return "#E4A598";
+        
         default:
             return "rosybrown";
     }
