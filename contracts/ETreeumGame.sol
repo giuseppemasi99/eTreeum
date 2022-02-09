@@ -18,7 +18,7 @@ contract ETreeumGame is ERC721 {
     address payable constant public planter = payable(0x335Ebf7EBd5e7e1318D75f8914CEA6e334cB92b7);
     Species[] private gameSpecies;
     uint8[] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5];        
-    //number of plants in the world: about 390000
+    //number of species in the world: about 390000 --> uint32
     mapping (ExtinctionRisk => uint32[]) private risksIndexes;
     mapping (ExtinctionRisk => uint8[5]) private valuesForStage;
     mapping (uint256 => Tree) trees;
