@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x6C430edE65E229Ec09a3ed1a10123Ee90e3e1206';
+var contractAddress = '0xE70644102739Cd75847379F62E1937b28d9cDB8b';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -553,7 +553,7 @@ function showInfo(){
 
     var complete_body, stat_div, tot_trees, num_tree, tree_id;
     var water, sun, rename, arrow, info;
-    var rarity, spiece;
+    var stage, spiece, risk;
     
     // divs and other elements
     stat_div = document.getElementById("treeStat");
@@ -562,7 +562,8 @@ function showInfo(){
     tot_trees = document.getElementById("tot_trees");
     tree_id = document.getElementById("tree_id");
     spiece = document.getElementById("spiece");
-    rarity = document.getElementById("rarity");
+    stage = document.getElementById("stage");
+    risk = document.getElementById("risk");
 
     // buttons
     rename = document.getElementById("change_name");
@@ -573,7 +574,8 @@ function showInfo(){
     
     tree_id.innerHTML = userIdsOfTrees[num_tree.innerHTML-1];
     spiece.innerHTML = userTrees[num_tree.innerHTML-1]["specie"]["name"];
-    rarity.innerHTML = userTrees[num_tree.innerHTML-1]["stage"];
+    risk.innerHTML = userTrees[num_tree.innerHTML-1]["specie"]["risk"];
+    stage.innerHTML = userTrees[num_tree.innerHTML-1]["stage"];
 
     stat_div.style.display = "flex";
     complete_body.style.opacity = 0.2;
