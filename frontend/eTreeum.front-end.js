@@ -783,7 +783,7 @@ function startTimer(duration, display, msg, type_button) {
 
 
 // function that gives the sun to the tree
-function giveSun(treeId, sunHours){
+async function giveSun(treeId, sunHours){
 
     contract.events.TreeGrown(
         async function(error, event){
