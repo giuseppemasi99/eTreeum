@@ -50,7 +50,7 @@ function showSellingTrees(){
         eth.className = "eth_value";
         eth.id = sellingTrees[i]["id"];
 
-        eth.addEventListener('click', buyOptions);
+        eth.addEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
 
         container.appendChild(tree_row);
         tree_row.appendChild(tree_name_div);
@@ -97,23 +97,49 @@ function whichColor(value){
     }
 }
 
-function buyOptions(){
-    var buy_option_div;
-    var cancel_button;
+function buyOptions(event, value){
+    var buy_option_div, shop_div, tree_to_show_div, tree_image;
+    var cancel_button, buy_buttons;
+
+    // in base a questa mostro l'immagine carina
 
     buy_option_div = document.getElementById("buy_options");
+    shop_div = document.getElementById("shop_body");
+    tree_to_show_div = document.getElementById("tree_to_sell");
+    tree_image = document.getElementById("tree_to_sell_image");
+
     cancel_button = document.getElementById("cancel");
+    buy_buttons = document.getElementsByClassName("eth_value");
+
+    for (let i=0; i<buy_buttons.length; i++){
+        buy_buttons[i].removeEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        buy_buttons[i].style.cursor = "default";
+    }
+
+    tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[value-1]["rarity"]);
+    tree_image.src = "img/" + whichImage(sellingTrees[value-1]["image"]);
 
     buy_option_div.style.display = "flex";
+    shop_div.style.opacity = 0.2;
 
     cancel_button.addEventListener('click', cancelOption);
 
 }
 
 function cancelOption(){
-    var buy_option_div;
+    var buy_option_div, shop_div;
+    var buy_buttons;
 
     buy_option_div = document.getElementById("buy_options");
+    shop_div = document.getElementById("shop_body");
+
+    buy_buttons = document.getElementsByClassName("eth_value");
+
+    for (let i=0; i<buy_buttons.length; i++){
+        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        buy_buttons[i].style.cursor = "pointer";
+    }
 
     buy_option_div.style.display = "none";
+    shop_div.style.opacity = 1;
 }

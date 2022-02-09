@@ -41,7 +41,7 @@ div#buy_options{
     align-items: center;
     flex-direction: column;
 
-    top: 35%;
+    top: 20%;
     left: 37.5%;
     width: 25%;
     border-radius: 10px;
@@ -104,6 +104,19 @@ header{
 
     font-weight: 900;
     font-size: 23pt;
+}
+
+button{
+    display: inline-block;
+    padding: 10px;
+
+    border-radius: 10px;
+    border: none;
+
+    cursor: pointer;
+
+    background-color: rgb(28, 75, 17);
+    color: white;
 }
 
 div#right_top_header{
