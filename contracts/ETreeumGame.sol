@@ -53,17 +53,17 @@ contract ETreeumGame is ERC721 {
         uint32 score;
     }
 
-    modifier MustOwnTree (uint256 id) {
+    modifier MustOwnTree(uint256 id){
         require (_ownsTree(msg.sender, id), "This tree isn't yours");
         _;
     }
 
-    modifier SetLastEntered () {
+    modifier SetLastEntered(){
         players[msg.sender].lastEntered = block.timestamp;
         _;
     }
 
-    modifier UpdatePlayerScore (address player) {
+    modifier UpdatePlayerScore(address player){
         _;
         uint32 oldScore = players[player].score;
         players[player].score = _computePlayerScore(player);
@@ -74,7 +74,7 @@ contract ETreeumGame is ERC721 {
     event RankingChanged(Player[3] ranking);
     event TreeGrown(address a, uint256 treeId, Stages stage);
 
-    constructor () ERC721 ("Tree", "T"){
+    constructor() ERC721("Tree", "T"){
         treeCounter = 0;
         _gardener = payable(msg.sender);
         addSpecies("AbiesNebrodensis", ExtinctionRisk.CriticallyEndangered, 1000, 10);
@@ -104,7 +104,7 @@ contract ETreeumGame is ERC721 {
         return false;
     }
 
-    function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered() public {
+    function joinGame(string calldata userNickname, string calldata treeNickname) SetLastEntered public {
         require (isNewUser(msg.sender), "You're already playing");
         players[msg.sender].nickname = bytes(userNickname).length > 0 ? userNickname : "Player"; 
         playersAddresses.push(msg.sender);
@@ -151,7 +151,11 @@ contract ETreeumGame is ERC721 {
         return ERC721.ownerOf(id) == player;
     }
 
-    function _growTree(uint256 id, Tree storage t) private returns (Stages) {
+    function renameTree(uint64 id, string calldata newNickname) MustOwnTree(id) public {
+        trees[id].nickname = newNickname;
+    }
+
+    function _growTree(uint256 id, Tree storage t) private {
         if (t.startWeek > block.timestamp -1 weeks) {
             if (t.stage != Stages.Secular && t.waterGivenInAWeek >= t.specie.waterNeededInAWeek && t.sunGivenInAWeek >= t.specie.sunNeededInAWeek) {
                 t.stage = Stages(uint8(t.stage)+1);
@@ -161,28 +165,23 @@ contract ETreeumGame is ERC721 {
             }
         }
         else { t.startWeek = block.timestamp; }
-        return t.stage;
     }
 
-    function renameTree(uint64 id, string calldata newNickname) MustOwnTree(id) public {
-        trees[id].nickname = newNickname;
-    }
-
-    function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public returns (Stages) {
+    function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public {
         require(waterAmount <= MAX_WATER, "Too much water");
         Tree storage t = trees[id];
         require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
         t.waterGivenInAWeek += waterAmount;
         t.lastWater = block.timestamp;
-        return _growTree(id, t);
+        _growTree(id, t);
     }
 
-    function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public returns (Stages) {
+    function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public {
         require(sunHours <= MAX_SUN, "Too much sun");
         Tree storage t = trees[id];
         require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
         t.sunGivenInAWeek += sunHours;
-        return _growTree(id, t);
+        _growTree(id, t);
     }
 
     function buySeed(string calldata treeNickname) SetLastEntered public payable {

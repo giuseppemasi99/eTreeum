@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xb8274d0F37cA5dd04E10967Ae88F17600D5FC712';
+var contractAddress = '0x30236694D6023229Cf777B6CCb509A9dB7DD39f8';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -22,9 +22,7 @@ async function start(){
 
     if (isNewUser) {
         registerPlayer();
-    }
-
-    else {
+    } else {
         login();
     }
 
@@ -56,6 +54,7 @@ function registerPlayer() {
     rules.disabled = true;
     start_play.disabled = true;
     join.disabled = false;    
+
 }
 
 function getErrorMessage(msg) {
@@ -200,7 +199,6 @@ async function login() {
 
 function thenPlantFreeSeed(freePlantedTree){
     userTrees.push(freePlantedTree)
-    //stampare albero free planted ever ok ciao Rocco
 }
 
 /* AFTER BLOCKCHAIN CALL - END */
@@ -208,36 +206,37 @@ function thenPlantFreeSeed(freePlantedTree){
 
 // function that allow the counter
 function startTreeCounter(){
+    
     var a = 0;
+
     $(window).ready(function() {
+        var oTop = $('#counter').offset().top - window.innerHeight;
+        if (a == 0 && $(window).scrollTop() > oTop) {
+            $('.counter-value').each(function() {
+            var $this = $(this),
+                countTo = $this.attr('data-count');
+            $({
+                countNum: $this.text()
+            }).animate({
+                countNum: countTo
+                },
 
-    var oTop = $('#counter').offset().top - window.innerHeight;
-    if (a == 0 && $(window).scrollTop() > oTop) {
-        $('.counter-value').each(function() {
-        var $this = $(this),
-            countTo = $this.attr('data-count');
-        $({
-            countNum: $this.text()
-        }).animate({
-            countNum: countTo
-            },
+                {
+                duration: 6000,
+                easing: 'swing',
+                step: function() {
+                    $this.text(Math.floor(this.countNum));
+                },
+                complete: function() {
+                    $this.text(this.countNum);
+                }
 
-            {
-            duration: 6000,
-            easing: 'swing',
-            step: function() {
-                $this.text(Math.floor(this.countNum));
-            },
-            complete: function() {
-                $this.text(this.countNum);
-            }
-
+                });
             });
-        });
-        a = 1;
-    }
-
+            a = 1;
+        }
     });
+
 }
 
 // function that set the username for a new user
@@ -319,8 +318,8 @@ async function joinGame () {
         async function(error, event){
             if (!error) {
                 setupPage();
-                console.log(event.returnValues['a']);
-                console.log(event.returnValues['treeId']);
+                console.log('addressSender' + event.returnValues['a']);
+                console.log('treeId:' + event.returnValues['treeId']);
                 plantedSeed = event.returnValues['treeId'];
                 if (senderAddress == event.returnValues.a) {
                     //DA RIPENSARCI
@@ -526,6 +525,7 @@ async function calculatePodium(){
 
 // function that show all the owned trees with the respective info and the user nickname
 function printTrees(){
+
     setupPage();
 
     var initial_div;
@@ -801,6 +801,7 @@ function giveSun(){
 
 // function that gives the water to the tree
 function giveWater(){
+    
     var coin;
 
     coin = Math.floor(Math.random() * 2);
