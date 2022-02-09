@@ -5,17 +5,23 @@ $(window).on('load', function() {
 });
 
 var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "rarity":1, "price":12, "id":2}, 
-{"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":3, "price":12, "id":5},
-{"image":1, "rarity":3, "price":12, "id":6}, {"image":3, "rarity":1, "price":12, "id":7}, {"image":1, "rarity":2, "price":12, "id":8}]
+{"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":0, "price":12, "id":5},
+{"image":1, "rarity":0, "price":12, "id":6}, {"image":3, "rarity":1, "price":12, "id":7}, {"image":1, "rarity":2, "price":12, "id":8}]
 
 
 function showSellingTrees(){
-    var container;
+    
+    var container, buy_button, cancel_button;
     var num_selling_trees = sellingTrees.length, i;
     
     var tree_row, tree_name_div, tree_div, eth, eth_value, tree_info, img, src;
 
     container = document.getElementById("trees_container");
+    buy_button = document.getElementById("buy");
+    cancel_button = document.getElementById("cancel");
+    
+    cancel_button.addEventListener('click', cancelOption);
+    buy_button.addEventListener('click', buyTree);
 
     for(i = 0; i < num_selling_trees; i++){
 
@@ -106,7 +112,7 @@ function whichColor(value){
 
 function buyOptions(event, value){
     var buy_option_div, shop_div, tree_to_show_div, tree_image;
-    var cancel_button, buy_buttons;
+    var buy_buttons;
 
     // in base a questa mostro l'immagine carina
 
@@ -115,21 +121,20 @@ function buyOptions(event, value){
     tree_to_show_div = document.getElementById("tree_to_sell");
     tree_image = document.getElementById("tree_to_sell_image");
 
-    cancel_button = document.getElementById("cancel");
     buy_buttons = document.getElementsByClassName("eth_value");
 
     for (let i=0; i<buy_buttons.length; i++){
-        buy_buttons[i].removeEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        var elClone = buy_buttons[i].cloneNode(true);
+        buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
         buy_buttons[i].style.cursor = "default";
     }
 
     tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[value-1]["rarity"]);
     tree_image.src = "img/" + whichImage(sellingTrees[value-1]["image"]);
+    tree_image.alt = value;
 
     buy_option_div.style.display = "flex";
     shop_div.style.opacity = 0.2;
-
-    cancel_button.addEventListener('click', cancelOption);
 
 }
 
@@ -149,4 +154,16 @@ function cancelOption(){
 
     buy_option_div.style.display = "none";
     shop_div.style.opacity = 1;
+}
+
+function buyTree(){
+    var tree_id, tree_image;
+
+    tree_image = document.getElementById("tree_to_sell_image");
+
+    tree_id = tree_image.alt;
+
+    alert(tree_id);
+    cancelOption();
+
 }

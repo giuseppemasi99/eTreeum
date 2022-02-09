@@ -252,7 +252,8 @@ function printUserInfo(username, score){
 // setting up all the necessary buttons and elements in the page
 async function setupPage(){
 
-    var water, sun, rename, info, find_out_button, exit_stat, submit_change;
+    var water, sun, rename, info, find_out_button, exit_stat, submit_change, menu_buy_seed;
+    var cancel_button, buy_seed_button;
     var div_treeName, complete_body, infoRow, counter, right_top_header;
 
     // buttons
@@ -263,6 +264,10 @@ async function setupPage(){
     find_out_button = document.getElementById("find_out");
     exit_stat = document.getElementById("exit");
     submit_change = document.getElementById("submit_change_name");
+    menu_buy_seed = document.getElementById("menu_buySeed");
+
+    cancel_button = document.getElementById("cancel");
+    buy_seed_button = document.getElementById("buy_seed_button");
 
     // divs
     infoRow = document.getElementById("top");
@@ -277,6 +282,10 @@ async function setupPage(){
     info.addEventListener("click", showInfo);
     sun.addEventListener('click', giveSun);
     water.addEventListener('click', giveWater);
+    menu_buy_seed.addEventListener('click', buyNewSeed);
+
+    cancel_button.addEventListener('click', cancel);
+    buy_seed_button.addEventListener('click', buySeed);
     
     find_out_button.style.display = "block";
 
@@ -548,6 +557,44 @@ function whichColor(value){
     }
 }
 
+function whichRisk(value){
+
+    switch(value){
+        case 0:
+            return "LeastConcern";
+        case 1:
+            return "ConservationDependent";
+        case 2:
+            return "NearThreatened";
+        case 3:
+            return "Vulnerable";
+        case 4:
+            return "Endangered";
+        case 5:
+            return "CriticallyEndangered";
+               
+        default:
+            return "LeastConcern";
+    }
+}
+
+function whichStage(value){
+    switch(value){
+        case 0:
+            return "Seed";
+        case 1:
+            return "Bush";
+        case 2:
+            return "Adult";
+        case 3:
+            return "Majestic";
+        case 4:
+            return "Secular";
+        default:
+            return "Seed";
+    }
+}
+
 // function used to show the information (stat) of a tree
 function showInfo(){
 
@@ -574,8 +621,8 @@ function showInfo(){
     
     tree_id.innerHTML = userIdsOfTrees[num_tree.innerHTML-1];
     spiece.innerHTML = userTrees[num_tree.innerHTML-1]["specie"]["name"];
-    risk.innerHTML = userTrees[num_tree.innerHTML-1]["specie"]["risk"];
-    stage.innerHTML = userTrees[num_tree.innerHTML-1]["stage"];
+    risk.innerHTML = whichRisk(userTrees[num_tree.innerHTML-1]["specie"]["risk"]);
+    stage.innerHTML = whichStage(userTrees[num_tree.innerHTML-1]["stage"]);
 
     stat_div.style.display = "flex";
     complete_body.style.opacity = 0.2;
@@ -628,7 +675,6 @@ function exitStat(){
 
 
 // function that gives the sun to the tree
-// ADD THE CHECK FOR THE AMOUNT OF SUN GIVEN
 async function giveSun(){
 
     var sunHours = prompt("How much sun you want to give to your plant?");
@@ -660,7 +706,6 @@ async function giveSun(){
 
 
 // function that gives the water to the tree
-// ADD THE CHECK FOR THE AMOUNT OF WATER GIVEN
 async function giveWater(){
 
     var waterAmount = prompt("How much water you want to give to your plant?");
@@ -690,6 +735,89 @@ async function giveWater(){
      
 }
 
+// function that allow the user to buy a new seed
+function buyNewSeed(){
+    var complete_body, buy_seed_div;
+    var buy_button, cancel_button;
+
+    var water, sun, rename, arrow, info, menu_buySeed;
+
+    complete_body = document.getElementById("complete_body");
+    buy_seed_div = document.getElementById("buy_new_seed");
+
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    info = document.getElementById("info")
+    arrow = document.getElementsByClassName("arrow");
+    menu_buySeed = document.getElementById("menu_buySeed");
+
+    buy_button = document.getElementsByClassName("buy_seed_button");
+    cancel_button = document.getElementsByClassName("cancel");
+
+    buy_seed_div.style.display = "flex";
+    complete_body.style.opacity = 0.2;
+
+    water.disabled = true;
+    sun.disabled = true;
+    rename.disabled = true;
+
+    info.removeEventListener("click", showInfo);
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+    
+    if(tot_trees.innerHTML > 1){
+        arrow[0].removeEventListener("click", goLeft);
+        arrow[1].removeEventListener("click", goRight);
+    }
+
+}
+
+// function that go out from the buy option
+function cancel(){
+    var complete_body, buy_seed_div;
+    var water, sun, rename, arrow, info, menu_buySeed;
+
+    // divs and other elements
+    buy_seed_div = document.getElementById("buy_new_seed");
+    complete_body = document.getElementById("complete_body");
+
+    // buttons
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    arrow = document.getElementsByClassName("arrow");
+    info = document.getElementById("info");
+    menu_buySeed = document.getElementById("menu_buySeed");
+
+    buy_seed_div.style.display = "none";
+    complete_body.style.opacity = 1;
+
+    water.disabled = false;
+    sun.disabled = false;
+    rename.disabled = false;
+    info.addEventListener("click", showInfo);
+    menu_buySeed.addEventListener('click', buyNewSeed);
+
+    if (tot_trees.innerHTML > 1){
+        arrow[0].addEventListener("click", goLeft);
+        arrow[1].addEventListener("click", goRight);
+    }
+
+}
+
+// function that actually buy the new seed
+// ADD CALL TO THE BACK-END METHOD
+function buySeed(){
+    var tree_id, num_tree;
+
+    num_tree = document.getElementById("tree_number").innerHTML;
+
+    tree_id = userIdsOfTrees[num_tree-1];
+
+    alert(tree_id);
+    cancel();
+
+}
 
 /* DO NOT MODIFY CODE BELOW */
 

@@ -34,7 +34,7 @@
                             <a href="#">&#128722;</a> 
                             <ul>
                                 <li><a href="./frontend/shop.html">Buy a tree</a></li>
-                                <li><a href="#">Buy a seed</a></li>
+                                <li><a id="menu_buySeed">Buy a seed</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -110,7 +110,8 @@
         </div>
 
         <div id="buy_new_seed">
-            <h2>Want to buy a new seed?</h2>
+            <h3>Want to buy a new seed?</h3>
+            <img id="seed_to_buy" src="frontend/img/seed.gif" alt="seed">
             <div id="buttons_option">
                 <button id="buy_seed_button" type="button">Buy!</button>
                 <button id="cancel" type="button">No thanks</button>
@@ -175,7 +176,10 @@
             </div>
 
             <div id="right_div">
+                <!--
                 <h2>Kings of the forest</h2>
+                -->
+                <img id="king" src="frontend/img/king.png">
 
                 <div id="podium">
                     <label class="podium" id="first">

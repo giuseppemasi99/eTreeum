@@ -139,6 +139,21 @@ div#user_info{
     align-items: center;
 }
 
+div#buttons_option button{
+    width: 80px;
+}
+
+div#tree_to_sell{
+    border-radius: 10px;
+    margin: 10px;
+}
+
+div#tree_to_sell img{
+    width: 150px;
+    margin: 30px;
+    border-radius: 10px;
+}
+
 /*CSS FOR THE LIST OF SELLING TREE*/
 
 div#trees_container{
