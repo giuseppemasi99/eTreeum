@@ -139,7 +139,7 @@ div#menu ul li ul li:hover{
 }
 
 
-div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat{
+div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat, div#buy_new_seed{
     position: absolute;
     z-index: 10;
 
@@ -202,13 +202,14 @@ button#join, button#submit_username, button#okrules_clicked, button#start_play{
 
 /*CSS FOR THE DIV USED TO CHANGE THE NICKNAME OF THE PLANT*/
 
-div#treeName_change_div, div#treeStat{
+div#treeName_change_div, div#treeStat, div#buy_new_seed{
     display: none;
     z-index: 11;
 
     font-size: 12pt;
     font-weight: 700;
 }
+
 
 input#newTreeName{
     margin-top: 10px;
@@ -272,6 +273,14 @@ div#tree_properties{
 label.stat{
     margin-left: 8px;
     font-size: 12pt;
+}
+
+/* CSS FOR THE DIV IN WHICH WE BUY A NEW SEED*/
+div#buy_new_seed{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 /* CSS FOR THE BODY OF THE PAGE*/

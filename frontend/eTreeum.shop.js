@@ -57,13 +57,18 @@ function showSellingTrees(){
 
 }
 
+//function that given a value return the type of image to show
 function whichImage(value){
     switch(value){
-        case 1:
+        case 0:
             return "seed.gif";
-        case 2:
+        case 1:
             return "little_tree.gif";
+        case 2:
+            return "da9cc5efa7671200c3def8a880721db7.gif";
         case 3:
+            return "da9cc5efa7671200c3def8a880721db7.gif";
+        case 4:
             return "da9cc5efa7671200c3def8a880721db7.gif";
         default:
             return "seed.gif";
