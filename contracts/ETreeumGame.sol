@@ -70,7 +70,7 @@ contract ETreeumGame is ERC721 {
         if (oldScore != players[player].score) computeRanking();
     }
 
-    event JoinedGame(address a, uint256 treeId);
+    event JoinedGame(address a, uint256 id, Tree tree);
     event RankingChanged(Player[3] ranking);
     event TreeGrown(address a, uint256 treeId, Stages stage);
 
@@ -108,8 +108,8 @@ contract ETreeumGame is ERC721 {
         require (isNewUser(msg.sender), "You're already playing");
         players[msg.sender].nickname = bytes(userNickname).length > 0 ? userNickname : "Player"; 
         playersAddresses.push(msg.sender);
-        uint256 treeId = _plantSeed(msg.sender, treeNickname);
-        emit JoinedGame(msg.sender, treeId);
+        (uint256 id, Tree memory t) = _plantSeed(msg.sender, treeNickname);
+        emit JoinedGame(msg.sender, id, t);
     }
 
     function isNewUser(address playerAddress) public view returns (bool) {
@@ -131,7 +131,7 @@ contract ETreeumGame is ERC721 {
         return trees[treeId];
     }
 
-    function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256) {
+    function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256 id, Tree memory) {
         uint256 treeId = treeCounter;
         _safeMint(owner, treeId);
         //_setTokenURI(treeCounter, tokenURI);
@@ -144,7 +144,7 @@ contract ETreeumGame is ERC721 {
         players[owner].treeOwned.push(treeId);
         trees[treeId] = t;
         treeCounter = treeCounter + 1;
-        return treeId;
+        return (treeId, t);
     }
 
     function _ownsTree(address player, uint256 id) view private returns (bool) {

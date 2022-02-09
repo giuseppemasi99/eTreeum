@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xbA4a95BEDd82911a3Ac01605fE8e119723caeF7f';
+var contractAddress = '0x367A49D5F88B298E5f5d695c2c2Fc9487bD6Aac6';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -12,6 +12,7 @@ var senderAddress = '0x0';
 var contract = null;
 var isNewUser = undefined;
 var userTrees = [];
+var userIdsOfTrees = [];
 
 
 async function start(){
@@ -45,11 +46,8 @@ function registerPlayer() {
     join.addEventListener('click', setUsername);
     username.addEventListener('click', showRules);
     rules.addEventListener('click', setPlantName);
-    //LEAVE with blockchain
     start_play.addEventListener('click', joinGame);
-    //REMOVE without blockchain
-    //start_play.addEventListener('click', setupPage);
-
+    
     username.disabled = true;
     rules.disabled = true;
     start_play.disabled = true;
@@ -70,8 +68,11 @@ function getErrorMessage(msg) {
 async function login() {
 
     try {
-        userTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
-        console.log("TREES", userTrees);
+        var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
+        userIdsOfTrees = userIdsTrees[0];
+        userTrees = userIdsTrees[1];
+        console.log("userIdsOfTrees", userIdsOfTrees);
+        console.log("userTrees", userTrees);
         printTrees();
     }
     catch(e) {
@@ -80,131 +81,8 @@ async function login() {
     }
 }
 
-
-
-/* BLOCKCHAIN INTERACTION - START */
-
-
-// function that check if you are or not a new user
-/*function isNewUser(senderAddress){
-    
-    // comment the return when working with the blockchain
-    //return Math.floor(Math.random() * 2);
-
-    // remove comment when working with the blockchain
-    contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000}).then(function(newUser) {
-        console.log('isNewUser:'+ newUser);
-        thenIsNewUser(newUser);
-    }); 
-
-}*/
-
-/*async function plantFreeSeed(senderAddress, nicknameUser, nicknameTree){
-
-     // Subscribe to all PlantedFreeSeed events
-    contract.events.JoinedGame(
-        async function(error, event){
-            if (!error) {
-                setupPage();
-                console.log('FREE PLANTED TREE');
-                console.log(event.returnValues['a']);
-                console.log(event.returnValues['treeId']);
-                plantedSeed = event.returnValues['treeId'];
-                //HERE WE SHOULD CHECK FOR THE ADDRESS
-                thenPlantFreeSeed(plantedSeed);
-            }
-        }
-    );
-    //contract.methods.joinGame(nicknameUser, nicknameTree).send({from:senderAddress, gas: 1500000});
-}*/
-
-/* BLOCKCHAIN INTERACTION - END */
-
-
-
-/* AFTER BLOCKCHAIN CALL - START */
-
-//var infoNewUser;
-
-/*async function thenIsNewUser(newUser){
-
-    infoNewUser = newUser;
-    
-    var water, sun;
-    var seed, rename, submit_change, exit_stat;
-    var username, rules, start_play;
-
-    water = document.getElementById("water");
-    sun = document.getElementById("sun");
-
-    seed = document.getElementById("join");
-    username = document.getElementById("submit_username");
-    rules = document.getElementById("okrules_clicked");
-    start_play = document.getElementById("start_play");
-    
-    rename = document.getElementById("change_name");
-    submit_change = document.getElementById("submit_change_name");
-    exit_stat = document.getElementById("exit");
-
-    seed.addEventListener('click', setUsername);
-    username.addEventListener('click', showRules);
-    rules.addEventListener('click', setPlantName);
-    // remove the comment when working with the blockchain
-    start_play.addEventListener('click', joinGame);
-    // comment when working with the blockchain
-    //start_play.addEventListener('click', setupPage);
-
-    rename.addEventListener('click', changeName);
-    submit_change.addEventListener('click', submitNewName);
-    exit_stat.addEventListener('click', exitStat);
-    sun.addEventListener('click', giveSun);
-    water.addEventListener('click', giveWater);
-    
-    if(newUser){ // new user
-        
-        water.disabled = true;
-        sun.disabled = true;
-        rename.disabled = true;
-        username.disabled = true;
-        rules.disabled = true;
-        start_play.disabled = true;
-
-        seed.disabled = false;    
-        
-    }else{ // old user
-        
-        water.disabled = false;
-        sun.disabled = false;
-        rename.disabled = false;
-        
-        rules.disabled = true;
-        start_play.disabled = true;
-        username.disabled = true;
-        seed.disabled = true;
-        printTrees(senderAddress);
-
-
-        console.log('CALLING GET TREES');
-        response = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 120000});
-        console.log('RESPONSE', response);
-
-    }
-
-}*/
-
-//var userTrees = new Array();
-/*var userTrees = [{"image":1, "rarity":3}, {"image":2, "rarity":1}, {"image":3, "rarity":2},
-            {"image":2, "rarity":1}, {"image":3, "rarity":3}, {"image":2, "rarity":2},];
-*/
-
-function thenPlantFreeSeed(freePlantedTree){
-    userTrees.push(freePlantedTree)
-}
-
-/* AFTER BLOCKCHAIN CALL - END */
-
-
 // function that allow the counter
+// DA CITARE
 function startTreeCounter(){
     
     var a = 0;
@@ -317,17 +195,15 @@ async function joinGame () {
     contract.events.JoinedGame(
         async function(error, event){
             if (!error) {
-                setupPage();
-                console.log('addressSender' + event.returnValues['a']);
-                console.log('treeId:' + event.returnValues['treeId']);
-                plantedSeed = event.returnValues['treeId'];
+                // console.log(event.returnValues['a']);
+                // console.log(event.returnValues['tree']);
+                let freeTreeId = event.returnValues['id'];
+                let freeTree = event.returnValues['tree'];
                 if (senderAddress == event.returnValues.a) {
-                    //DA RIPENSARCI
-                    //window.reload();
+                    userIdsOfTrees.push(freeTreeId);
+                    userTrees.push(freeTree);
+                    printTrees();
                 }
-                //thenPlantFreeSeed(plantedSeed);
-                //HERE WE SHOULD CHECK FOR THE ADDRESS
-                //thenPlantFreeSeed(plantedSeed);
             }
         }
     );
@@ -335,13 +211,10 @@ async function joinGame () {
     try {
         var transaction = await contract.methods.joinGame(username, treename).send({from:senderAddress, gas: 1500000});
         console.log("TRANSACTION", transaction);
-        
-        //plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
-        alert("Something went wrong: "+errorMessage);
-        //ALERT
+        alert("Something went wrong: " + errorMessage);
     }
     
 }
@@ -393,41 +266,10 @@ async function setupPage(){
 
     startTreeCounter();
 
-    /*if(infoNewUser){
-
-        var input_treeName, label_treeName, username, tree_num, tot_trees, tree_img;
-
-        input_treeName = document.getElementById("input_treeName");
-        label_treeName = document.getElementById("treeName");
-        username = document.getElementById("username");
-        tree_num = document.getElementById("tree_number");
-        tot_trees = document.getElementById("tot_trees");
-        div_tree = document.getElementById("tree");
-
-        tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-        treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
-
-        div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
-
-        tree_num.innerHTML = 1;
-        tot_trees.innerHTML = 1;
-        label_treeName.innerHTML = input_treeName.value;
-        input_treeName.innerHTML = "";
-
-        // remove this comment when working with the blockchain
-        //await plantFreeSeed(senderAddress, username.innerHTML, label_treeName.innerHTML);
-
-    }else{
-
-        var initial_div;
-        initial_div = document.getElementById("initial_div");
-        initial_div.style.display = "none";
-
-    }*/
-
     calculatePodium();
     
 }
+
 // function that allow you to change the nickname of a plant
 // display a div in wich you can input the new nickname
 function changeName(){
@@ -464,6 +306,7 @@ function changeName(){
 }
 
 // function that sumbit the change of the nickname
+// ADD THE CALL TO THE CONTRACT METHOD 'renameTree'
 function submitNewName(){
 
     var label, name, complete_body, divRename, tot_trees;
@@ -572,7 +415,7 @@ function printTrees(){
     tot_trees.innerHTML = userTrees.length;
 
     tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"]);
     
     tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
 
@@ -599,7 +442,7 @@ function goLeft(){
     }
 
     tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"]);
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -622,7 +465,7 @@ function goRight(){
     }
 
     tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["rarity"])
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"])
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
@@ -679,9 +522,9 @@ function showInfo(){
     info = document.getElementById("info")
     arrow = document.getElementsByClassName("arrow");
     
-    tree_id.innerHTML = num_tree.innerHTML;
-    spiece.innerHTML = userTrees[num_tree.innerHTML-1]["image"];
-    rarity.innerHTML = userTrees[num_tree.innerHTML-1]["rarity"];
+    tree_id.innerHTML = userIdsOfTrees[num_tree.innerHTML-1];
+    spiece.innerHTML = userTrees[num_tree.innerHTML-1]["specie"]["name"];
+    rarity.innerHTML = userTrees[num_tree.innerHTML-1]["stage"];
 
     stat_div.style.display = "flex";
     complete_body.style.opacity = 0.2;
@@ -732,57 +575,9 @@ function exitStat(){
 
 }
 
-// timer used for water and sun button
-function startTimer(duration, display, msg, type_button) {
-
-    var timer = duration, minutes, seconds, intervalID;
-        
-    intervalID = setInterval(
-        function () {
-                
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            display.innerHTML = minutes + ":" + seconds;
-
-            if (--timer < 0) {
-                
-                clearInterval(intervalID)
-
-                if(type_button == "sun"){
-                    sun_button_active = false;
-                }
-                else{
-                    water_button_active = false;
-                }
-
-                if(!sun_button_active && !water_button_active){
-                    
-                    var arrow;
-
-                    arrow = document.getElementsByClassName("arrow")
-                    
-                    arrow[0].style.cursor = "pointer";
-                    arrow[1].style.cursor = "pointer";
-
-                    arrow[0].addEventListener("click", goLeft);
-                    arrow[1].addEventListener("click", goRight);
-                }
-
-                display.disabled = false;
-                display.style.cursor = "pointer";
-                display.innerHTML = msg;
-            }
-        }, 
-        1000);
-
-}
-
 
 // function that gives the sun to the tree
+// ADD THE CHECK FOR THE AMOUNT OF SUN GIVEN
 async function giveSun(treeId, sunHours){
 
     contract.events.TreeGrown(
@@ -800,24 +595,13 @@ async function giveSun(treeId, sunHours){
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
-        //ALERT
     }
-
-    // var coin;
-
-    // coin = Math.floor(Math.random() * 2);
-
-    // if(coin){
-    //     var sun = prompt("How much sun you want to give to the plant?");
-    //     alert("Good job you gave "+sun+" hours of sun to your tree!");
-    // }else{
-    //     alert("You gave too much sun to your tree, STOP IT!");
-    // }
 
 }
 
 
 // function that gives the water to the tree
+// ADD THE CHECK FOR THE AMOUNT OF WATER GIVEN
 async function giveWater(treeId, waterAmount){
     
     contract.events.TreeGrown(
@@ -835,20 +619,7 @@ async function giveWater(treeId, waterAmount){
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
-        //ALERT
     }
-
-    // var coin;
-
-    // coin = Math.floor(Math.random() * 2);
-
-    // if(coin){
-    //     var water = prompt("How much water you want to give to the plant?");
-    //     alert("Good job you gave "+water+" liters of water to your tree!");
-    // }else{
-    //     alert("You gave too much water to your tree, STOP IT!");
-    // }
-
      
 }
 
@@ -856,9 +627,6 @@ async function giveWater(treeId, waterAmount){
 /* DO NOT MODIFY CODE BELOW */
 
 $(window).on('load', function() {
-    // comment this code when working with blockchain
-    //start();
-
     initialise(contractAddress);
 });
 
@@ -897,43 +665,3 @@ async function initialise(contractAddress) {
     start();
 
 }
-
-
-
-/*
-
-    METODI PROFESSORE
-
-function updateDisplayedInformation() {
-    checkWeiBalance();
-	displayMinter();
-	displayAccountAddress();
-	return false;
-}
-
-// Displays the current wei balance
-function checkWeiBalance(){
-    web3.eth.getBalance(senderAddress).then(function(result){
-        $("#myweibalance").html(result);
-    });
-}
-
-// Displays the current minter address
-function displayMinter() {
-    contract.methods.minter().call({from:senderAddress, gas: 120000}).then(function(result) { // A promise in action
-        $("#currentminter").html(result);
-    });
-    //  // The “send” method is not required here as it is a view on a public attribute of the contract.
-    //  // Therefore, no state change is necessary on the contract and the sole call() suffices.
-    //  contract.methods.minter().send({from:senderAddress, gas: 120000}).on('receipt', function(receipt){
-    //    console.log("Tx Hash of displayMinter(): " + receipt.transactionHash);
-    //  });
-}
-
-// Displays the account address
-function displayAccountAddress() {
-	$("#myaccountaddress").html(
-		senderAddress
-	);
-}
-*/
