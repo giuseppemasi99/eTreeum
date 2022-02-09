@@ -239,8 +239,8 @@ contract ETreeumGame is ERC721 {
         return value;
     }
 
-    function getPlayerScore(address player) view public returns (uint32) {
-        return players[player].score;
+    function getPlayerNicknameAndScore(address player) view public returns (string memory, uint32) {
+        return (players[player].nickname, players[player].score);
     }
 
     function _computePlayerScore(address player) view private returns (uint32) {

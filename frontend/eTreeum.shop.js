@@ -1,16 +1,3 @@
-// Set the contract address
-var contractAddress = '0xf6CABd014fe2F29c5A5d047C1E07C902Fbd02Da8';
-
-// Set the relative URI of the contract’s skeleton (with ABI)
-var contractJSON = "build/contracts/ETreeumGame.json"
-
-// Set the sending address
-var senderAddress = '0x0';
-
-// Set contract ABI and the contract
-var contract = null;
-
-
 $(window).on('load', function() {
     // comment this code when working with blockchain
     showSellingTrees();

@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x367A49D5F88B298E5f5d695c2c2Fc9487bD6Aac6';
+var contractAddress = '0xca4269F0f6843215Bf133EFaCf02ac27bE977a44';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -74,11 +74,13 @@ async function login() {
         console.log("userIdsOfTrees", userIdsOfTrees);
         console.log("userTrees", userTrees);
         printTrees();
+        getPlayerNicknameAndScore();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
     }
+
 }
 
 // function that allow the counter
@@ -203,6 +205,7 @@ async function joinGame () {
                     userIdsOfTrees.push(freeTreeId);
                     userTrees.push(freeTree);
                     printTrees();
+                    getPlayerNicknameAndScore();
                 }
             }
         }
@@ -217,6 +220,33 @@ async function joinGame () {
         alert("Something went wrong: " + errorMessage);
     }
     
+}
+
+async function getPlayerNicknameAndScore(){
+
+    try {
+        var nickname_score = await contract.methods.getPlayerNicknameAndScore(senderAddress).call({from:senderAddress, gas: 1500000});
+        let username = nickname_score[0];
+        let score = nickname_score[1];
+        // console.log("nickname_score");
+        // console.log(nickname_score);
+        printUserInfo(username, score);
+    }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+
+}
+
+function printUserInfo(username, score){
+
+    let username_span = document.getElementById("username");
+    let score_span = document.getElementById("user_score");
+
+    username_span.innerHTML = username;    
+    score_span.innerHTML = score + " points";
+
 }
 
 // setting up all the necessary buttons and elements in the page
