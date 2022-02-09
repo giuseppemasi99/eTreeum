@@ -337,8 +337,8 @@ function changeName(){
     info.removeEventListener("click", showInfo);
     
     if(tot_trees.innerHTML > 1){
-        arrow[0].removeEventListener("click", goLeft);
-        arrow[1].removeEventListener("click", goRight);
+        arrow[0].removeEventListener("click", swipe(true));
+        arrow[1].removeEventListener("click", swipe(false));
     }
 
 }
@@ -376,8 +376,8 @@ function submitNewName(){
     info.addEventListener("click", showInfo);
 
     if (tot_trees.innerHTML > 1){
-        arrow[0].addEventListener("click", goLeft);
-        arrow[1].addEventListener("click", goRight);
+        arrow[0].addEventListener("click", swipe(true));
+        arrow[1].addEventListener("click", swipe(false));
     }
 
 }
@@ -438,12 +438,12 @@ function printTrees(){
         arrow[0].style.cursor = "pointer";
         arrow[1].style.cursor = "pointer";
 
-        arrow[0].addEventListener("click", goLeft);
-        arrow[1].addEventListener("click", goRight);
+        arrow[0].addEventListener("click", swipe(true));
+        arrow[1].addEventListener("click", swipe(false));
 
     }else{
-        arrow[0].removeEventListener("click", goLeft);
-        arrow[1].removeEventListener("click", goRight);
+        arrow[0].removeEventListener("click", swipe(true));
+        arrow[1].removeEventListener("click", swipe(false));
 
         arrow[0].style.cursor = "not-allowed";
         arrow[1].style.cursor = "not-allowed";
@@ -463,8 +463,28 @@ function printTrees(){
 
 }
 
+function swipe(left) {
+    var tree_num, tot_trees, div_tree, tree_img, treeCard;
+    
+    tree_num = document.getElementById("tree_number");
+    tot_trees = document.getElementById("tot_trees");
+    div_tree = document.getElementById("tree");
+    treeCard = document.getElementById("treeCard")
+    
+    if(tree_num.innerHTML == tot_trees.innerHTML){
+        tree_num.innerHTML = 1;
+    }else{
+        tree_num.innerHTML = left ? tree_num.innerHTML -1 : tree_num.innerHTML +1;
+    }
+
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"])
+
+    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+}
+
 // if you click on the left arrow you can see the tree on the left side
-function goLeft(){
+/*function goLeft(){
 
     var tree_num, tot_trees, div_tree, tree_img, treeCard;
     
@@ -507,7 +527,7 @@ function goRight(){
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
-}
+}*/
 
 //function that given a value return the type of image to show
 function whichImage(value){
@@ -627,8 +647,8 @@ function showInfo(){
     info.removeEventListener("click", showInfo);
     
     if(tot_trees.innerHTML > 1){
-        arrow[0].removeEventListener("click", goLeft);
-        arrow[1].removeEventListener("click", goRight);
+        arrow[0].removeEventListener("click", swipe(true));
+        arrow[1].removeEventListener("click", swipe(false));
     }
 
 }
@@ -660,8 +680,8 @@ function exitStat(){
     info.addEventListener("click", showInfo);
 
     if (tot_trees.innerHTML > 1){
-        arrow[0].addEventListener("click", goLeft);
-        arrow[1].addEventListener("click", goRight);
+        arrow[0].addEventListener("click", swipe(true));
+        arrow[1].addEventListener("click", swipe(false));
     }
 
 }
@@ -759,8 +779,8 @@ function buyNewSeed(){
     menu_buySeed.removeEventListener('click', buyNewSeed);
     
     if(tot_trees.innerHTML > 1){
-        arrow[0].removeEventListener("click", goLeft);
-        arrow[1].removeEventListener("click", goRight);
+        arrow[0].removeEventListener("click", swipe(true));
+        arrow[1].removeEventListener("click", swipe(false));
     }
 
 }
@@ -792,8 +812,8 @@ function cancel(){
     menu_buySeed.addEventListener('click', buyNewSeed);
 
     if (tot_trees.innerHTML > 1){
-        arrow[0].addEventListener("click", goLeft);
-        arrow[1].addEventListener("click", goRight);
+        arrow[0].addEventListener("click", swipe(true));
+        arrow[1].addEventListener("click", swipe(false));
     }
 
 }
