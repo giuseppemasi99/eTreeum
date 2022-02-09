@@ -65,7 +65,7 @@
             <p>Before starting playing and plant your seed</p>
             <p>insert here your username.</p>
             <p class="space_parag">Be carefull when chosing it, it will be your UserName for the rest of the game!</p>
-            <input type="text" id="input_username" value="" placeholder="Username"/>
+            <input type="text" id="input_username" maxlength="15" value="" placeholder="Username"/>
             <button id="submit_username" type="button">Set UserName!</button>
         </div>
 
@@ -79,12 +79,12 @@
             <h2>One more step...</h2>
             <p>The last step is to choose a name for your first seed.</p>
             <p class="space_parag">Note: for this case you will be able to change the plant name during the game!</p>
-            <input type="text" id="input_treeName" value="" placeholder="TreeName"/>
+            <input type="text" id="input_treeName" maxlength="15" value="" placeholder="TreeName"/>
             <button id="start_play" type="button">Start playing!</button>
         </div>
 
         <div id="treeName_change_div">
-            Enter a NickName for your plant: <input type="text" id="newTreeName" value="" />
+            Enter a NickName for your plant: <input type="text" id="newTreeName" maxlength="15" value="" placeholder="newTreeName"/>
             <button id="submit_change_name" type="button">Change NickName</button>
         </div>
 
@@ -128,7 +128,7 @@
 
                         <div id="top">
                             <span class="info_row">
-                                <button id="change_name" type="button"></button>
+                                <button id="change_name" type="button">✏️</button>
                                 <label id="treeName">TreeName</label>
                             </span>
 

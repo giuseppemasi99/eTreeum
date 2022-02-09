@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xca4269F0f6843215Bf133EFaCf02ac27bE977a44';
+var contractAddress = '0x6C430edE65E229Ec09a3ed1a10123Ee90e3e1206';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -608,7 +608,14 @@ function exitStat(){
 
 // function that gives the sun to the tree
 // ADD THE CHECK FOR THE AMOUNT OF SUN GIVEN
-async function giveSun(treeId, sunHours){
+async function giveSun(){
+
+    var sunHours = prompt("How much sun you want to give to your plant?");
+    var treeId, num_tree;
+
+    num_tree = document.getElementById("tree_number").innerHTML;
+
+    treeId = userIdsOfTrees[num_tree - 1];
 
     contract.events.TreeGrown(
         async function(error, event){
@@ -621,6 +628,7 @@ async function giveSun(treeId, sunHours){
     try {
         var transaction = await contract.methods.giveSun(treeId, sunHours).send({from:senderAddress, gas: 1500000});
         console.log("Transaction giveSun: ", transaction);
+        alert("Good job, you gave " + sunHours + " hour(s) of sun to your tree");
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -632,7 +640,14 @@ async function giveSun(treeId, sunHours){
 
 // function that gives the water to the tree
 // ADD THE CHECK FOR THE AMOUNT OF WATER GIVEN
-async function giveWater(treeId, waterAmount){
+async function giveWater(){
+
+    var waterAmount = prompt("How much water you want to give to your plant?");
+    var treeId, num_tree;
+
+    num_tree = document.getElementById("tree_number").innerHTML;
+
+    treeId = userIdsOfTrees[num_tree - 1];
     
     contract.events.TreeGrown(
         async function(error, event){
@@ -645,6 +660,7 @@ async function giveWater(treeId, waterAmount){
     try {
         var transaction = await contract.methods.giveWater(treeId, waterAmount).send({from:senderAddress, gas: 1500000});
         console.log("Transaction giveWater: ", transaction);
+        alert("Good job, you gave " + waterAmount + " liters of water to your tree");
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
