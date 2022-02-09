@@ -17,7 +17,13 @@ contract ETreeumGame is ERC721 {
     //fake address
     address payable constant public planter = payable(0x335Ebf7EBd5e7e1318D75f8914CEA6e334cB92b7);
     Species[] private gameSpecies;
-    uint8[] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5];        
+    //0 -> 35 %
+    //1 -> 30 %
+    //2 -> 20 %
+    //3 -> 9 %
+    //4 -> 5 %
+    //5 -> 1%
+    uint8[100] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5];        
     //number of species in the world: about 390000 --> uint32
     mapping (ExtinctionRisk => uint32[]) private risksIndexes;
     mapping (ExtinctionRisk => uint8[5]) private valuesForStage;
@@ -154,7 +160,7 @@ contract ETreeumGame is ERC721 {
         _safeMint(owner, treeId);
         //_setTokenURI(treeCounter, tokenURI);
         uint random = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, treeCounter)));
-        ExtinctionRisk risk = ExtinctionRisk(probabilitiesDitribution[random % probabilitiesDitribution.length]);
+        ExtinctionRisk risk = ExtinctionRisk(probabilitiesDitribution[random % 100]);
         uint32[] memory speciesAtRisk = risksIndexes[risk];
         uint32 speciesIndex = speciesAtRisk[random % speciesAtRisk.length];
         Tree memory t = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _computeTreeValue(risk, Stages.Seed), 0, 0, 0);

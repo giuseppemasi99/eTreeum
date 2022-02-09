@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0x96D282D59e086FB75327289de124C726ac4832Ef';
+var contractAddress = '0xcd1AF761a7D4CB19CE3862218723Ac063579CD79';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -569,8 +569,6 @@ function whichColor(value){
 }
 
 function whichRisk(value){
-
-    console.log("WHICKRISK", value);
 
     switch(value){
         case '0':
