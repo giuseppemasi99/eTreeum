@@ -1,5 +1,5 @@
 // Set the contract address
-var contractAddress = '0x827F41D59B27dbbce9aC60352E56089934d01903';
+var contractAddress = '0x7a5269d9d85E9CD8DB664e05717566230375364B';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -19,6 +19,9 @@ var swipeEventActive = false;
 
 
 async function start(){
+
+    subscribeToAllEvents();
+
     //Check is new user --> return
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
     console.log('isNewUser:'+ isNewUser);
@@ -28,6 +31,28 @@ async function start(){
     } else {
         login();
     }
+
+}
+
+function subscribeToAllEvents(){
+
+    contract.events.JoinedGame(
+        async function(error, event){
+            if (!error) {
+                // console.log(event.returnValues['a']);
+                // console.log(event.returnValues['tree']);
+                var freeTreeId = event.returnValues['id'];
+                var freeTree = event.returnValues['tree'];
+                if (senderAddress == event.returnValues.a) {
+                    isNewUser = false;
+                    userIdsOfTrees.push(parseInt(freeTreeId));
+                    userTrees.push({...freeTree});
+                    printTrees();
+                    getPlayer();
+                }
+            }
+        }
+    );
 
     contract.events.UpdatedPlayerScore(
         async function(error, event){
@@ -50,6 +75,21 @@ async function start(){
                 var newStage = event.returnValues['stage'];
                 if (senderAddress == event.returnValues.a) {
                     userTrees[userIdsOfTrees.indexOf(treeId)]['stage'] = newStage;
+                    printTrees();
+                }
+            }
+        }
+    );
+
+    contract.events.BoughtSeed(
+        async function(error, event){
+            if (!error) {
+                var boughtTreeId = event.returnValues['id'];
+                var boughtTree = event.returnValues['t'];
+                if (senderAddress == event.returnValues.a) {
+                    userIdsOfTrees.push(parseInt(boughtTreeId));
+                    userTrees.push({...boughtTree});
+                    cancel();
                     printTrees();
                 }
             }
@@ -225,24 +265,6 @@ async function joinGame () {
 
     input_treeName.innerHTML = "";
     treename = input_treeName.value;
-
-    contract.events.JoinedGame(
-        async function(error, event){
-            if (!error) {
-                // console.log(event.returnValues['a']);
-                // console.log(event.returnValues['tree']);
-                var freeTreeId = event.returnValues['id'];
-                var freeTree = event.returnValues['tree'];
-                if (senderAddress == event.returnValues.a) {
-                    isNewUser = false;
-                    userIdsOfTrees.push(parseInt(freeTreeId));
-                    userTrees.push({...freeTree});
-                    printTrees();
-                    getPlayer();
-                }
-            }
-        }
-    );
 
     try {
         var transaction = await contract.methods.joinGame(username, treename).send({from:senderAddress, gas: 1500000});
@@ -851,21 +873,6 @@ async function buySeed(){
 
     var treeNickname = document.getElementById("name_newSeed").value;
     document.getElementById("name_newSeed").value = "";
-
-    contract.events.BoughtSeed(
-        async function(error, event){
-            if (!error) {
-                var boughtTreeId = event.returnValues['id'];
-                var boughtTree = event.returnValues['t'];
-                if (senderAddress == event.returnValues.a) {
-                    userIdsOfTrees.push(parseInt(boughtTreeId));
-                    userTrees.push({...boughtTree});
-                    cancel();
-                    printTrees();
-                }
-            }
-        }
-    );
 
     try {
         var transaction = await contract.methods.buySeed(treeNickname).send(
