@@ -17,12 +17,12 @@ contract ETreeumGame is ERC721 {
     //fake address
     address payable constant public planter = payable(0x335Ebf7EBd5e7e1318D75f8914CEA6e334cB92b7);
     Species[] private gameSpecies;
-    //0 -> 35 %
-    //1 -> 30 %
-    //2 -> 20 %
-    //3 -> 9 %
-    //4 -> 5 %
-    //5 -> 1%
+    // 0 -> 35 %
+    // 1 -> 30 %
+    // 2 -> 20 %
+    // 3 -> 9 %
+    // 4 -> 5 %
+    // 5 -> 1%
     uint8[100] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5];        
     //number of species in the world: about 390000 --> uint32
     mapping (ExtinctionRisk => uint32[]) private risksIndexes;
@@ -80,12 +80,17 @@ contract ETreeumGame is ERC721 {
         _;
         uint32 oldScore = players[player].score;
         players[player].score = _computePlayerScore(player);
-        if (oldScore != players[player].score) computeRanking();
+        if (oldScore != players[player].score){
+            computeRanking();
+            emit UpdatedPlayerScore(player, players[player].score);
+        } 
     }
 
     event JoinedGame(address a, uint256 id, Tree tree);
     event RankingChanged(PlayerInRanking[3] ranking);
     event TreeGrown(address a, uint256 treeId, Stages stage);
+    event BoughtSeed(address a, uint256 id, Tree t);
+    event UpdatedPlayerScore(address a, uint32 score);
 
     constructor() ERC721("Tree", "T"){
         treeCounter = 0;
@@ -210,7 +215,8 @@ contract ETreeumGame is ERC721 {
     function buySeed(string calldata treeNickname) SetLastEntered public payable {
         require(msg.value >= SEED_PRICE, "Not enough money for a seed");
         planter.transfer(msg.value);
-        _plantSeed(msg.sender, treeNickname);
+        (uint256 id, Tree memory t) = _plantSeed(msg.sender, treeNickname);
+        emit BoughtSeed(msg.sender, id, t);
     }
 
     function sellTree(uint256 treeId, uint8 price) MustOwnTree(treeId) SetLastEntered public {
@@ -307,4 +313,5 @@ contract ETreeumGame is ERC721 {
             emit RankingChanged(ranking);
         }
     }
+
 }

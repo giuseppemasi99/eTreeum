@@ -1,6 +1,6 @@
 
 // Set the contract address
-var contractAddress = '0xcd1AF761a7D4CB19CE3862218723Ac063579CD79';
+var contractAddress = '0x78BBF1247Ec28CB40e9EB88E0366dFaFf9D7C087';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"
@@ -11,8 +11,10 @@ var senderAddress = '0x0';
 // Set contract ABI and the contract
 var contract = null;
 var isNewUser = undefined;
-var userTrees = [];
-var userIdsOfTrees = [];
+var userTrees = Array();
+var userIdsOfTrees = Array();
+var player_username;
+var player_score;
 
 
 async function start(){
@@ -25,6 +27,34 @@ async function start(){
     } else {
         login();
     }
+
+    contract.events.UpdatedPlayerScore(
+        async function(error, event){
+            if (!error) {
+                // console.log(event.returnValues['a']);
+                // console.log(event.returnValues['tree']);
+                var newScore = event.returnValues['score'];
+                if (senderAddress == event.returnValues.a) {
+                    player_score = newScore;
+                    printUserInfo();
+                }
+            }
+        }
+    );
+
+    contract.events.TreeGrown(
+        async function(error, event){
+            if (!error) {
+                var treeId = event.returnValues['treeId'];
+                var newStage = event.returnValues['stage'];
+                if (senderAddress == event.returnValues.a) {
+                    userTrees[userIdsOfTrees.indexOf(treeId)]['stage'] = newStage;
+                    printTrees();
+                }
+            }
+        }
+    );
+
 }
 
 function registerPlayer() {
@@ -66,13 +96,16 @@ function getErrorMessage(msg) {
 async function login() {
 
     try {
+
         var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
-        userIdsOfTrees = userIdsTrees[0];
-        userTrees = userIdsTrees[1];
-        console.log("userIdsOfTrees", userIdsOfTrees);
-        console.log("userTrees", userTrees);
+        
+        userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
+        
+        userIdsTrees[1].forEach(element => userTrees.push({...element}));
+
         printTrees();
         getPlayer();
+
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -197,12 +230,12 @@ async function joinGame () {
             if (!error) {
                 // console.log(event.returnValues['a']);
                 // console.log(event.returnValues['tree']);
-                let freeTreeId = event.returnValues['id'];
-                let freeTree = event.returnValues['tree'];
+                var freeTreeId = event.returnValues['id'];
+                var freeTree = event.returnValues['tree'];
                 if (senderAddress == event.returnValues.a) {
                     isNewUser = false;
-                    userIdsOfTrees.push(freeTreeId);
-                    userTrees.push(freeTree);
+                    userIdsOfTrees.push(parseInt(freeTreeId));
+                    userTrees.push({...freeTree});
                     printTrees();
                     getPlayer();
                 }
@@ -225,11 +258,11 @@ async function getPlayer(){
 
     try {
         var nickname_score = await contract.methods.getPlayerInfo(senderAddress).call({from:senderAddress, gas: 1500000});
-        let username = nickname_score[0];
-        let score = nickname_score[1];
+        player_username = nickname_score[0];
+        player_score = nickname_score[1];
         // console.log("nickname_score");
         // console.log(nickname_score);
-        printUserInfo(username, score);
+        printUserInfo();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -238,13 +271,13 @@ async function getPlayer(){
 
 }
 
-function printUserInfo(username, score){
+function printUserInfo(){
 
     let username_span = document.getElementById("username");
     let score_span = document.getElementById("user_score");
 
-    username_span.innerHTML = username;    
-    score_span.innerHTML = score + " points";
+    username_span.innerHTML = player_username;    
+    score_span.innerHTML = player_score + " points";
 
 }
 
@@ -336,16 +369,33 @@ function changeName(){
 
     info.removeEventListener("click", showInfo);
     
-    if(tot_trees.innerHTML > 1){
-        arrow[0].removeEventListener("click", swipe(true));
-        arrow[1].removeEventListener("click", swipe(false));
+    if(parseInt(tot_trees.innerHTML) > 1){
+        var arrow0clone = arrow[0].cloneNode(true);
+        var arrow1clone = arrow[1].cloneNode(true);
+
+        arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
+        arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
     }
 
 }
 
+async function renameTree(treeId, newNickname){
+
+    try {
+        var transaction = await contract.methods.renameTree(treeId, newNickname).send({from:senderAddress, gas: 1500000});
+        console.log("TRANSACTION", transaction);
+        return true;
+    }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+        return false;
+    }
+    
+}
+
 // function that sumbit the change of the nickname
-// ADD THE CALL TO THE CONTRACT METHOD 'renameTree'
-function submitNewName(){
+async function submitNewName(){
 
     var label, name, complete_body, divRename, tot_trees;
     var water, sun, rename, arrow, info;
@@ -361,23 +411,27 @@ function submitNewName(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    arrow = document.getElementsByClassName("arrow")
-    info = document.getElementById("info")
+    arrow = document.getElementsByClassName("arrow");
+    info = document.getElementById("info");
+
+    num_tree = parseInt(document.getElementById("tree_number").innerHTML);
+    treeId = userIdsOfTrees[num_tree - 1];
+
+    if (await renameTree(treeId, name.value)){
+
+        console.log(userTrees[num_tree-1]['nickname']);
+        console.log(name.value)
+        userTrees[num_tree-1]['nickname'] = name.value;
+        console.log(userTrees[num_tree-1]['nickname']);
+
+        label.innerText = name.value;
+        name.value = "";
     
-    label.innerText = name.value;
-    name.value = "";
+        divRename.style.display = "none";
+        complete_body.style.opacity = 1;
+    
+        printTrees();
 
-    divRename.style.display = "none";
-    complete_body.style.opacity = 1;
-
-    water.disabled = false;
-    sun.disabled = false;
-    rename.disabled = false;
-    info.addEventListener("click", showInfo);
-
-    if (tot_trees.innerHTML > 1){
-        arrow[0].addEventListener("click", swipe(true));
-        arrow[1].addEventListener("click", swipe(false));
     }
 
 }
@@ -438,12 +492,15 @@ function printTrees(){
         arrow[0].style.cursor = "pointer";
         arrow[1].style.cursor = "pointer";
 
-        arrow[0].addEventListener("click", swipe(true));
-        arrow[1].addEventListener("click", swipe(false));
+        arrow[0].addEventListener("click", swipe.bind(null, event, true));
+        arrow[1].addEventListener("click", swipe.bind(null, event, false));
 
     }else{
-        arrow[0].removeEventListener("click", swipe(true));
-        arrow[1].removeEventListener("click", swipe(false));
+        var arrow0clone = arrow[0].cloneNode(true);
+        var arrow1clone = arrow[1].cloneNode(true);
+
+        arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
+        arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
 
         arrow[0].style.cursor = "not-allowed";
         arrow[1].style.cursor = "not-allowed";
@@ -463,22 +520,27 @@ function printTrees(){
 
 }
 
-function swipe(left) {
-    var tree_num, tot_trees, div_tree, tree_img, treeCard;
+function swipe(e, left) {
+
+    var tree_num, tot_trees, div_tree, tree_img, treeCard, tree_name;
     
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
     treeCard = document.getElementById("treeCard")
+    tree_name = document.getElementById("treeName");
     
-    if(tree_num.innerHTML == tot_trees.innerHTML){
+    if (left && parseInt(tree_num.innerHTML) == 1){
+        tree_num.innerHTML = tot_trees.innerHTML;
+    }else if(!left && tree_num.innerHTML == tot_trees.innerHTML){
         tree_num.innerHTML = 1;
     }else{
-        tree_num.innerHTML = left ? tree_num.innerHTML -1 : tree_num.innerHTML +1;
+        tree_num.innerHTML = left ? parseInt(tree_num.innerHTML)-1 : parseInt(tree_num.innerHTML)+1;
     }
 
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["image"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["name"])
+    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
+    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
+    tree_name.innerHTML = userTrees[tree_num.innerHTML-1]["nickname"];
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 }
@@ -644,9 +706,14 @@ function showInfo(){
 
     info.removeEventListener("click", showInfo);
     
-    if(tot_trees.innerHTML > 1){
-        arrow[0].removeEventListener("click", swipe(true));
-        arrow[1].removeEventListener("click", swipe(false));
+    if(parseInt(tot_trees.innerHTML) > 1){
+
+        var arrow0clone = arrow[0].cloneNode(true);
+        var arrow1clone = arrow[1].cloneNode(true);
+
+        arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
+        arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
+
     }
 
 }
@@ -666,8 +733,8 @@ function exitStat(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    arrow = document.getElementsByClassName("arrow")
-    info = document.getElementById("info")
+    arrow = document.getElementsByClassName("arrow");
+    info = document.getElementById("info");
 
     stat_div.style.display = "none";
     complete_body.style.opacity = 1;
@@ -677,9 +744,10 @@ function exitStat(){
     rename.disabled = false;
     info.addEventListener("click", showInfo);
 
-    if (tot_trees.innerHTML > 1){
-        arrow[0].addEventListener("click", swipe(true));
-        arrow[1].addEventListener("click", swipe(false));
+    if (parseInt(tot_trees.innerHTML) > 1){
+        console.log(arrow)
+        arrow[0].addEventListener("click", swipe.bind(null, event, true));
+        arrow[1].addEventListener("click", swipe.bind(null, event, false));
     }
 
 }
@@ -694,14 +762,6 @@ async function giveSun(){
     num_tree = document.getElementById("tree_number").innerHTML;
 
     treeId = userIdsOfTrees[num_tree - 1];
-
-    contract.events.TreeGrown(
-        async function(error, event){
-            if (!error) {
-                console.log('TreeGrown event, returnValues: ' + event.returnValues);
-            }
-        }
-    );
 
     try {
         var transaction = await contract.methods.giveSun(treeId, sunHours).send({from:senderAddress, gas: 1500000});
@@ -725,14 +785,6 @@ async function giveWater(){
     num_tree = document.getElementById("tree_number").innerHTML;
 
     treeId = userIdsOfTrees[num_tree - 1];
-    
-    contract.events.TreeGrown(
-        async function(error, event){
-            if (!error) {
-                console.log('TreeGrown event, returnValues: ' + event.returnValues);
-            }
-        }
-    );
 
     try {
         var transaction = await contract.methods.giveWater(treeId, waterAmount).send({from:senderAddress, gas: 1500000});
@@ -745,6 +797,8 @@ async function giveWater(){
     }
      
 }
+
+
 
 // function that allow the user to buy a new seed
 function buyNewSeed(){
@@ -776,9 +830,12 @@ function buyNewSeed(){
     info.removeEventListener("click", showInfo);
     menu_buySeed.removeEventListener('click', buyNewSeed);
     
-    if(tot_trees.innerHTML > 1){
-        arrow[0].removeEventListener("click", swipe(true));
-        arrow[1].removeEventListener("click", swipe(false));
+    if(parseInt(tot_trees.innerHTML) > 1){
+        var arrow0clone = arrow[0].cloneNode(true);
+        var arrow1clone = arrow[1].cloneNode(true);
+
+        arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
+        arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
     }
 
 }
@@ -809,26 +866,48 @@ function cancel(){
     info.addEventListener("click", showInfo);
     menu_buySeed.addEventListener('click', buyNewSeed);
 
-    if (tot_trees.innerHTML > 1){
-        arrow[0].addEventListener("click", swipe(true));
-        arrow[1].addEventListener("click", swipe(false));
+    if (parseInt(tot_trees.innerHTML) > 1){
+        arrow[0].addEventListener("click", swipe.bind(null, event, true));
+        arrow[1].addEventListener("click", swipe.bind(null, event, false));
     }
 
 }
 
 // function that actually buy the new seed
-// ADD CALL TO THE BACK-END METHOD
-function buySeed(){
-    var tree_id, num_tree;
+async function buySeed(treeNickname){
 
-    num_tree = document.getElementById("tree_number").innerHTML;
+    contract.events.BoughtSeed(
+        async function(error, event){
+            if (!error) {
+                var boughtTreeId = event.returnValues['id'];
+                var boughtTree = event.returnValues['t'];
+                if (senderAddress == event.returnValues.a) {
+                    userIdsOfTrees.push(parseInt(boughtTreeId));
+                    userTrees.push({...boughtTree});
+                    cancel();
+                    printTrees();
+                }
+            }
+        }
+    );
 
-    tree_id = userIdsOfTrees[num_tree-1];
-
-    alert(tree_id);
-    cancel();
+    try {
+        var transaction = await contract.methods.buySeed(treeNickname).send(
+            {
+                from:senderAddress, 
+                value: web3.utils.toWei('0.001', 'ether'),
+                gas: 1500000
+            });
+        console.log("TRANSACTION", transaction);
+    }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
 
 }
+
+
 
 /* DO NOT MODIFY CODE BELOW */
 
