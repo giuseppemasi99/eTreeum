@@ -1,6 +1,5 @@
-
 // Set the contract address
-var contractAddress = '0x78BBF1247Ec28CB40e9EB88E0366dFaFf9D7C087';
+var contractAddress = '0x827F41D59B27dbbce9aC60352E56089934d01903';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "build/contracts/ETreeumGame.json"

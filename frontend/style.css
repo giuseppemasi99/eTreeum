@@ -210,12 +210,6 @@ div#treeName_change_div, div#treeStat, div#buy_new_seed{
     font-weight: 700;
 }
 
-/*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA*/
-div#treeName_change_div{
-    display: flex;
-}
-/*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA*/
-
 
 input#newTreeName{
     margin-top: 10px;
