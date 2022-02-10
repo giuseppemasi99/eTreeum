@@ -33,6 +33,9 @@ var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "ra
 {"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":0, "price":12, "id":5},
 {"image":1, "rarity":0, "price":12, "id":6}, {"image":3, "rarity":1, "price":12, "id":7}, {"image":1, "rarity":2, "price":12, "id":8}]
 
+// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//      farsi restituire i tree in vendita
+// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 async function showSellingTrees(){
 
@@ -92,6 +95,9 @@ async function showSellingTrees(){
         tree_row.appendChild(eth);
         eth.appendChild(eth_value);
 
+        // PER PEPPOZ, UNA VOLTA RESTITUITI I TREE IN VENDITA METTI 
+        // "sellingTree[i]["specie"]["risk"]" al posto di sellingTrees[i]["rarity"] e
+        // "sellingTree[i]["stage"]" al posto di sellingTrees[i]["image"]
         tree_div.style.backgroundColor = whichColor(sellingTrees[i]["rarity"]);
         src += whichImage(sellingTrees[i]["image"]);
         img.src = src;
@@ -174,6 +180,7 @@ function cancelOption(){
     shop_div.style.opacity = 1;
 }
 
+// CALL A METHOD OF THE BLOCKCHAIN THAT BUY THE TREE
 function buyTree(){
     
     var tree_id, tree_image;

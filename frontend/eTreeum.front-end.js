@@ -967,6 +967,7 @@ function cancelSellTree(){
     }
 }
 
+// ADD CALL TO THE BLOCKCHAINMETHOD
 function sellingTheTree(){
     // dopo aver fatto la transazione lanciare la funzione cancelSellTree
     // e magari un alert che hai messo in vendita l'albero ad un certo tot
