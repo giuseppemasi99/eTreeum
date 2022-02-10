@@ -31,9 +31,17 @@
             
             <div id="right_top_header">
 
-                <a href="./index.html">
-                    <i class="fa fa-home"></i>
-                </a>
+                <div id="menu">
+                    <ul> 
+                        <li id="shop_chart">
+                            <a href="#">&#128722;</a> 
+                            <ul>
+                                <li><a href="./shop.html">Go to the shop</a></li>
+                                <li><a id="menu_buySeed">Buy from game</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
 
                 <div id="user_info">
                     <span id="username"></span>
@@ -54,6 +62,17 @@
             <div id="buttons_option">
                 <button id="buy" type="button">Buy!</button>
                 <button id="cancel" type="button">Cancel</button>
+            </div>
+        </div>
+
+        <div id="buy_new_seed">
+            <h3>Want to buy a new seed?</h3>
+            <p>Seed cost: <img id="eth_logo" src="frontend/img/eth.png"> 0.001</p>
+            <img id="seed_to_buy" src="frontend/img/seed.gif" alt="seed">
+            <input type="text" id="name_newSeed" maxlength="15" value="" placeholder="TreeName"/>
+            <div class="buttons_option">
+                <button id="buy_seed_button" type="button">Buy!</button>
+                <button id="cancel_newSeed" type="button">No thanks</button>
             </div>
         </div>
 

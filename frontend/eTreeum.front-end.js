@@ -145,7 +145,7 @@ async function login() {
 }
 
 // function that allow the counter
-// DA CITARE
+// https://codepen.io/dmcreis/pen/VLLYPo
 function startTreeCounter(){
     
     var a = 0;
@@ -270,7 +270,8 @@ async function joinGame () {
 async function setupPage(){
 
     var water, sun, rename, info, find_out_button, exit_stat, submit_change, menu_buy_seed;
-    var cancel_button, buy_seed_button, cancel_change_button;
+    var cancel_button, buy_seed_button, cancel_change_button, sell_button;
+    var sell_tree_button, cancel_sell_tree_button;
     var div_treeName, complete_body, infoRow, counter, right_top_header;
 
     // buttons
@@ -282,6 +283,9 @@ async function setupPage(){
     exit_stat = document.getElementById("exit");
     submit_change = document.getElementById("submit_change_name");
     menu_buy_seed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
+    sell_tree_button = document.getElementById("sell_tree_button");
+    cancel_sell_tree_button = document.getElementById("cancel_sell_tree");
 
     cancel_change_button = document.getElementById("cancel_change_treeName");
     cancel_button = document.getElementById("cancel");
@@ -301,6 +305,9 @@ async function setupPage(){
     sun.addEventListener('click', giveSun);
     water.addEventListener('click', giveWater);
     menu_buy_seed.addEventListener('click', buyNewSeed);
+    sell_button.addEventListener('click', sellTree);
+    sell_tree_button.addEventListener('click', sellingTheTree);
+    cancel_sell_tree_button.addEventListener('click', cancelSellTree);
 
     cancel_change_button.addEventListener('click', cancelChangeName);
     cancel_button.addEventListener('click', cancel);
@@ -447,7 +454,7 @@ function printTrees(){
     initial_div.style.display = "none";
 
     var counter, tree_num, tot_trees, div_tree, tree_img, tree_name;
-    var arrow, info, treeCard;
+    var arrow, info, treeCard, sell_tree_button;
 
     counter = document.getElementById("counting_tree");
     tree_num = document.getElementById("tree_number");
@@ -458,10 +465,11 @@ function printTrees(){
 
     // button
     info = document.getElementById("info")
+    sell_tree_button = document.getElementById("sell_tree");
+    arrow = document.getElementsByClassName("arrow");
     
     info.addEventListener("click", showInfo);
 
-    arrow = document.getElementsByClassName("arrow")
 
     if(userTrees.length > 1 && !swipeEventActive){
         swipeEventActive = true;
@@ -498,17 +506,25 @@ function printTrees(){
 
     counter.style.display = "flex";
 
+    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 0 ){
+        sell_tree_button.style.display = "flex";
+    }
+    else{
+        sell_tree_button.style.display = "none";
+    }
+
 }
 
 function swipe(e, left) {
 
-    var tree_num, tot_trees, div_tree, tree_img, treeCard, tree_name;
+    var tree_num, tot_trees, div_tree, tree_img, treeCard, tree_name, sell_tree_button;
     
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
     treeCard = document.getElementById("treeCard")
     tree_name = document.getElementById("treeName");
+    sell_tree_button = document.getElementById("sell_tree");
     
     if (left && parseInt(tree_num.innerHTML) == 1){
         tree_num.innerHTML = tot_trees.innerHTML;
@@ -523,6 +539,13 @@ function swipe(e, left) {
     tree_name.innerHTML = userTrees[tree_num.innerHTML-1]["nickname"];
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+
+    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 0 ){
+        sell_tree_button.style.display = "flex";
+    }
+    else{
+        sell_tree_button.style.display = "none";
+    }
 }
 
 // function used to show the information (stat) of a tree
@@ -779,6 +802,84 @@ async function buySeed(){
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
     }
+
+}
+
+function sellTree(){
+    // ottenere immagine e sfonto del tree da vendere
+    var complete_body, sell_tree_div, num_tree;
+
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
+
+    complete_body = document.getElementById("complete_body");
+    sell_tree_div = document.getElementById("sell_tree_div");
+
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    info = document.getElementById("info")
+    arrow = document.getElementsByClassName("arrow");
+    menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
+
+    num_tree = parseInt(document.getElementById("tree_number").innerHTML);
+
+    sell_tree_div.style.display = "flex";
+    complete_body.style.opacity = 0.2;
+
+    water.disabled = true;
+    sun.disabled = true;
+    rename.disabled = true;
+
+    info.removeEventListener("click", showInfo);
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+    sell_button.removeEventListener('click', sellTree);
+    
+    if(parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = false;
+        var arrow0clone = arrow[0].cloneNode(true);
+        var arrow1clone = arrow[1].cloneNode(true);
+
+        arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
+        arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
+    }
+}
+
+function cancelSellTree(){
+    var complete_body, sell_tree_div;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
+
+    // divs and other elements
+    sell_tree_div = document.getElementById("sell_tree_div");
+    complete_body = document.getElementById("complete_body");
+
+    // buttons
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    arrow = document.getElementsByClassName("arrow");
+    info = document.getElementById("info");
+    menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
+
+    sell_tree_div.style.display = "none";
+    complete_body.style.opacity = 1;
+
+    water.disabled = false;
+    sun.disabled = false;
+    rename.disabled = false;
+    info.addEventListener("click", showInfo);
+    menu_buySeed.addEventListener('click', buyNewSeed);
+    sell_button.addEventListener('click', sellTree);
+
+    if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = true;
+        arrow[0].addEventListener("click", swipe.bind(null, event, true));
+        arrow[1].addEventListener("click", swipe.bind(null, event, false));
+    }
+}
+
+function sellingTheTree(){
 
 }
 

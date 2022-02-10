@@ -19,9 +19,11 @@ body{
     background-color: white;
 }
 
-h2{
+h2, h3{
     font-family: 'Varela Round';
     font-weight: 700;
+
+    margin-bottom: 10px;
 }
 
 img {
@@ -33,7 +35,7 @@ a{
     text-decoration: none;
 }
 
-div#buy_options{
+div#buy_options, div#buy_new_seed{
     position: absolute;
     z-index: 10;
 
@@ -51,18 +53,14 @@ div#buy_options{
 
     background-color: white;
 
-    font-size: 17pt;
-    font-weight: 700;
-
-}
-
-div#buy_options{
     display: none;
     z-index: 11;
 
     font-size: 12pt;
     font-weight: 700;
+
 }
+
 
 /* CSS FOR THE HEADER*/
 
@@ -152,6 +150,90 @@ div#tree_to_sell img{
     width: 150px;
     margin: 30px;
     border-radius: 10px;
+}
+
+/*CSS FOR THE MENU'*/
+div#menu ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+li#shop_chart{
+    display: flex;
+    align-items: center;
+
+    height: 80px;
+}
+
+div#menu li ul{
+    display: none
+}
+
+div#menu li:hover ul{
+    display: block;
+
+    position: absolute;
+    top: 78px;
+
+    z-index:1;
+
+    color: black;
+    background-color: rgb(36, 102, 36);
+}
+
+div#menu ul li ul{
+    text-align: left;
+    border-radius: 5px;
+}
+
+div#menu ul li ul li a{
+    color: black;
+    font-weight: 600;
+    padding: 5px;
+    cursor: pointer;
+}
+
+div#menu ul li ul li:hover{
+    background-color: rgb(28, 75, 17);
+    border-radius: 5px;
+}
+
+/*CSS FOR BUYING A SEED*/
+div#buy_new_seed{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 25%;
+}
+
+img#eth_logo{
+    width: 10px;
+    height: 15px;
+}
+
+input#name_newSeed{
+    margin-bottom: 10px;
+}
+
+div.buttons_option{
+    display: flex;
+}
+
+div.buttons_option button{
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px;
+
+    width: 100px;
+}
+
+img#seed_to_buy{
+    width: 80px;
+    height: 110px;
+
+    margin: 10px 5px;
 }
 
 /*CSS FOR THE LIST OF SELLING TREE*/

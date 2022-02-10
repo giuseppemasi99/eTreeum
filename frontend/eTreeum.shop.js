@@ -13,6 +13,21 @@ $(window).on('load', async function() {
 
 });
 
+
+function subscribeToAllEvents(){
+
+    contract.events.BoughtSeed(
+        async function(error, event){
+            if (!error) {
+                if (senderAddress == event.returnValues.a) {
+                    cancelNewSeed();
+                    getPlayer();
+                }
+            }
+        }
+    );
+}
+
 // sostituire con getShop
 var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "rarity":1, "price":12, "id":2}, 
 {"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":0, "price":12, "id":5},
@@ -22,18 +37,30 @@ var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "ra
 async function showSellingTrees(){
 
     await getPlayer();
+
+    subscribeToAllEvents();
     
     var container, buy_button, cancel_button;
     var num_selling_trees = sellingTrees.length, i;
     
     var tree_row, tree_name_div, tree_div, eth, eth_value, tree_info, img, src;
+    var menu_buy_seed, cancel_seed_button, buy_seed_button;
 
     container = document.getElementById("trees_container");
     buy_button = document.getElementById("buy");
     cancel_button = document.getElementById("cancel");
+   
+    cancel_seed_button = document.getElementById("cancel_newSeed");
+    buy_seed_button = document.getElementById("buy_seed_button");
+    menu_buy_seed = document.getElementById("menu_buySeed");
     
+    menu_buy_seed.addEventListener('click', buyNewSeed);
+    cancel_seed_button.addEventListener('click', cancelNewSeed);
+    buy_seed_button.addEventListener('click', buySeed);
+
     cancel_button.addEventListener('click', cancelOption);
     buy_button.addEventListener('click', buyTree);
+
 
     for(i = 0; i < num_selling_trees; i++){
 
@@ -72,6 +99,31 @@ async function showSellingTrees(){
 
     }
     
+
+}
+
+function buyNewSeed(){
+    var shop_body, buy_seed_div;
+
+    var menu_buySeed, buy_buttons;
+
+    shop_body = document.getElementById("shop_body");
+    buy_seed_div = document.getElementById("buy_new_seed");
+
+    menu_buySeed = document.getElementById("menu_buySeed");
+    buy_buttons = document.getElementsByClassName("eth_value");
+
+    buy_seed_div.style.display = "flex";
+    shop_body.style.opacity = 0.2;
+
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+
+    
+    for (let i=0; i<buy_buttons.length; i++){
+        var elClone = buy_buttons[i].cloneNode(true);
+        buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
+        buy_buttons[i].style.cursor = "default";
+    }
 
 }
 
@@ -132,5 +184,53 @@ function buyTree(){
 
     alert(tree_id);
     cancelOption();
+
+}
+
+// function that go out from the buy option
+function cancelNewSeed(){
+    var shop_body, buy_seed_div;
+    var menu_buySeed, buy_buttons;
+
+    // divs and other elements
+    buy_seed_div = document.getElementById("buy_new_seed");
+    shop_body = document.getElementById("shop_body");
+
+    // buttons
+    menu_buySeed = document.getElementById("menu_buySeed");
+    buy_buttons = document.getElementsByClassName("eth_value");
+
+    buy_seed_div.style.display = "none";
+    shop_body.style.opacity = 1;
+
+    menu_buySeed.addEventListener('click', buyNewSeed);
+    
+
+    for (let i=0; i<buy_buttons.length; i++){
+        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        buy_buttons[i].style.cursor = "pointer";
+    }
+
+}
+
+// function that actually buy the new seed
+async function buySeed(){
+
+    var treeNickname = document.getElementById("name_newSeed").value;
+    document.getElementById("name_newSeed").value = "";
+
+    try {
+        var transaction = await contract.methods.buySeed(treeNickname).send(
+            {
+                from:senderAddress, 
+                value: web3.utils.toWei('0.001', 'ether'),
+                gas: 1500000
+            });
+        console.log("TRANSACTION", transaction);
+    }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
 
 }

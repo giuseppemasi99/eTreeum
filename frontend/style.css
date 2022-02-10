@@ -139,7 +139,7 @@ div#menu ul li ul li:hover{
 }
 
 
-div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat, div#buy_new_seed{
+div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat, div#buy_new_seed, div#sell_tree_div{
     position: absolute;
     z-index: 10;
 
@@ -176,12 +176,6 @@ div#initial_div, div#insert_username, div#game_rules, div#select_treeName{
 
 }
 
-/*
-div#insert_username, div#game_rules, div#select_treeName{
-    display: none;
-}
-*/
-
 h2, h3{
     margin-bottom: 0px;
 }
@@ -202,7 +196,7 @@ button#join, button#submit_username, button#okrules_clicked, button#start_play{
 
 /*CSS FOR THE DIV USED TO CHANGE THE NICKNAME OF THE PLANT*/
 
-div#treeName_change_div, div#treeStat, div#buy_new_seed{
+div#treeName_change_div, div#treeStat, div#buy_new_seed, div#sell_tree_div{
     display: none;
     z-index: 11;
 
@@ -276,7 +270,7 @@ label.stat{
 }
 
 /* CSS FOR THE DIV IN WHICH WE BUY A NEW SEED*/
-div#buy_new_seed{
+div#buy_new_seed, div#sell_tree_div{
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -288,7 +282,7 @@ img#eth_logo{
     height: 15px;
 }
 
-input#name_newSeed{
+input#name_newSeed, input#tree_price{
     margin-bottom: 10px;
 }
 
@@ -310,6 +304,18 @@ img#seed_to_buy{
     height: 110px;
 
     margin: 10px 5px;
+}
+
+/*CSS FOR SELL THE TREE*/
+div#tree_to_sell{
+    border-radius: 10px;
+    margin: 10px;
+}
+
+div#tree_to_sell img{
+    width: 150px;
+    margin: 30px;
+    border-radius: 10px;
 }
 
 /* CSS FOR THE BODY OF THE PAGE*/
