@@ -210,12 +210,19 @@ div#treeName_change_div, div#treeStat, div#buy_new_seed{
     font-weight: 700;
 }
 
+/*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA*/
+div#treeName_change_div{
+    display: flex;
+}
+/*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA*/
+
 
 input#newTreeName{
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-button#submit_change_name{
+button#submit_change_name, button#cancel_change_treeName{
     cursor: pointer;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -279,13 +286,23 @@ div#buy_new_seed{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    top: 25%;
 }
 
-div#buttons_option{
+img#eth_logo{
+    width: 10px;
+    height: 15px;
+}
+
+input#name_newSeed{
+    margin-bottom: 10px;
+}
+
+div.buttons_option{
     display: flex;
 }
 
-div#buttons_option button{
+div.buttons_option button{
     cursor: pointer;
     padding: 10px;
     border-radius: 10px;

@@ -16,6 +16,8 @@ var userIdsOfTrees = Array();
 var player_username;
 var player_score;
 
+var swipeEventActive = false;
+
 
 async function start(){
     //Check is new user --> return
@@ -285,7 +287,7 @@ function printUserInfo(){
 async function setupPage(){
 
     var water, sun, rename, info, find_out_button, exit_stat, submit_change, menu_buy_seed;
-    var cancel_button, buy_seed_button;
+    var cancel_button, buy_seed_button, cancel_change_button;
     var div_treeName, complete_body, infoRow, counter, right_top_header;
 
     // buttons
@@ -298,6 +300,7 @@ async function setupPage(){
     submit_change = document.getElementById("submit_change_name");
     menu_buy_seed = document.getElementById("menu_buySeed");
 
+    cancel_change_button = document.getElementById("cancel_change_treeName");
     cancel_button = document.getElementById("cancel");
     buy_seed_button = document.getElementById("buy_seed_button");
 
@@ -316,6 +319,7 @@ async function setupPage(){
     water.addEventListener('click', giveWater);
     menu_buy_seed.addEventListener('click', buyNewSeed);
 
+    cancel_change_button.addEventListener('click', cancelChangeName);
     cancel_button.addEventListener('click', cancel);
     buy_seed_button.addEventListener('click', buySeed);
     
@@ -397,22 +401,13 @@ async function renameTree(treeId, newNickname){
 // function that sumbit the change of the nickname
 async function submitNewName(){
 
-    var label, name, complete_body, divRename, tot_trees;
-    var water, sun, rename, arrow, info;
+    var label, name, complete_body, divRename, num_tree;
 
     // divs and other elements
     label = document.getElementById("treeName");
     name = document.getElementById("newTreeName");
     divRename = document.getElementById("treeName_change_div");
     complete_body = document.getElementById("complete_body");
-    tot_trees = document.getElementById("tot_trees");
-
-    // buttons
-    rename = document.getElementById("change_name");
-    water = document.getElementById("water");
-    sun = document.getElementById("sun");
-    arrow = document.getElementsByClassName("arrow");
-    info = document.getElementById("info");
 
     num_tree = parseInt(document.getElementById("tree_number").innerHTML);
     treeId = userIdsOfTrees[num_tree - 1];
@@ -484,7 +479,7 @@ function printTrees(){
 
     arrow = document.getElementsByClassName("arrow")
 
-    if(userTrees.length > 1){
+    if(!swipeEventActive && userTrees.length > 1){
     
         arrow[0].style.opacity = 1;
         arrow[1].style.opacity = 1;
@@ -544,52 +539,6 @@ function swipe(e, left) {
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 }
-
-// if you click on the left arrow you can see the tree on the left side
-/*function goLeft(){
-
-    var tree_num, tot_trees, div_tree, tree_img, treeCard;
-    
-    tree_num = document.getElementById("tree_number");
-    tot_trees = document.getElementById("tot_trees");
-    div_tree = document.getElementById("tree");
-    treeCard = document.getElementById("treeCard")
-
-    if(tree_num.innerHTML == 1){
-        tree_num.innerHTML = tot_trees.innerHTML;
-    }else{
-        tree_num.innerHTML--;
-    }
-
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
-
-    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
-
-}
-
-// if you click on the right arrow you can see the tree on the right side
-function goRight(){
-
-    var tree_num, tot_trees, div_tree, tree_img, treeCard;
-    
-    tree_num = document.getElementById("tree_number");
-    tot_trees = document.getElementById("tot_trees");
-    div_tree = document.getElementById("tree");
-    treeCard = document.getElementById("treeCard")
-    
-    if(tree_num.innerHTML == tot_trees.innerHTML){
-        tree_num.innerHTML = 1;
-    }else{
-        tree_num.innerHTML++;
-    }
-
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"])
-
-    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
-
-}*/
 
 //function that given a value return the type of image to show
 function whichImage(value){
@@ -744,14 +693,13 @@ function exitStat(){
     rename.disabled = false;
     info.addEventListener("click", showInfo);
 
-    if (parseInt(tot_trees.innerHTML) > 1){
+    if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
         console.log(arrow)
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
     }
 
 }
-
 
 // function that gives the sun to the tree
 async function giveSun(){
@@ -775,7 +723,6 @@ async function giveSun(){
 
 }
 
-
 // function that gives the water to the tree
 async function giveWater(){
 
@@ -798,12 +745,9 @@ async function giveWater(){
      
 }
 
-
-
 // function that allow the user to buy a new seed
 function buyNewSeed(){
     var complete_body, buy_seed_div;
-    var buy_button, cancel_button;
 
     var water, sun, rename, arrow, info, menu_buySeed;
 
@@ -816,9 +760,6 @@ function buyNewSeed(){
     info = document.getElementById("info")
     arrow = document.getElementsByClassName("arrow");
     menu_buySeed = document.getElementById("menu_buySeed");
-
-    buy_button = document.getElementsByClassName("buy_seed_button");
-    cancel_button = document.getElementsByClassName("cancel");
 
     buy_seed_div.style.display = "flex";
     complete_body.style.opacity = 0.2;
@@ -838,6 +779,11 @@ function buyNewSeed(){
         arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
     }
 
+}
+
+// function that go out from the change of the Tree Name
+function cancelChangeName(){
+    
 }
 
 // function that go out from the buy option
@@ -866,7 +812,7 @@ function cancel(){
     info.addEventListener("click", showInfo);
     menu_buySeed.addEventListener('click', buyNewSeed);
 
-    if (parseInt(tot_trees.innerHTML) > 1){
+    if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
     }
@@ -874,7 +820,10 @@ function cancel(){
 }
 
 // function that actually buy the new seed
-async function buySeed(treeNickname){
+async function buySeed(){
+
+    var treeNickname = document.getElementById("name_newSeed").value;
+    document.getElementById("name_newSeed").value = "";
 
     contract.events.BoughtSeed(
         async function(error, event){

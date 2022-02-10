@@ -84,8 +84,11 @@
         </div>
 
         <div id="treeName_change_div">
-            Enter a NickName for your plant: <input type="text" id="newTreeName" maxlength="15" value="" placeholder="newTreeName"/>
-            <button id="submit_change_name" type="button">Change NickName</button>
+            Enter a NickName for your plant: <input type="text" id="newTreeName" maxlength="15" value="" placeholder="New TreeName"/>
+            <div class="buttons_option">
+                <button id="submit_change_name" type="button">Change it</button>
+                <button id="cancel_change_treeName" type="button">Cancel</button>
+            </div>
         </div>
 
         <div id="treeStat">
@@ -111,8 +114,10 @@
 
         <div id="buy_new_seed">
             <h3>Want to buy a new seed?</h3>
+            <p>Seed cost: <img id="eth_logo" src="frontend/img/eth.png"> 0.001</p>
             <img id="seed_to_buy" src="frontend/img/seed.gif" alt="seed">
-            <div id="buttons_option">
+            <input type="text" id="name_newSeed" maxlength="15" value="" placeholder="TreeName"/>
+            <div class="buttons_option">
                 <button id="buy_seed_button" type="button">Buy!</button>
                 <button id="cancel" type="button">No thanks</button>
             </div>
