@@ -1,15 +1,27 @@
-$(window).on('load', function() {
+var isNewUser;
+
+$(window).on('load', async function() {
     // comment this code when working with blockchain
-    showSellingTrees();
+    await initialise();
+    if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
+
+    if(isNewUser){
+        window.location.href = "./index.html";
+    }else{
+        showSellingTrees();
+    }
 
 });
 
+// sostituire con getShop
 var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "rarity":1, "price":12, "id":2}, 
 {"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":0, "price":12, "id":5},
 {"image":1, "rarity":0, "price":12, "id":6}, {"image":3, "rarity":1, "price":12, "id":7}, {"image":1, "rarity":2, "price":12, "id":8}]
 
 
-function showSellingTrees(){
+async function showSellingTrees(){
+
+    await getPlayer();
     
     var container, buy_button, cancel_button;
     var num_selling_trees = sellingTrees.length, i;
@@ -25,7 +37,7 @@ function showSellingTrees(){
 
     for(i = 0; i < num_selling_trees; i++){
 
-        src = "img/";
+        src = "frontend/img/";
 
         tree_row = document.createElement("div");
         tree_name_div = document.createElement("div");
@@ -63,53 +75,6 @@ function showSellingTrees(){
 
 }
 
-//function that given a value return the type of image to show
-function whichImage(value){
-    switch(value){
-        case 0:
-            return "seed.gif";
-        case 1:
-            return "little_tree.gif";
-        case 2:
-            return "da9cc5efa7671200c3def8a880721db7.gif";
-        case 3:
-            return "da9cc5efa7671200c3def8a880721db7.gif";
-        case 4:
-            return "da9cc5efa7671200c3def8a880721db7.gif";
-        default:
-            return "seed.gif";
-    }
-}
-
-//function that given a value return the color to show in background
-function whichColor(value){
-    switch(value){
-        case "AbiesNebrodensis":
-            return "rosybrown";
-        case "CallitrisPancheri":
-            return "#9400D3";
-        case "AfzeliaAfricana":
-            return "#b9f2ff";
-        case "AloeSquarrosa":
-            return "#FFD700";
-        case "CanariumZeylanicum":
-            return "#CD853F";
-        case "PinusLatteri":
-            return "#FF8C00";
-        case "BaccaureaPolyneura":
-            return "#C0C0C0";
-        case "MalusDomestica":
-            return "#CD7F32";
-        case "PinusSylvestris":
-            return "#87CEEB";
-        case "TheobromaCacao":
-            return "#E4A598";
-        
-        default:
-            return "rosybrown";
-    }
-}
-
 function buyOptions(event, value){
     var buy_option_div, shop_div, tree_to_show_div, tree_image;
     var buy_buttons;
@@ -139,6 +104,7 @@ function buyOptions(event, value){
 }
 
 function cancelOption(){
+
     var buy_option_div, shop_div;
     var buy_buttons;
 
@@ -157,6 +123,7 @@ function cancelOption(){
 }
 
 function buyTree(){
+    
     var tree_id, tree_image;
 
     tree_image = document.getElementById("tree_to_sell_image");
