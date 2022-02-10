@@ -623,7 +623,8 @@ async function giveSun(){
     try {
         var transaction = await contract.methods.giveSun(treeId, sunHours).send({from:senderAddress, gas: 1500000});
         console.log("Transaction giveSun: ", transaction);
-        alert("Good job, you gave " + sunHours + " hour(s) of sun to your tree");
+        var sun = sunHours == 1 ? "hour" : "hours";
+        alert("Good job, you gave " + sunHours + " " + sun + " of sun to your tree");
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -645,7 +646,7 @@ async function giveWater(){
     try {
         var transaction = await contract.methods.giveWater(treeId, waterAmount).send({from:senderAddress, gas: 1500000});
         console.log("Transaction giveWater: ", transaction);
-        alert("Good job, you gave " + waterAmount + " liters of water to your tree");
+        alert("Good job, you gave " + waterAmount + " milliliters of water to your tree");
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
