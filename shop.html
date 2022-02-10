@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<html lang="en">
+
+    <head>
+
+        <title>eTreeum - Shop</title>
+        
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+        </style>
+
+        <link rel="stylesheet" href="frontend/style_shop.css">
+
+    </head>
+
+    <body>
+
+        <div id="header">
+            <div id="logo">
+                <a href="./index.html">
+                    <img id="_img" src="frontend/img/logo.png" alt="logo">
+                </a>
+            </div>
+
+            <header>Welcome into the tree shop!</header>
+            
+            <div id="right_top_header">
+
+                <a href="./index.html">
+                    <i class="fa fa-home"></i>
+                </a>
+
+                <div id="user_info">
+                    <span id="username"></span>
+                    <span id="user_score"></span>
+                </div>
+
+            </div>
+            
+        </div>
+
+        <div id="buy_options">
+            Lo voi comprà st'albero?
+
+            <div id="tree_to_sell">
+                <img id="tree_to_sell_image" src="#" alt="">
+            </div>
+
+            <div id="buttons_option">
+                <button id="buy" type="button">Buy!</button>
+                <button id="cancel" type="button">Cancel</button>
+            </div>
+        </div>
+
+        <div id="shop_body">
+            <h2>Frase molto bella su come funziona lo shop!</h2>
+            
+            <div id="trees_container">
+                
+            </div>
+        </div>
+
+
+    </body>
+
+	<!-- JavaScript -->
+
+	<script src="./dist/js/jquery.min.js"></script>
+	<script src="./dist/js/web3.min.js"></script>
+	
+    <script src="frontend/eTreeum.init.js"></script>
+  	<script src="frontend/eTreeum.shop.js"></script>
+    
+</html> 
