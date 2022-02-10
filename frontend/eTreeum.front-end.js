@@ -340,7 +340,7 @@ async function setupPage(){
 function changeName(){
 
     var complete_body, divRename, tot_trees;
-    var water, sun, rename, arrow, info;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
     
     // divs and other elements
     divRename = document.getElementById("treeName_change_div");
@@ -352,6 +352,8 @@ function changeName(){
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     info = document.getElementById("info")
+    menu_buySeed = document.getElementById("menu_buySeed")
+    sell_button = document.getElementById("sell_tree")
     arrow = document.getElementsByClassName("arrow")
     
     divRename.style.display = "flex";
@@ -362,6 +364,8 @@ function changeName(){
     rename.disabled = true;
 
     info.removeEventListener("click", showInfo);
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+    sell_button.removeEventListener('click', sellTree);
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;
@@ -370,6 +374,15 @@ function changeName(){
 
         arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
         arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
+
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    } else{
+
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
+        
     }
 
 }
@@ -454,7 +467,7 @@ function printTrees(){
     initial_div.style.display = "none";
 
     var counter, tree_num, tot_trees, div_tree, tree_img, tree_name;
-    var arrow, info, treeCard, sell_tree_button;
+    var arrow, treeCard, sell_tree_button;
 
     counter = document.getElementById("counting_tree");
     tree_num = document.getElementById("tree_number");
@@ -464,11 +477,8 @@ function printTrees(){
     tree_name = document.getElementById("treeName");
 
     // button
-    info = document.getElementById("info")
     sell_tree_button = document.getElementById("sell_tree");
     arrow = document.getElementsByClassName("arrow");
-    
-    info.addEventListener("click", showInfo);
 
 
     if(userTrees.length > 1 && !swipeEventActive){
@@ -482,6 +492,9 @@ function printTrees(){
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
 
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
     }else if(userTrees.length == 1){
         swipeEventActive = false;
         var arrow0clone = arrow[0].cloneNode(true);
@@ -490,8 +503,8 @@ function printTrees(){
         arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
         arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
 
-        arrow[0].style.cursor = "not-allowed";
-        arrow[1].style.cursor = "not-allowed";
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
 
     tree_num.innerHTML = 1;
@@ -552,7 +565,7 @@ function swipe(e, left) {
 function showInfo(){
 
     var complete_body, stat_div, tot_trees, num_tree, tree_id;
-    var water, sun, rename, arrow, info;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
     var stage, spiece, risk;
     
     // divs and other elements
@@ -570,6 +583,8 @@ function showInfo(){
     water = document.getElementById("water");
     sun = document.getElementById("sun");
     info = document.getElementById("info")
+    menu_buySeed = document.getElementById("menu_buySeed")
+    sell_button = document.getElementById("sell_tree")
     arrow = document.getElementsByClassName("arrow");
     
     tree_id.innerHTML = userIdsOfTrees[num_tree.innerHTML-1];
@@ -585,6 +600,8 @@ function showInfo(){
     rename.disabled = true;
 
     info.removeEventListener("click", showInfo);
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+    sell_button.removeEventListener('click', sellTree);
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;
@@ -594,6 +611,12 @@ function showInfo(){
         arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
         arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
 
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    }else{
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
 
 }
@@ -602,7 +625,7 @@ function showInfo(){
 function exitStat(){
 
     var complete_body, stat_div, tot_trees;
-    var water, sun, rename, arrow, info;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
 
     // divs and other elements
     stat_div = document.getElementById("treeStat");
@@ -615,6 +638,8 @@ function exitStat(){
     sun = document.getElementById("sun");
     arrow = document.getElementsByClassName("arrow");
     info = document.getElementById("info");
+    menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
 
     stat_div.style.display = "none";
     complete_body.style.opacity = 1;
@@ -623,12 +648,21 @@ function exitStat(){
     sun.disabled = false;
     rename.disabled = false;
     info.addEventListener("click", showInfo);
+    menu_buySeed.addEventListener('click', buyNewSeed);
+    sell_button.addEventListener('click', sellTree);
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = true;
         console.log(arrow)
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
+        
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    }else if (parseInt(tot_trees.innerHTML) == 1){
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
 
 }
@@ -682,7 +716,7 @@ async function giveWater(){
 function buyNewSeed(){
     var complete_body, buy_seed_div;
 
-    var water, sun, rename, arrow, info, menu_buySeed;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
 
     complete_body = document.getElementById("complete_body");
     buy_seed_div = document.getElementById("buy_new_seed");
@@ -693,6 +727,7 @@ function buyNewSeed(){
     info = document.getElementById("info")
     arrow = document.getElementsByClassName("arrow");
     menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree")
 
     buy_seed_div.style.display = "flex";
     complete_body.style.opacity = 0.2;
@@ -703,6 +738,7 @@ function buyNewSeed(){
 
     info.removeEventListener("click", showInfo);
     menu_buySeed.removeEventListener('click', buyNewSeed);
+    sell_button.removeEventListener('click', sellTree);
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;
@@ -711,14 +747,22 @@ function buyNewSeed(){
 
         arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
         arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
+
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    }else {
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
+
 
 }
 
 // function that go out from the change of the Tree Name
 function cancelChangeName(){
     var complete_body, change_treeName_div;
-    var water, sun, rename, arrow, info, menu_buySeed;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
 
     // divs and other elements
     change_treeName_div = document.getElementById("treeName_change_div");
@@ -731,6 +775,7 @@ function cancelChangeName(){
     arrow = document.getElementsByClassName("arrow");
     info = document.getElementById("info");
     menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
 
     change_treeName_div.style.display = "none";
     complete_body.style.opacity = 1;
@@ -740,19 +785,28 @@ function cancelChangeName(){
     rename.disabled = false;
     info.addEventListener("click", showInfo);
     menu_buySeed.addEventListener('click', buyNewSeed);
+    sell_button.addEventListener('click', sellTree);
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = true;
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
+        
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    }else if (parseInt(tot_trees.innerHTML) == 1){
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
+
     
 }
 
 // function that go out from the buy option
 function cancel(){
     var complete_body, buy_seed_div;
-    var water, sun, rename, arrow, info, menu_buySeed;
+    var water, sun, rename, arrow, info, menu_buySeed, sell_button;
 
     // divs and other elements
     buy_seed_div = document.getElementById("buy_new_seed");
@@ -765,6 +819,7 @@ function cancel(){
     arrow = document.getElementsByClassName("arrow");
     info = document.getElementById("info");
     menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
 
     buy_seed_div.style.display = "none";
     complete_body.style.opacity = 1;
@@ -774,12 +829,21 @@ function cancel(){
     rename.disabled = false;
     info.addEventListener("click", showInfo);
     menu_buySeed.addEventListener('click', buyNewSeed);
+    sell_button.addEventListener('click', sellTree);
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = true;
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
+        
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    }else if (parseInt(tot_trees.innerHTML) == 1){
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
+
 
 }
 
@@ -807,8 +871,8 @@ async function buySeed(){
 
 function sellTree(){
     // ottenere immagine e sfonto del tree da vendere
-    var complete_body, sell_tree_div, num_tree;
-
+    var complete_body, sell_tree_div, tree_to_sell_div, num_tree, tree_img;
+    var tree_img_src;
     var water, sun, rename, arrow, info, menu_buySeed, sell_button;
 
     complete_body = document.getElementById("complete_body");
@@ -817,10 +881,12 @@ function sellTree(){
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    info = document.getElementById("info")
+    info = document.getElementById("info");
     arrow = document.getElementsByClassName("arrow");
     menu_buySeed = document.getElementById("menu_buySeed");
     sell_button = document.getElementById("sell_tree");
+    tree_to_sell_div = document.getElementById("tree_to_sell");
+    tree_img = document.getElementById("tree_to_sell_img");
 
     num_tree = parseInt(document.getElementById("tree_number").innerHTML);
 
@@ -834,6 +900,12 @@ function sellTree(){
     info.removeEventListener("click", showInfo);
     menu_buySeed.removeEventListener('click', buyNewSeed);
     sell_button.removeEventListener('click', sellTree);
+
+    tree_img_src = whichImage(userTrees[num_tree-1]["stage"]);
+    tree_img.src = "frontend/img/"+tree_img_src;
+
+    tree_to_sell_div.style.backgroundColor = whichColor(userTrees[num_tree-1]["specie"]["risk"]);
+
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;
@@ -842,6 +914,13 @@ function sellTree(){
 
         arrow[0].parentNode.replaceChild(arrow0clone, arrow[0]);
         arrow[1].parentNode.replaceChild(arrow1clone, arrow[1]);
+
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+    }
+    else{
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
     }
 }
 
@@ -876,14 +955,23 @@ function cancelSellTree(){
         swipeEventActive = true;
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
+
+        arrow[0].style.display = "inline";
+        arrow[1].style.display = "inline";
+
+    } else if (parseInt(tot_trees.innerHTML) == 1){
+
+        arrow[0].style.display = "none";
+        arrow[1].style.display = "none";
+        
     }
 }
 
 function sellingTheTree(){
-
+    // dopo aver fatto la transazione lanciare la funzione cancelSellTree
+    // e magari un alert che hai messo in vendita l'albero ad un certo tot
+    cancelSellTree()
 }
-
-
 
 /* DO NOT MODIFY CODE BELOW */
 
