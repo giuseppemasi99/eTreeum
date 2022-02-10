@@ -357,6 +357,7 @@ function changeName(){
     info.removeEventListener("click", showInfo);
     
     if(parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = false;
         var arrow0clone = arrow[0].cloneNode(true);
         var arrow1clone = arrow[1].cloneNode(true);
 
@@ -462,8 +463,8 @@ function printTrees(){
 
     arrow = document.getElementsByClassName("arrow")
 
-    if(!swipeEventActive && userTrees.length > 1){
-    
+    if(userTrees.length > 1 && !swipeEventActive){
+        swipeEventActive = true;
         arrow[0].style.opacity = 1;
         arrow[1].style.opacity = 1;
 
@@ -473,7 +474,8 @@ function printTrees(){
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
 
-    }else{
+    }else if(userTrees.length == 1){
+        swipeEventActive = false;
         var arrow0clone = arrow[0].cloneNode(true);
         var arrow1clone = arrow[1].cloneNode(true);
 
@@ -562,7 +564,7 @@ function showInfo(){
     info.removeEventListener("click", showInfo);
     
     if(parseInt(tot_trees.innerHTML) > 1){
-
+        swipeEventActive = false;
         var arrow0clone = arrow[0].cloneNode(true);
         var arrow1clone = arrow[1].cloneNode(true);
 
@@ -600,6 +602,7 @@ function exitStat(){
     info.addEventListener("click", showInfo);
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = true;
         console.log(arrow)
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
@@ -678,6 +681,7 @@ function buyNewSeed(){
     menu_buySeed.removeEventListener('click', buyNewSeed);
     
     if(parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = false;
         var arrow0clone = arrow[0].cloneNode(true);
         var arrow1clone = arrow[1].cloneNode(true);
 
@@ -714,6 +718,7 @@ function cancelChangeName(){
     menu_buySeed.addEventListener('click', buyNewSeed);
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = true;
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
     }
@@ -747,6 +752,7 @@ function cancel(){
     menu_buySeed.addEventListener('click', buyNewSeed);
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
+        swipeEventActive = true;
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
     }

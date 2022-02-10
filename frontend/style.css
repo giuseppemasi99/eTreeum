@@ -405,6 +405,8 @@ div#top{
     height: 10%;
     width: 100%;
 
+    padding: 4px;
+
     display: none;
     justify-content: center;
     align-items: center;
@@ -413,6 +415,12 @@ div#top{
 span.info_row{
     align-items: center;
     margin-left: auto;
+}
+
+img#sell_tree{
+    display: none;
+    margin-left: 10px;
+    cursor: pointer;
 }
 
 button#change_name{
