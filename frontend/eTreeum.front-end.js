@@ -782,6 +782,34 @@ function buyNewSeed(){
 
 // function that go out from the change of the Tree Name
 function cancelChangeName(){
+    var complete_body, change_treeName_div;
+    var water, sun, rename, arrow, info, menu_buySeed;
+
+    // divs and other elements
+    change_treeName_div = document.getElementById("treeName_change_div");
+    complete_body = document.getElementById("complete_body");
+
+    // buttons
+    rename = document.getElementById("change_name");
+    water = document.getElementById("water");
+    sun = document.getElementById("sun");
+    arrow = document.getElementsByClassName("arrow");
+    info = document.getElementById("info");
+    menu_buySeed = document.getElementById("menu_buySeed");
+
+    change_treeName_div.style.display = "none";
+    complete_body.style.opacity = 1;
+
+    water.disabled = false;
+    sun.disabled = false;
+    rename.disabled = false;
+    info.addEventListener("click", showInfo);
+    menu_buySeed.addEventListener('click', buyNewSeed);
+
+    if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
+        arrow[0].addEventListener("click", swipe.bind(null, event, true));
+        arrow[1].addEventListener("click", swipe.bind(null, event, false));
+    }
     
 }
 
