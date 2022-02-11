@@ -167,19 +167,29 @@ function buyNewSeed(){
     menu_buySeed.removeEventListener('click', buyNewSeed);
     
     for (let i=0; i<buy_buttons.length; i++){
-        var elClone = buy_buttons[i].cloneNode(true);
+
+        let k = 0;
+
+        let elClone = buy_buttons[i].cloneNode(true);
         buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
         buy_buttons[i].style.cursor = "default";
+
+        if(owners[i] == senderAddress){
+
+            let elClone = change_price_buttons[k].cloneNode(true);
+            change_price_buttons[k].parentNode.replaceChild(elClone, change_price_buttons[k]);
+            change_price_buttons[k].style.cursor = "default";
+
+            k += 1;
+        }
     }
 
 }
 
-function buyOptions(event, i){
+function buyOptions(event, treeIndex){
     
     var buy_option_div, shop_div, tree_to_show_div, tree_image, eth_span;
-    var buy_buttons;
-
-    // in base a questa mostro l'immagine carina
+    var buy_buttons, change_price_buttons, menu_buySeed;
 
     buy_option_div = document.getElementById("buy_options");
     shop_div = document.getElementById("shop_body");
@@ -187,19 +197,36 @@ function buyOptions(event, i){
     tree_image = document.getElementById("tree_to_sell_image");
     eth_span = document.getElementById("buy_options_eth");
 
+    menu_buySeed = document.getElementById("menu_buySeed");
     buy_buttons = document.getElementsByClassName("eth_value");
+    change_price_buttons = document.getElementsByClassName("change_value")
 
-    for (let j=0; j<buy_buttons.length; j++){
-        var elClone = buy_buttons[j].cloneNode(true);
-        buy_buttons[j].parentNode.replaceChild(elClone, buy_buttons[j]);
-        buy_buttons[j].style.cursor = "default";
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+
+    for (let i=0; i<buy_buttons.length; i++){
+
+        let k = 0;
+
+        let elClone = buy_buttons[i].cloneNode(true);
+        buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
+        buy_buttons[i].style.cursor = "default";
+
+        if(owners[i] == senderAddress){
+
+            let elClone = change_price_buttons[k].cloneNode(true);
+            change_price_buttons[k].parentNode.replaceChild(elClone, change_price_buttons[k]);
+            change_price_buttons[k].style.cursor = "default";
+
+            k += 1;
+        }
     }
 
-    tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[i]["specie"]["risk"]);
-    tree_image.src = "frontend/img/" + whichImage(sellingTrees[i]["stage"]);
-    tree_image.alt = i;
+    tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[treeIndex]["specie"]["risk"]);
+    tree_image.src = "frontend/img/" + whichImage(sellingTrees[treeIndex]["stage"]);
 
-    eth_span.innerHTML = web3.utils.fromWei(prices[i].toString(), 'ether');
+    document.getElementById('buy').value = treeIndex;
+
+    eth_span.innerHTML = web3.utils.fromWei(prices[treeIndex].toString(), 'ether');
 
     buy_option_div.style.display = "flex";
     shop_div.style.opacity = 0.2;
@@ -209,17 +236,31 @@ function buyOptions(event, i){
 function cancelOption(){
 
     var buy_option_div, shop_div;
-    var buy_buttons;
+    var buy_buttons, menu_buySeed, change_price_buttons;
 
     buy_option_div = document.getElementById("buy_options");
     shop_div = document.getElementById("shop_body");
 
+    menu_buySeed = document.getElementById("menu_buySeed");    
     buy_buttons = document.getElementsByClassName("eth_value");
+    change_price_buttons = document.getElementsByClassName("change_value")
+
+    menu_buySeed.addEventListener('click', buyNewSeed);
 
     for (let i=0; i<buy_buttons.length; i++){
+        
+        let k = 0;
+
         buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
         buy_buttons[i].style.cursor = "pointer";
+
+        if(owners[i] == senderAddress){
+            change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
+            change_price_buttons[k].style.cursor = "pointer";
+            k += 1;
+        }
     }
+
     
     buy_option_div.style.display = "none";
     shop_div.style.opacity = 1;
@@ -250,7 +291,9 @@ async function _buyTree(shopIndex){
 
 async function buyTree(){
 
-    var shopIndex = document.getElementById("tree_to_sell_image").alt;
+    var shopIndex = document.getElementById('buy').value;
+
+    console.log('ID: '+shopIndex);
 
     await _buyTree(shopIndex);
 
@@ -261,7 +304,7 @@ async function buyTree(){
 // function that go out from the buy option
 function cancelNewSeed(){
     var shop_body, buy_seed_div;
-    var menu_buySeed, buy_buttons;
+    var menu_buySeed, buy_buttons, change_price_buttons;
 
     // divs and other elements
     buy_seed_div = document.getElementById("buy_new_seed");
@@ -270,6 +313,7 @@ function cancelNewSeed(){
     // buttons
     menu_buySeed = document.getElementById("menu_buySeed");
     buy_buttons = document.getElementsByClassName("eth_value");
+    change_price_buttons = document.getElementsByClassName("change_value")
 
     buy_seed_div.style.display = "none";
     shop_body.style.opacity = 1;
@@ -278,8 +322,17 @@ function cancelNewSeed(){
     
 
     for (let i=0; i<buy_buttons.length; i++){
+
+        let k = 0;
+
         buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
         buy_buttons[i].style.cursor = "pointer";
+
+        if(owners[i] == senderAddress){
+            change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
+            change_price_buttons[k].style.cursor = "pointer";
+            k += 1;
+        }
     }
 
 }
@@ -297,7 +350,7 @@ function clickChangePrice(event, treeIndex){
 
     menu_buySeed = document.getElementById("menu_buySeed");
     buy_buttons = document.getElementsByClassName("eth_value");
-    change_price_buttons = document.getElementsByClassName("change_value")
+    change_price_buttons = document.getElementsByClassName("change_value");
 
     change_price_value_div.style.display = "flex";
     shop_body.style.opacity = 0.2;
