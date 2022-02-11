@@ -534,7 +534,7 @@ function printTrees(){
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
-    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 0 ){
+    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
         sell_tree_button.style.display = "flex";
     }
     else{
