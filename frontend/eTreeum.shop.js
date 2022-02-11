@@ -2,6 +2,8 @@ var isNewUser;
 
 var sellingTrees = Array();
 var prices = Array();
+var shopIds = Array();
+var owners = Array();
 
 $(window).on('load', async function() {
     // comment this code when working with blockchain
@@ -38,10 +40,15 @@ function subscribeToAllEvents(){
 
 async function getShopTrees(){
     let ret = await contract.methods.getShop().call({from:senderAddress, gas: 1500000});
+    // ret = (treesInShop, prices, shopIds, owners)
     sellingTrees = ret[0];
     prices = ret[1];
+    shopIds = ret[2];
+    owners = ret[3];
     // console.log(sellingTrees);
     // console.log(prices);
+    // console.log(shopIds);
+    // console.log(owners);
 }
 
 async function showSellingTrees(){
@@ -53,9 +60,14 @@ async function showSellingTrees(){
     var num_selling_trees = sellingTrees.length, i;
     
     var tree_row, tree_name_div, tree_div, eth, eth_value, tree_info, img, src, eth_div;
-    var menu_buy_seed, cancel_seed_button, buy_seed_button, change_value, change_value_char;
+    var menu_buy_seed, cancel_seed_button, buy_seed_button;
 
     container = document.getElementById("trees_container");
+
+    while(container.lastElementChild){
+        container.removeChild(container.lastElementChild);
+    }
+
     buy_button = document.getElementById("buy");
     cancel_button = document.getElementById("cancel");
    
@@ -86,24 +98,20 @@ async function showSellingTrees(){
         tree_div = document.createElement("div");
         img = document.createElement("img");
         eth_div = document.createElement("div");
-        change_value = document.createElement("span");
         eth = document.createElement("span");
 
         let s = sellingTrees[i]['nickname'] + ': ' + whichStage(sellingTrees[i]["stage"]) + ', ' + sellingTrees[i]["specie"]["name"] + ' - Risk: ' + whichRisk(sellingTrees[i]["specie"]["risk"]);
         tree_info = document.createTextNode(s);
         eth_value = document.createTextNode(web3.utils.fromWei(prices[i].toString(), 'ether') + " ETH");
-        change_value_char = document.createTextNode("✏️");
-
+        
         tree_name_div.className = "tree_logo_name";
         tree_row.className = "tree_row";
         tree_div.className = "tree_logo";
         img.className = "tree_img";
-        change_value.className = "change_value";
-        change_value.id = "id" + i;
         eth.className = "eth_value";
         eth.id = "id" + i;
 
-        change_value.addEventListener('click', clickChangePrice);
+        
         eth.addEventListener('click', buyOptions.bind(null, event, i));
 
         container.appendChild(tree_row);
@@ -113,9 +121,24 @@ async function showSellingTrees(){
         tree_div.appendChild(img);
         tree_row.appendChild(eth_div);
 
-        eth_div.appendChild(change_value);
-        eth_div.appendChild(eth);
-        change_value.appendChild(change_value_char);
+        if(owners[i] == senderAddress){
+            
+            var change_value, change_value_char;
+
+            change_value = document.createElement("span");
+            change_value_char = document.createTextNode("✏️");
+            
+            change_value.className = "change_value";
+            change_value.id = "id" + i;
+            
+            eth_div.appendChild(change_value);
+            change_value.appendChild(change_value_char);
+            
+            change_value.addEventListener('click', clickChangePrice.bind(null, event, i));
+            
+        }
+        
+        eth_div.appendChild(eth);        
         eth.appendChild(eth_value);
 
         tree_div.style.backgroundColor = whichColor(sellingTrees[i]["specie"]["risk"]);
@@ -206,10 +229,10 @@ function cancelOption(){
 async function _buyTree(shopIndex){
 
     var price = prices[shopIndex];
-    //var treeId = shopTreeIds[shopIndex];
+    var treeId = shopIds[shopIndex];
 
     try {
-        var transaction = await contract.methods.buyTree(0 /*treeId*/, shopIndex).send(
+        var transaction = await contract.methods.buyTree(treeId, shopIndex).send(
             {
                 from:senderAddress, 
                 value: price, 
@@ -225,7 +248,6 @@ async function _buyTree(shopIndex){
 
 }
 
-// CALL A METHOD OF THE BLOCKCHAIN THAT BUY THE TREE
 async function buyTree(){
 
     var shopIndex = document.getElementById("tree_to_sell_image").alt;
@@ -263,10 +285,12 @@ function cancelNewSeed(){
 }
 
 // function that open the div that allow you to change the price value of a tree
-function clickChangePrice(){
+function clickChangePrice(event, treeIndex){
     var shop_body, change_price_value_div;
 
     var menu_buySeed, buy_buttons, change_price_buttons;
+
+    document.getElementById('change_price_value').value = treeIndex;
 
     shop_body = document.getElementById("shop_body");
     change_price_value_div = document.getElementById("change_price_value_div");
@@ -281,21 +305,69 @@ function clickChangePrice(){
     menu_buySeed.removeEventListener('click', buyNewSeed);
     
     for (let i=0; i<buy_buttons.length; i++){
-        var elClone = buy_buttons[i].cloneNode(true);
+        
+        let k = 0;
+
+        let elClone = buy_buttons[i].cloneNode(true);
         buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
         buy_buttons[i].style.cursor = "default";
 
-        change_price_buttons[i].removeEventListener('click', clickChangePrice);
-        change_price_buttons[i].style.cursor = "default";
+        if(owners[i] == senderAddress){
+            let elClone = change_price_buttons[k].cloneNode(true);
+            change_price_buttons[k].parentNode.replaceChild(elClone, change_price_buttons[k]);
+            change_price_buttons[k].style.cursor = "default";
+
+            k += 1;
+        }
 
     }
 
 }
 
+// function that actually change the price of the tree in the shop
+async function _changePrice(treeId, new_price){
+
+    if(isNaN(new_price)){
+        alert('Please, insert a number!');
+        return;
+    }
+
+    new_price = new_price.toString();
+    new_price = web3.utils.toWei(new_price, 'ether');
+
+    try {
+        var transaction = await contract.methods.changePrice(treeId, new_price).send(
+            {
+                from:senderAddress, 
+                gas: 1500000
+            });
+        console.log("TRANSACTION", transaction);
+        alert("Price changed!");
+    }catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+
+}
+
 // function that effectively change the tree price value
-// ADD CALL TO A METHOD IN THE BLOCKCHAIN
-function changePrice(){
-    cancelChangePrice();
+async function changePrice(){
+
+    var new_price = parseFloat(document.getElementById('new_eth_input').value);
+    document.getElementById('new_eth_input').value = "";
+
+    var treeIndex = document.getElementById('change_price_value').value;
+
+    await _changePrice(shopIds[treeIndex], new_price);
+
+    var change_price_value_div, shop_div;
+    change_price_value_div = document.getElementById("change_price_value_div");
+    shop_div = document.getElementById("shop_body");
+    change_price_value_div.style.display = "none";
+    shop_div.style.opacity = 1;
+
+    showSellingTrees();
+
 }
 
 // function that go out from the div that allow you to change the price value
@@ -311,11 +383,18 @@ function cancelChangePrice(){
     change_price_buttons = document.getElementsByClassName("change_value")
 
     for (let i=0; i<buy_buttons.length; i++){
+
+        let k = 0;
+
         buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
         buy_buttons[i].style.cursor = "pointer";
 
-        change_price_buttons[i].addEventListener('click', clickChangePrice);
-        change_price_buttons[i].style.cursor = "pointer";
+        if(owners[i] == senderAddress){
+            change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
+            change_price_buttons[k].style.cursor = "pointer";
+            k += 1;
+        }
+
     }
     
     change_price_value_div.style.display = "none";

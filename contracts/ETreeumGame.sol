@@ -223,7 +223,7 @@ contract ETreeumGame is ERC721 {
 
     function sellTree(uint256 treeId, uint256 price) MustOwnTree(treeId) SetLastEntered public {
         Tree storage t = trees[treeId];
-        require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
+        require(uint8(t.stage) >= 0, "This tree isn't old enough for selling it");
         require(shop[treeId] == 0, "This tree is already in the shop");
         require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
         shop[treeId] = price;
@@ -263,19 +263,40 @@ contract ETreeumGame is ERC721 {
         players[msg.sender].treeOwned.push(treeId);
     }
 
-    function getShop() view public returns (Tree[] memory, uint256[] memory){
+    function getShop() view public returns (Tree[] memory, uint256[] memory, uint256[] memory, address[] memory){
         Tree[] memory treesInShop = new Tree[](shopIds.length);
         uint256[] memory prices = new uint256[](shopIds.length);
+        uint256[] memory _treeOwned = new uint256[](shopIds.length);
+        address[] memory owners = new address[](shopIds.length);
+
         for (uint256 i=0; i<shopIds.length; i++) {
             treesInShop[i] = trees[shopIds[i]];
             prices[i] = shop[shopIds[i]];
         }
-        return (treesInShop, prices);
+
+        for (uint256 i=0; i<shopIds.length; i++) {
+            for (uint256 j=0; j<playersAddresses.length; j++) {
+                _treeOwned = players[playersAddresses[j]].treeOwned;
+                for (uint256 k=0; k<_treeOwned.length; k++) {
+                    if(shopIds[i] == _treeOwned[k]){
+                        owners[i] = playersAddresses[j];
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (treesInShop, prices, shopIds, owners);
     }
 
     function _checkTreePrice(uint256 value, uint256 price) pure private returns (bool) {
+        return true;
         uint256 percentage = value/100;
         return price >= value - percentage && price <= value + percentage && price != 0;
+    }
+
+    function changePrice(uint256 treeId, uint256 newPrice) public {
+        shop[treeId] = newPrice;
     }
 
     function _computeTreeValue(ExtinctionRisk risk, Stages stage) view private returns (uint8) {

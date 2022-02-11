@@ -62,20 +62,6 @@ function subscribeToAllEvents(){
         }
     );
 
-    contract.events.TreeGrown(
-        async function(error, event){
-            if (!error) {
-                console.log('TreeGrown event');
-                var treeId = event.returnValues['treeId'];
-                var newStage = event.returnValues['stage'];
-                if (senderAddress == event.returnValues.a) {
-                    userTrees[userIdsOfTrees.indexOf(treeId)]['stage'] = newStage;
-                    printTrees();
-                }
-            }
-        }
-    );
-
     contract.events.BoughtSeed(
         async function(error, event){
             if (!error) {
@@ -89,6 +75,20 @@ function subscribeToAllEvents(){
                     userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
                     userIdsTrees[1].forEach(element => userTrees.push({...element}));
                     cancel();
+                    printTrees();
+                }
+            }
+        }
+    );
+
+    contract.events.TreeGrown(
+        async function(error, event){
+            if (!error) {
+                console.log('TreeGrown event');
+                var treeId = event.returnValues['treeId'];
+                var newStage = event.returnValues['stage'];
+                if (senderAddress == event.returnValues.a) {
+                    userTrees[userIdsOfTrees.indexOf(treeId)]['stage'] = newStage;
                     printTrees();
                 }
             }
