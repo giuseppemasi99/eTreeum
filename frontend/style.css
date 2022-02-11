@@ -323,6 +323,19 @@ div#tree_to_sell img{
 
     border-radius: 10px;
 }
+div#price_of_sell_div{
+    height: 20px;
+    display: flex;
+    align-items: center;
+
+    padding: 3px;
+    margin: 5px;
+}
+
+input#tree_price{
+    margin-bottom: 0px;
+    margin-right: 5px;
+}
 
 /* CSS FOR THE BODY OF THE PAGE*/
 

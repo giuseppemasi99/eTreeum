@@ -49,11 +49,11 @@ async function showSellingTrees(){
     await getPlayer();
     await getShopTrees();
 
-    var container, buy_button, cancel_button;
+    var container, buy_button, cancel_button, cancel_change_button, submit_change_button;
     var num_selling_trees = sellingTrees.length, i;
     
-    var tree_row, tree_name_div, tree_div, eth, eth_value, tree_info, img, src;
-    var menu_buy_seed, cancel_seed_button, buy_seed_button;
+    var tree_row, tree_name_div, tree_div, eth, eth_value, tree_info, img, src, eth_div;
+    var menu_buy_seed, cancel_seed_button, buy_seed_button, change_value, change_value_char;
 
     container = document.getElementById("trees_container");
     buy_button = document.getElementById("buy");
@@ -62,6 +62,9 @@ async function showSellingTrees(){
     cancel_seed_button = document.getElementById("cancel_newSeed");
     buy_seed_button = document.getElementById("buy_seed_button");
     menu_buy_seed = document.getElementById("menu_buySeed");
+
+    cancel_change_button = document.getElementById("cancel_change_value");
+    submit_change_button = document.getElementById("change_price_value");
     
     menu_buy_seed.addEventListener('click', buyNewSeed);
     cancel_seed_button.addEventListener('click', cancelNewSeed);
@@ -69,6 +72,9 @@ async function showSellingTrees(){
 
     cancel_button.addEventListener('click', cancelOption);
     buy_button.addEventListener('click', buyTree);
+
+    cancel_change_button.addEventListener('click', cancelChangePrice);
+    submit_change_button.addEventListener('click', changePrice);
 
 
     for(i = 0; i < num_selling_trees; i++){
@@ -79,19 +85,25 @@ async function showSellingTrees(){
         tree_name_div = document.createElement("div");
         tree_div = document.createElement("div");
         img = document.createElement("img");
+        eth_div = document.createElement("div");
+        change_value = document.createElement("span");
         eth = document.createElement("span");
 
         let s = sellingTrees[i]['nickname'] + ': ' + whichStage(sellingTrees[i]["stage"]) + ', ' + sellingTrees[i]["specie"]["name"] + ' - Risk: ' + whichRisk(sellingTrees[i]["specie"]["risk"]);
         tree_info = document.createTextNode(s);
         eth_value = document.createTextNode(web3.utils.fromWei(prices[i].toString(), 'ether') + " ETH");
+        change_value_char = document.createTextNode("✏️");
 
         tree_name_div.className = "tree_logo_name";
         tree_row.className = "tree_row";
         tree_div.className = "tree_logo";
         img.className = "tree_img";
+        change_value.className = "change_value";
+        change_value.id = "id" + i;
         eth.className = "eth_value";
-        eth.id = i;
+        eth.id = "id" + i;
 
+        change_value.addEventListener('click', clickChangePrice);
         eth.addEventListener('click', buyOptions.bind(null, event, i));
 
         container.appendChild(tree_row);
@@ -99,7 +111,11 @@ async function showSellingTrees(){
         tree_name_div.appendChild(tree_div);
         tree_name_div.appendChild(tree_info);
         tree_div.appendChild(img);
-        tree_row.appendChild(eth);
+        tree_row.appendChild(eth_div);
+
+        eth_div.appendChild(change_value);
+        eth_div.appendChild(eth);
+        change_value.appendChild(change_value_char);
         eth.appendChild(eth_value);
 
         tree_div.style.backgroundColor = whichColor(sellingTrees[i]["specie"]["risk"]);
@@ -244,4 +260,64 @@ function cancelNewSeed(){
         buy_buttons[i].style.cursor = "pointer";
     }
 
+}
+
+// function that open the div that allow you to change the price value of a tree
+function clickChangePrice(){
+    var shop_body, change_price_value_div;
+
+    var menu_buySeed, buy_buttons, change_price_buttons;
+
+    shop_body = document.getElementById("shop_body");
+    change_price_value_div = document.getElementById("change_price_value_div");
+
+    menu_buySeed = document.getElementById("menu_buySeed");
+    buy_buttons = document.getElementsByClassName("eth_value");
+    change_price_buttons = document.getElementsByClassName("change_value")
+
+    change_price_value_div.style.display = "flex";
+    shop_body.style.opacity = 0.2;
+
+    menu_buySeed.removeEventListener('click', buyNewSeed);
+    
+    for (let i=0; i<buy_buttons.length; i++){
+        var elClone = buy_buttons[i].cloneNode(true);
+        buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
+        buy_buttons[i].style.cursor = "default";
+
+        change_price_buttons[i].removeEventListener('click', clickChangePrice);
+        change_price_buttons[i].style.cursor = "default";
+
+    }
+
+}
+
+// function that effectively change the tree price value
+// ADD CALL TO A METHOD IN THE BLOCKCHAIN
+function changePrice(){
+    cancelChangePrice();
+}
+
+// function that go out from the div that allow you to change the price value
+function cancelChangePrice(){
+
+    var change_price_value_div, shop_div;
+    var buy_buttons, change_price_buttons;
+
+    change_price_value_div = document.getElementById("change_price_value_div");
+    shop_div = document.getElementById("shop_body");
+
+    buy_buttons = document.getElementsByClassName("eth_value");
+    change_price_buttons = document.getElementsByClassName("change_value")
+
+    for (let i=0; i<buy_buttons.length; i++){
+        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
+        buy_buttons[i].style.cursor = "pointer";
+
+        change_price_buttons[i].addEventListener('click', clickChangePrice);
+        change_price_buttons[i].style.cursor = "pointer";
+    }
+    
+    change_price_value_div.style.display = "none";
+    shop_div.style.opacity = 1;
 }

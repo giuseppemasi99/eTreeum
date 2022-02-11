@@ -35,7 +35,7 @@ a{
     text-decoration: none;
 }
 
-div#buy_options, div#buy_new_seed{
+div#buy_options, div#buy_new_seed, div#change_price_value_div{
     position: absolute;
     z-index: 10;
 
@@ -59,6 +59,10 @@ div#buy_options, div#buy_new_seed{
     font-size: 12pt;
     font-weight: 700;
 
+}
+
+div#change_price_value_div{
+    top: 30%;
 }
 
 div#div_buy_options_eth{
@@ -149,10 +153,6 @@ div#user_info{
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-div#buttons_option button{
-    width: 80px;
 }
 
 div#tree_to_sell{
@@ -250,6 +250,26 @@ img#seed_to_buy{
     margin: 10px 5px;
 }
 
+/*CSS FOR CHANGE THE PRICE OF A TREE*/
+
+div#new_eth_value{
+    height: 20px;
+    display: flex;
+    align-items: center;
+
+    padding: 3px;
+    margin: 10px;
+}
+
+
+
+
+input#new_eth_input{
+    margin-bottom: 0px;
+    margin-right: 5px;
+}
+
+
 /*CSS FOR THE LIST OF SELLING TREE*/
 
 div#trees_container{
@@ -295,6 +315,11 @@ div.tree_logo{
 img.tree_img{
     border-radius: 5px;
 
+}
+
+span.change_value{
+    margin-right: 10px;
+    cursor: pointer;
 }
 
 span.eth_value{

@@ -994,6 +994,7 @@ async function sellingTheTree(){
     treeId = userIdsOfTrees[num_tree - 1];
     
     price = document.getElementById("tree_price").value;
+    document.getElementById("tree_price").value = "";
 
     await _sellTree(treeId, price);
 
