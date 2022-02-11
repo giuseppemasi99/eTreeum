@@ -61,6 +61,20 @@ div#buy_options, div#buy_new_seed{
 
 }
 
+div#div_buy_options_eth{
+
+    display: flex;
+    padding: 3px;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+
+}
+
+div#div_buy_options_eth img{
+    margin-left: 5px;
+}
+
 
 /* CSS FOR THE HEADER*/
 

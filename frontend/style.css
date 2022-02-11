@@ -382,6 +382,26 @@ div#middle_div{
     margin-top: 7.5%;
 }
 
+div#middle_div div#noTrees{
+    display: none;
+    flex-direction: column;
+    font-weight: 700;
+}
+
+div#middle_div div#noTrees p#p1{
+    font-size: 32pt;
+    margin-bottom: 20px;
+}
+
+div#middle_div div#noTrees p#p2{
+    font-size: 24pt;
+}
+
+div#middle_div div#noTrees p#p3{
+    font-size: 16pt;
+}
+
+
 div#tree_body{
     display: flex;
     align-items: center;

@@ -1,8 +1,14 @@
 var isNewUser;
 
+var sellingTrees = Array();
+var prices = Array();
+
 $(window).on('load', async function() {
     // comment this code when working with blockchain
     await initialise();
+
+    subscribeToAllEvents();
+
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
 
     if(isNewUser){
@@ -16,6 +22,8 @@ $(window).on('load', async function() {
 
 function subscribeToAllEvents(){
 
+    console.log('EVENTS SUBSCRIPTION SHOP');
+
     contract.events.BoughtSeed(
         async function(error, event){
             if (!error) {
@@ -28,21 +36,19 @@ function subscribeToAllEvents(){
     );
 }
 
-// sostituire con getShop
-var sellingTrees = [{"image":1, "rarity":1, "price":12, "id":1}, {"image":2, "rarity":1, "price":12, "id":2}, 
-{"image":1, "rarity":2, "price":12, "id":3}, {"image":3, "rarity":1, "price":12, "id":4}, {"image":2, "rarity":0, "price":12, "id":5},
-{"image":1, "rarity":0, "price":12, "id":6}, {"image":3, "rarity":1, "price":12, "id":7}, {"image":1, "rarity":2, "price":12, "id":8}]
-
-// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-//      farsi restituire i tree in vendita
-// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+async function getShopTrees(){
+    let ret = await contract.methods.getShop().call({from:senderAddress, gas: 1500000});
+    sellingTrees = ret[0];
+    prices = ret[1];
+    // console.log(sellingTrees);
+    // console.log(prices);
+}
 
 async function showSellingTrees(){
 
     await getPlayer();
+    await getShopTrees();
 
-    subscribeToAllEvents();
-    
     var container, buy_button, cancel_button;
     var num_selling_trees = sellingTrees.length, i;
     
@@ -75,17 +81,18 @@ async function showSellingTrees(){
         img = document.createElement("img");
         eth = document.createElement("span");
 
-        tree_info = document.createTextNode("alberello");
-        eth_value = document.createTextNode(sellingTrees[i]["price"]+" ETH");
+        let s = sellingTrees[i]['nickname'] + ': ' + whichStage(sellingTrees[i]["stage"]) + ', ' + sellingTrees[i]["specie"]["name"] + ' - Risk: ' + whichRisk(sellingTrees[i]["specie"]["risk"]);
+        tree_info = document.createTextNode(s);
+        eth_value = document.createTextNode(web3.utils.fromWei(prices[i].toString(), 'ether') + " ETH");
 
         tree_name_div.className = "tree_logo_name";
         tree_row.className = "tree_row";
         tree_div.className = "tree_logo";
         img.className = "tree_img";
         eth.className = "eth_value";
-        eth.id = sellingTrees[i]["id"];
+        eth.id = i;
 
-        eth.addEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        eth.addEventListener('click', buyOptions.bind(null, event, i));
 
         container.appendChild(tree_row);
         tree_row.appendChild(tree_name_div);
@@ -95,13 +102,9 @@ async function showSellingTrees(){
         tree_row.appendChild(eth);
         eth.appendChild(eth_value);
 
-        // PER PEPPOZ, UNA VOLTA RESTITUITI I TREE IN VENDITA METTI 
-        // "sellingTree[i]["specie"]["risk"]" al posto di sellingTrees[i]["rarity"] e
-        // "sellingTree[i]["stage"]" al posto di sellingTrees[i]["image"]
-        tree_div.style.backgroundColor = whichColor(sellingTrees[i]["rarity"]);
-        src += whichImage(sellingTrees[i]["image"]);
+        tree_div.style.backgroundColor = whichColor(sellingTrees[i]["specie"]["risk"]);
+        src += whichImage(sellingTrees[i]["stage"]);
         img.src = src;
-
 
     }
     
@@ -123,7 +126,6 @@ function buyNewSeed(){
     shop_body.style.opacity = 0.2;
 
     menu_buySeed.removeEventListener('click', buyNewSeed);
-
     
     for (let i=0; i<buy_buttons.length; i++){
         var elClone = buy_buttons[i].cloneNode(true);
@@ -133,8 +135,9 @@ function buyNewSeed(){
 
 }
 
-function buyOptions(event, value){
-    var buy_option_div, shop_div, tree_to_show_div, tree_image;
+function buyOptions(event, i){
+    
+    var buy_option_div, shop_div, tree_to_show_div, tree_image, eth_span;
     var buy_buttons;
 
     // in base a questa mostro l'immagine carina
@@ -143,18 +146,21 @@ function buyOptions(event, value){
     shop_div = document.getElementById("shop_body");
     tree_to_show_div = document.getElementById("tree_to_sell");
     tree_image = document.getElementById("tree_to_sell_image");
+    eth_span = document.getElementById("buy_options_eth");
 
     buy_buttons = document.getElementsByClassName("eth_value");
 
-    for (let i=0; i<buy_buttons.length; i++){
-        var elClone = buy_buttons[i].cloneNode(true);
-        buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
-        buy_buttons[i].style.cursor = "default";
+    for (let j=0; j<buy_buttons.length; j++){
+        var elClone = buy_buttons[j].cloneNode(true);
+        buy_buttons[j].parentNode.replaceChild(elClone, buy_buttons[j]);
+        buy_buttons[j].style.cursor = "default";
     }
 
-    tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[value-1]["rarity"]);
-    tree_image.src = "img/" + whichImage(sellingTrees[value-1]["image"]);
-    tree_image.alt = value;
+    tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[i]["specie"]["risk"]);
+    tree_image.src = "frontend/img/" + whichImage(sellingTrees[i]["stage"]);
+    tree_image.alt = i;
+
+    eth_span.innerHTML = web3.utils.fromWei(prices[i].toString(), 'ether');
 
     buy_option_div.style.display = "flex";
     shop_div.style.opacity = 0.2;
@@ -172,24 +178,44 @@ function cancelOption(){
     buy_buttons = document.getElementsByClassName("eth_value");
 
     for (let i=0; i<buy_buttons.length; i++){
-        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
         buy_buttons[i].style.cursor = "pointer";
     }
-
+    
     buy_option_div.style.display = "none";
     shop_div.style.opacity = 1;
 }
 
+// function that actually buy the tree from the shop
+async function _buyTree(shopIndex){
+
+    var price = prices[shopIndex];
+    //var treeId = shopTreeIds[shopIndex];
+
+    try {
+        var transaction = await contract.methods.buyTree(0 /*treeId*/, shopIndex).send(
+            {
+                from:senderAddress, 
+                value: price, 
+                gas: 1500000
+            });
+        console.log("TRANSACTION", transaction);
+        alert("Tree bought!");
+        showSellingTrees();
+    }catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+
+}
+
 // CALL A METHOD OF THE BLOCKCHAIN THAT BUY THE TREE
-function buyTree(){
-    
-    var tree_id, tree_image;
+async function buyTree(){
 
-    tree_image = document.getElementById("tree_to_sell_image");
+    var shopIndex = document.getElementById("tree_to_sell_image").alt;
 
-    tree_id = tree_image.alt;
+    await _buyTree(shopIndex);
 
-    alert(tree_id);
     cancelOption();
 
 }
@@ -214,30 +240,8 @@ function cancelNewSeed(){
     
 
     for (let i=0; i<buy_buttons.length; i++){
-        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, sellingTrees[i]["id"]));
+        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
         buy_buttons[i].style.cursor = "pointer";
-    }
-
-}
-
-// function that actually buy the new seed
-async function buySeed(){
-
-    var treeNickname = document.getElementById("name_newSeed").value;
-    document.getElementById("name_newSeed").value = "";
-
-    try {
-        var transaction = await contract.methods.buySeed(treeNickname).send(
-            {
-                from:senderAddress, 
-                value: web3.utils.toWei('0.001', 'ether'),
-                gas: 1500000
-            });
-        console.log("TRANSACTION", transaction);
-    }
-    catch(e) {
-        var errorMessage = getErrorMessage(e.message);
-        alert("Something went wrong: " + errorMessage);
     }
 
 }

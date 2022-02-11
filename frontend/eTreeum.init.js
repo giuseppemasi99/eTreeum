@@ -1,5 +1,5 @@
 // Set the contract address
-var contractAddress = '0xE4EA807fa5a0B112b3dB1E274EB7c6abd90236D4';
+var contractAddress = '0xb4dC508a29d5a8fE7D2F189758bf5db17C7f8094';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "../build/contracts/ETreeumGame.json"
@@ -44,6 +44,28 @@ async function initialise() {
 
 }
 
+// function that actually buy the new seed
+async function buySeed(){
+
+    var treeNickname = document.getElementById("name_newSeed").value;
+    document.getElementById("name_newSeed").value = "";
+
+    try {
+        var transaction = await contract.methods.buySeed(treeNickname).send(
+            {
+                from:senderAddress, 
+                value: web3.utils.toWei('0.001', 'ether'),
+                gas: 1500000
+            });
+        console.log("TRANSACTION", transaction);
+    }
+    catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+
+}
+
 async function getPlayer(){
 
     try {
@@ -69,6 +91,16 @@ function printUserInfo(){
     username_span.innerHTML = player_username;    
     score_span.innerHTML = player_score + " points";
 
+}
+
+function getErrorMessage(msg) {
+    var errorMessage = msg;
+    var index = msg.indexOf("reason\":\"");
+    if (index != -1) {
+        errorMessage = msg.substring(index + 9);
+        errorMessage = errorMessage.substring(0, errorMessage.indexOf("\"}"));
+    }
+    return errorMessage;
 }
 
 //function that given a value return the type of image to show

@@ -15,7 +15,7 @@ contract ETreeumGame is ERC721 {
     uint256 public treeCounter;
     address payable private _gardener;
     //fake address
-    address payable constant public planter = payable(0x335Ebf7EBd5e7e1318D75f8914CEA6e334cB92b7);
+    address payable constant public planter = payable(0xFBB311A55434A47C99700F56B7b20fC3Cb440a98);
     Species[] private gameSpecies;
     // 0 -> 35 %
     // 1 -> 30 %
@@ -31,7 +31,7 @@ contract ETreeumGame is ERC721 {
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
     address[] private playersAddresses;
-    mapping(uint256 => uint8) private shop;
+    mapping(uint256 => uint256) private shop;
     uint256[] private shopIds;
     PlayerInRanking[3] private ranking;
 
@@ -221,7 +221,7 @@ contract ETreeumGame is ERC721 {
         emit BoughtSeed(msg.sender, id, t);
     }
 
-    function sellTree(uint256 treeId, uint8 price) MustOwnTree(treeId) SetLastEntered public {
+    function sellTree(uint256 treeId, uint256 price) MustOwnTree(treeId) SetLastEntered public {
         Tree storage t = trees[treeId];
         require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
         require(shop[treeId] == 0, "This tree is already in the shop");
@@ -242,14 +242,14 @@ contract ETreeumGame is ERC721 {
         require(!_ownsTree(msg.sender, treeId), "You can't buy your own trees");
         require(shop[treeId] != 0, "This tree is not up for sale");
         require(shopIds[shopIndex] == treeId, "You are selecting the wrong tree");
-        uint8 price = shop[treeId];
+        uint256 price = shop[treeId];
         require(msg.value >= price, "You are not paying enough");
         address oldOwner = ERC721.ownerOf(treeId);
         uint256 oldOwnerIndex = _getOwnerIndex(treeId, oldOwner);
-        uint8 percentage = price / 100;
+        uint256 percentage = price / 100;
         price = price - percentage;
         planter.transfer(percentage);
-        ERC721.safeTransferFrom(oldOwner, msg.sender, treeId);
+        ERC721._transfer(oldOwner, msg.sender, treeId);//ERC721.safeTransferFrom(oldOwner, msg.sender, treeId);
         payable(oldOwner).transfer(price);
         _afterSelling(oldOwner, msg.sender, treeId, shopIndex, oldOwnerIndex);
     }
@@ -263,9 +263,9 @@ contract ETreeumGame is ERC721 {
         players[msg.sender].treeOwned.push(treeId);
     }
 
-    function getShop() view public returns (Tree[] memory, uint8[] memory){
+    function getShop() view public returns (Tree[] memory, uint256[] memory){
         Tree[] memory treesInShop = new Tree[](shopIds.length);
-        uint8[] memory prices = new uint8[](shopIds.length);
+        uint256[] memory prices = new uint256[](shopIds.length);
         for (uint256 i=0; i<shopIds.length; i++) {
             treesInShop[i] = trees[shopIds[i]];
             prices[i] = shop[shopIds[i]];
@@ -273,7 +273,7 @@ contract ETreeumGame is ERC721 {
         return (treesInShop, prices);
     }
 
-    function _checkTreePrice(uint256 value, uint8 price) pure private returns (bool) {
+    function _checkTreePrice(uint256 value, uint256 price) pure private returns (bool) {
         uint256 percentage = value/100;
         return price >= value - percentage && price <= value + percentage && price != 0;
     }

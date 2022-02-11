@@ -10,7 +10,7 @@ var swipeEventActive = false;
 async function start(){
 
     subscribeToAllEvents();
-
+    
     //Check is new user --> return
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
     console.log('isNewUser:'+ isNewUser);
@@ -28,14 +28,18 @@ function subscribeToAllEvents(){
     contract.events.JoinedGame(
         async function(error, event){
             if (!error) {
+                console.log('JoinedGame event');
                 // console.log(event.returnValues['a']);
                 // console.log(event.returnValues['tree']);
                 var freeTreeId = event.returnValues['id'];
                 var freeTree = event.returnValues['tree'];
                 if (senderAddress == event.returnValues.a) {
                     isNewUser = false;
-                    userIdsOfTrees.push(parseInt(freeTreeId));
-                    userTrees.push({...freeTree});
+                    var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
+                    userTrees = Array();
+                    userIdsOfTrees = Array();
+                    userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
+                    userIdsTrees[1].forEach(element => userTrees.push({...element}));
                     printTrees();
                     getPlayer();
                 }
@@ -46,6 +50,7 @@ function subscribeToAllEvents(){
     contract.events.UpdatedPlayerScore(
         async function(error, event){
             if (!error) {
+                console.log('UpdatedPlayerScore event');
                 // console.log(event.returnValues['a']);
                 // console.log(event.returnValues['tree']);
                 var newScore = event.returnValues['score'];
@@ -60,6 +65,7 @@ function subscribeToAllEvents(){
     contract.events.TreeGrown(
         async function(error, event){
             if (!error) {
+                console.log('TreeGrown event');
                 var treeId = event.returnValues['treeId'];
                 var newStage = event.returnValues['stage'];
                 if (senderAddress == event.returnValues.a) {
@@ -73,17 +79,23 @@ function subscribeToAllEvents(){
     contract.events.BoughtSeed(
         async function(error, event){
             if (!error) {
+                console.log('BoughtSeed event');
                 var boughtTreeId = event.returnValues['id'];
                 var boughtTree = event.returnValues['t'];
                 if (senderAddress == event.returnValues.a) {
-                    userIdsOfTrees.push(parseInt(boughtTreeId));
-                    userTrees.push({...boughtTree});
+                    var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
+                    userTrees = Array();
+                    userIdsOfTrees = Array();
+                    userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
+                    userIdsTrees[1].forEach(element => userTrees.push({...element}));
                     cancel();
                     printTrees();
                 }
             }
         }
     );
+
+    console.log('EVENTS SUBSCRIPTION');
 
 }
 
@@ -113,16 +125,6 @@ function registerPlayer() {
 
 }
 
-function getErrorMessage(msg) {
-    var errorMessage = msg;
-    var index = msg.indexOf("reason\":\"");
-    if (index != -1) {
-        errorMessage = msg.substring(index + 9);
-        errorMessage = errorMessage.substring(0, errorMessage.indexOf("\"}"));
-    }
-    return errorMessage;
-}
-
 async function login() {
 
     try {
@@ -145,7 +147,7 @@ async function login() {
 }
 
 // function that allow the counter
-// https://codepen.io/dmcreis/pen/VLLYPo
+// This function comes from: https://codepen.io/dmcreis/pen/VLLYPo
 function startTreeCounter(){
     
     var a = 0;
@@ -480,6 +482,21 @@ function printTrees(){
     sell_tree_button = document.getElementById("sell_tree");
     arrow = document.getElementsByClassName("arrow");
 
+    counter.style.display = "flex";
+
+    if(userTrees.length == 0){
+
+        var tree_body_div = document.getElementById('tree_body');
+        var counting_tree_div = document.getElementById('counting_tree');
+        var noTrees_div = document.getElementById('noTrees');
+        
+        tree_body_div.style.display = 'none';
+        counting_tree_div.style.display = 'none';
+        noTrees_div.style.display = 'flex';
+
+        return;
+
+    }
 
     if(userTrees.length > 1 && !swipeEventActive){
         swipeEventActive = true;
@@ -516,8 +533,6 @@ function printTrees(){
     tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
-
-    counter.style.display = "flex";
 
     if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 0 ){
         sell_tree_button.style.display = "flex";
@@ -847,28 +862,6 @@ function cancel(){
 
 }
 
-// function that actually buy the new seed
-async function buySeed(){
-
-    var treeNickname = document.getElementById("name_newSeed").value;
-    document.getElementById("name_newSeed").value = "";
-
-    try {
-        var transaction = await contract.methods.buySeed(treeNickname).send(
-            {
-                from:senderAddress, 
-                value: web3.utils.toWei('0.001', 'ether'),
-                gas: 1500000
-            });
-        console.log("TRANSACTION", transaction);
-    }
-    catch(e) {
-        var errorMessage = getErrorMessage(e.message);
-        alert("Something went wrong: " + errorMessage);
-    }
-
-}
-
 function sellTree(){
     // ottenere immagine e sfonto del tree da vendere
     var complete_body, sell_tree_div, tree_to_sell_div, num_tree, tree_img;
@@ -967,8 +960,43 @@ function cancelSellTree(){
     }
 }
 
-// ADD CALL TO THE BLOCKCHAINMETHOD
-function sellingTheTree(){
+// function that actually add to the shop the tree
+async function _sellTree(treeId, price){
+
+    price = parseFloat(price);
+
+    if(isNaN(price)){
+        alert('Please, insert a number!');
+        return;
+    }
+
+    price = price.toString();
+    price = web3.utils.toWei(price, 'ether');
+
+    try {
+        var transaction = await contract.methods.sellTree(treeId, price).send(
+            {
+                from:senderAddress, 
+                gas: 1500000
+            });
+        console.log("TRANSACTION", transaction);
+        alert("Tree added to the shop!");
+    }catch(e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+
+}
+
+async function sellingTheTree(){
+
+    num_tree = document.getElementById("tree_number").innerHTML;
+    treeId = userIdsOfTrees[num_tree - 1];
+    
+    price = document.getElementById("tree_price").value;
+
+    await _sellTree(treeId, price);
+
     // dopo aver fatto la transazione lanciare la funzione cancelSellTree
     // e magari un alert che hai messo in vendita l'albero ad un certo tot
     cancelSellTree()
