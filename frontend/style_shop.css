@@ -270,6 +270,8 @@ div#new_eth_value{
 input#new_eth_input{
     margin-bottom: 0px;
     margin-right: 5px;
+
+    text-align: right;
 }
 
 

@@ -335,6 +335,8 @@ div#price_of_sell_div{
 input#tree_price{
     margin-bottom: 0px;
     margin-right: 5px;
+
+    text-align: right;
 }
 
 /* CSS FOR THE BODY OF THE PAGE*/
