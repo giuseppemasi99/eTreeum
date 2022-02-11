@@ -484,11 +484,11 @@ function printTrees(){
 
     counter.style.display = "flex";
 
-    if(userTrees.length == 0){
+    var tree_body_div = document.getElementById('tree_body');
+    var counting_tree_div = document.getElementById('counting_tree');
+    var noTrees_div = document.getElementById('noTrees');
 
-        var tree_body_div = document.getElementById('tree_body');
-        var counting_tree_div = document.getElementById('counting_tree');
-        var noTrees_div = document.getElementById('noTrees');
+    if(userTrees.length == 0){
         
         tree_body_div.style.display = 'none';
         counting_tree_div.style.display = 'none';
@@ -497,6 +497,11 @@ function printTrees(){
         return;
 
     }
+        
+    tree_body_div.style.display = 'flex';
+    counting_tree_div.style.display = 'flex';
+    noTrees_div.style.display = 'none';
+
 
     if(userTrees.length > 1 && !swipeEventActive){
         swipeEventActive = true;
@@ -534,7 +539,7 @@ function printTrees(){
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
-    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
+    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 0 ){
         sell_tree_button.style.display = "flex";
     }
     else{

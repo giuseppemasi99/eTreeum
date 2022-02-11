@@ -162,7 +162,7 @@ div#tree_to_sell{
 
 div#tree_to_sell img{
     width: 150px;
-    margin: 30px;
+    margin: 15px;
     border-radius: 10px;
 }
 
@@ -178,6 +178,9 @@ li#shop_chart{
     align-items: center;
 
     height: 80px;
+    width: 50px;
+    cursor: pointer;
+    justify-content: center;
 }
 
 div#menu li ul{

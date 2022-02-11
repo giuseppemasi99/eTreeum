@@ -293,8 +293,6 @@ async function buyTree(){
 
     var shopIndex = document.getElementById('buy').value;
 
-    console.log('ID: '+shopIndex);
-
     await _buyTree(shopIndex);
 
     cancelOption();
