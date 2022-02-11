@@ -223,7 +223,7 @@ contract ETreeumGame is ERC721 {
 
     function sellTree(uint256 treeId, uint256 price) MustOwnTree(treeId) SetLastEntered public {
         Tree storage t = trees[treeId];
-        require(uint8(t.stage) >= 0, "This tree isn't old enough for selling it");
+        require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
         require(shop[treeId] == 0, "This tree is already in the shop");
         require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
         shop[treeId] = price;
@@ -290,7 +290,6 @@ contract ETreeumGame is ERC721 {
     }
 
     function _checkTreePrice(uint256 value, uint256 price) pure private returns (bool) {
-        return true;
         uint256 percentage = value/100;
         return price >= value - percentage && price <= value + percentage && price != 0;
     }
