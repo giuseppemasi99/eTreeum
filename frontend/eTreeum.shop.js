@@ -403,7 +403,7 @@ async function _changePrice(treeId, new_price){
 // function that effectively change the tree price value
 async function changePrice(){
 
-    var new_price = parseFloat(document.getElementById('new_eth_input').value);
+    var new_price = document.getElementById('new_eth_input').value;
     document.getElementById('new_eth_input').value = "";
 
     var treeIndex = document.getElementById('change_price_value').value;
