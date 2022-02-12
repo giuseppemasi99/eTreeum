@@ -977,15 +977,12 @@ function cancelSellTree(){
 // function that actually add to the shop the tree
 async function _sellTree(treeId, price){
 
-    price = parseFloat(price);
-
-    if(isNaN(price)){
-        alert('Please, insert a number!');
+    try{
+        price = web3.utils.toWei(price, 'ether');
+    }catch(e){
+        alert("Please, enter a number!");
         return;
     }
-
-    price = price.toString();
-    price = web3.utils.toWei(price, 'ether');
 
     try {
         var transaction = await contract.methods.sellTree(treeId, price).send(
