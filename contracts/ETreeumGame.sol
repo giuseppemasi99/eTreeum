@@ -8,7 +8,7 @@ contract ETreeumGame is ERC721 {
     enum ExtinctionRisk {LeastConcern, ConservationDependent, NearThreatened, Vulnerable, Endangered, CriticallyEndangered}
     enum Stages {Seed, Bush, Adult, Majestic, Secular}
 
-    uint constant public SEED_PRICE = 1e15;
+    uint constant public SEED_PRICE = 1e15; // SEED_PRICE costa 1 finney
     uint16 constant MAX_WATER = 200;
     uint8 constant MAX_SUN = 3;
     uint8 constant PERCENTAGE_FOR_REAL_PLANT = 1;
@@ -204,25 +204,30 @@ contract ETreeumGame is ERC721 {
                 t.stage = Stages(uint8(t.stage)+1);
                 t.value = _computeTreeValue(t.specie.risk, t.stage);
                 players[msg.sender].score = _computePlayerScore(msg.sender);
+                t.waterGivenInAWeek = 0;
+                t.sunGivenInAWeek = 0;
+                emit UpdatedPlayerScore(msg.sender, players[msg.sender].score);
                 emit TreeGrown(ERC721.ownerOf(id), id, t.stage);
             }
         }
-        else { t.startWeek = block.timestamp; }
+        t.startWeek = block.timestamp;
     }
 
     function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public {
-        require(waterAmount <= MAX_WATER, "Too much water");
+        //require(waterAmount <= MAX_WATER, "Too much water");
         Tree storage t = trees[id];
-        require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
+        require(t.lastWater < block.timestamp -1 minutes, "You watered this plant not so long ago");
+        //require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
         t.waterGivenInAWeek += waterAmount;
         t.lastWater = block.timestamp;
         _growTree(id, t);
     }
 
     function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public {
-        require(sunHours <= MAX_SUN, "Too much sun");
+        //require(sunHours <= MAX_SUN, "Too much sun");
         Tree storage t = trees[id];
-        require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
+        require(t.lastSun < block.timestamp -1 minutes, "You exposed this plant to the sun not so long ago");
+        //require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
         t.sunGivenInAWeek += sunHours;
         t.lastSun = block.timestamp;
         _growTree(id, t);
@@ -231,8 +236,8 @@ contract ETreeumGame is ERC721 {
     function buySeed(string calldata treeNickname) SetLastEntered public payable {
         require(msg.value >= SEED_PRICE, "Not enough money for a seed");
         planter.transfer(msg.value);
-        (uint256 id, Tree memory t) = _plantSeed(msg.sender, treeNickname);
-        emit BoughtSeed(msg.sender, id, t);
+        _plantSeed(msg.sender, treeNickname);
+        //emit BoughtSeed(msg.sender, id, t);
     }
 
     function sellTree(uint256 treeId, uint256 price) SetLastEntered public {
@@ -267,6 +272,8 @@ contract ETreeumGame is ERC721 {
         require(shopIds[shopIndex] == treeId, "You are selecting the wrong tree");
         uint256 price = shop[treeId];
         uint256 commission = trees[treeId].value * 1e15; 
+
+        // msg.value espresso in wei
         require(msg.value >= price + commission, "You are not paying enough");
         address oldOwner = ERC721.ownerOf(treeId);
         uint256 oldOwnerIndex = _getOwnerIndex(treeId, oldOwner);

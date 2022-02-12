@@ -1,5 +1,5 @@
 // Set the contract address
-var contractAddress = '0xc6B586351831cC928429fFad7a71e5f7733e2366';
+var contractAddress = '0xE3331FF54C1Bfe252B4487565d58BE4417cA4030';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "../build/contracts/ETreeumGame.json"
@@ -58,12 +58,39 @@ async function buySeed(){
                 gas: 1500000
             });
         console.log("TRANSACTION", transaction);
+
+        if(window.location.href.indexOf('index') != -1){
+            cancel();
+            await getTrees();
+            printTrees();
+        }else{
+            cancelNewSeed();
+            alert("You bought a new seed! You'll find it in the home page.");
+        }
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
     }
 
+}
+
+function subscribeToUpdatedPlayerScore(){
+    contract.events.UpdatedPlayerScore(
+        async function(error, event){
+            if (!error) {
+                console.log('UpdatedPlayerScore event', event);
+                var newScore = event.returnValues['score'];
+                if (senderAddress == event.returnValues.a) {
+                    player_score = newScore;
+                    printUserInfo();
+                    if(window.location.href.indexOf('index') != -1){
+                        calculatePodium();
+                    }
+                }
+            }
+        }
+    );
 }
 
 async function getPlayer(){

@@ -9,90 +9,37 @@ var swipeEventActive = false;
 
 
 async function start(){
-
-    subscribeToAllEvents();
     
+    subscribeToUpdatedPlayerScore();
+
     //Check is new user --> return
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
     console.log('isNewUser:'+ isNewUser);
-
+    
     if (isNewUser) {
         registerPlayer();
     } else {
         login();
     }
 
+    subscribeToTreeGrown();
+
 }
 
-function subscribeToAllEvents(){
-
-    contract.events.JoinedGame(
-        async function(error, event){
-            if (!error) {
-                console.log('JoinedGame event');
-                var freeTreeId = event.returnValues['id'];
-                var freeTree = event.returnValues['tree'];
-                if (senderAddress == event.returnValues.a) {
-                    isNewUser = false;
-                    var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
-                    userTrees = Array();
-                    userIdsOfTrees = Array();
-                    userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
-                    userIdsTrees[1].forEach(element => userTrees.push({...element}));
-                    printTrees();
-                    getPlayer();
-                }
-            }
-        }
-    );
-
-    contract.events.UpdatedPlayerScore(
-        async function(error, event){
-            if (!error) {
-                console.log('UpdatedPlayerScore event');
-                var newScore = event.returnValues['score'];
-                if (senderAddress == event.returnValues.a) {
-                    player_score = newScore;
-                    printUserInfo();
-                    calculatePodium();
-                }
-            }
-        }
-    );
-
-    contract.events.BoughtSeed(
-        async function(error, event){
-            if (!error) {
-                console.log('BoughtSeed event');
-                if (senderAddress == event.returnValues.a) {
-                    var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
-                    userTrees = Array();
-                    userIdsOfTrees = Array();
-                    userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
-                    userIdsTrees[1].forEach(element => userTrees.push({...element}));
-                    cancel();
-                    printTrees();
-                }
-            }
-        }
-    );
-
+function subscribeToTreeGrown(){
     contract.events.TreeGrown(
         async function(error, event){
             if (!error) {
-                console.log('TreeGrown event');
+                console.log('TreeGrown event', event);
                 var treeId = event.returnValues['treeId'];
                 var newStage = event.returnValues['stage'];
                 if (senderAddress == event.returnValues.a) {
-                    userTrees[userIdsOfTrees.indexOf(treeId)]['stage'] = newStage;
+                    userTrees[userIdsOfTrees.indexOf(parseInt(treeId))]['stage'] = newStage;
                     printTrees();
                 }
             }
         }
     );
-
-    console.log('EVENTS SUBSCRIPTION');
-
 }
 
 function registerPlayer() {
@@ -121,24 +68,28 @@ function registerPlayer() {
 
 }
 
-async function login() {
+async function getTrees(){
 
-    try {
+    userIdsOfTrees = Array();
+    userTrees = Array();
 
-        var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
-        
+    try{
+        let userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
         userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
-        
         userIdsTrees[1].forEach(element => userTrees.push({...element}));
-
-        printTrees();
-        getPlayer();
-
-    }
-    catch(e) {
+    }catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
     }
+
+}
+
+async function login() {
+
+    await getTrees();
+    printTrees();
+    await getPlayer();
+    printUserInfo();
 
 }
 
@@ -252,6 +203,25 @@ async function joinGame () {
 
     input_treeName.innerHTML = "";
     treename = input_treeName.value;
+
+    contract.events.JoinedGame(
+        async function(error, event){
+            if (!error) {
+                console.log('JoinedGame event', event);
+                if (senderAddress == event.returnValues.a) {
+                    isNewUser = false;
+                    var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
+                    userTrees = Array();
+                    userIdsOfTrees = Array();
+                    userIdsTrees[0].forEach(element => userIdsOfTrees.push(parseInt(element)));
+                    userIdsTrees[1].forEach(element => userTrees.push({...element}));
+                    printTrees();
+                    await getPlayer();
+                    printUserInfo();
+                }
+            }
+        }
+    );
 
     try {
         var transaction = await contract.methods.joinGame(username, treename).send({from:senderAddress, gas: 1500000});
@@ -443,7 +413,7 @@ async function calculatePodium(){
     third = document.getElementById("third_name");
 
     try {
-        scores_ = await contract.methods.getScores().call({from:senderAddress, gas: 120000});
+        let scores_ = await contract.methods.getScores().call({from:senderAddress, gas: 120000});
         scores = Array();
         scores_.forEach(element => scores.push(
             {
@@ -466,7 +436,7 @@ async function calculatePodium(){
 
 // function that show all the owned trees with the respective info and the user nickname
 function printTrees(){
-
+    
     setupPage();
 
     var initial_div;
@@ -707,6 +677,8 @@ async function giveSun(){
         console.log("Transaction giveSun: ", transaction);
         var sun = sunHours == 1 ? "hour" : "hours";
         alert("Good job, you gave " + sunHours + " " + sun + " of sun to your tree");
+        let t = await contract.methods.getTree(treeId).call({from:senderAddress, gas: 1500000});
+        userTrees[num_tree-1] = {...t};
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -729,6 +701,8 @@ async function giveWater(){
         var transaction = await contract.methods.giveWater(treeId, waterAmount).send({from:senderAddress, gas: 1500000});
         console.log("Transaction giveWater: ", transaction);
         alert("Good job, you gave " + waterAmount + " milliliters of water to your tree");
+        let t = await contract.methods.getTree(treeId).call({from:senderAddress, gas: 1500000});
+        userTrees[num_tree-1] = {...t};
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);

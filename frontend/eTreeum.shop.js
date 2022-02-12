@@ -9,34 +9,17 @@ $(window).on('load', async function() {
     // comment this code when working with blockchain
     await initialise();
 
-    subscribeToAllEvents();
-
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
 
     if(isNewUser){
         window.location.href = "./index.html";
     }else{
         showSellingTrees();
+        subscribeToUpdatedPlayerScore();
     }
 
 });
 
-
-function subscribeToAllEvents(){
-
-    console.log('EVENTS SUBSCRIPTION SHOP');
-
-    contract.events.BoughtSeed(
-        async function(error, event){
-            if (!error) {
-                if (senderAddress == event.returnValues.a) {
-                    cancelNewSeed();
-                    getPlayer();
-                }
-            }
-        }
-    );
-}
 
 async function getShopTrees(){
     let ret = await contract.methods.getShop().call({from:senderAddress, gas: 1500000});
@@ -271,6 +254,10 @@ async function _buyTree(shopIndex){
 
     var price = prices[shopIndex];
     var treeId = shopIds[shopIndex];
+
+    let fee = web3.utils.toWei(sellingTrees[shopIndex].value, 'finney');
+    
+    price = (parseInt(price) + parseInt(fee)).toString();
 
     try {
         var transaction = await contract.methods.buyTree(treeId, shopIndex).send(
