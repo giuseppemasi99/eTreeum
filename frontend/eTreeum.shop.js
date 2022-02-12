@@ -40,10 +40,10 @@ function subscribeToAllEvents(){
 
 async function getShopTrees(){
     let ret = await contract.methods.getShop().call({from:senderAddress, gas: 1500000});
-    // ret = (treesInShop, prices, shopIds, owners)
-    sellingTrees = ret[0];
-    prices = ret[1];
-    shopIds = ret[2];
+    // ret = (shopIds, treesInShop, prices, owners)
+    shopIds = ret[0];
+    sellingTrees = ret[1];
+    prices = ret[2];
     owners = ret[3];
     // console.log(sellingTrees);
     // console.log(prices);

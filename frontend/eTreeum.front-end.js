@@ -30,8 +30,6 @@ function subscribeToAllEvents(){
         async function(error, event){
             if (!error) {
                 console.log('JoinedGame event');
-                // console.log(event.returnValues['a']);
-                // console.log(event.returnValues['tree']);
                 var freeTreeId = event.returnValues['id'];
                 var freeTree = event.returnValues['tree'];
                 if (senderAddress == event.returnValues.a) {
@@ -52,12 +50,11 @@ function subscribeToAllEvents(){
         async function(error, event){
             if (!error) {
                 console.log('UpdatedPlayerScore event');
-                // console.log(event.returnValues['a']);
-                // console.log(event.returnValues['tree']);
                 var newScore = event.returnValues['score'];
                 if (senderAddress == event.returnValues.a) {
                     player_score = newScore;
                     printUserInfo();
+                    calculatePodium();
                 }
             }
         }
@@ -67,8 +64,6 @@ function subscribeToAllEvents(){
         async function(error, event){
             if (!error) {
                 console.log('BoughtSeed event');
-                var boughtTreeId = event.returnValues['id'];
-                var boughtTree = event.returnValues['t'];
                 if (senderAddress == event.returnValues.a) {
                     var userIdsTrees = await contract.methods.getPlayerTrees(senderAddress).call({from:senderAddress, gas: 1500000});
                     userTrees = Array();
@@ -449,6 +444,7 @@ async function calculatePodium(){
 
     try {
         scores_ = await contract.methods.getScores().call({from:senderAddress, gas: 120000});
+        scores = Array();
         scores_.forEach(element => scores.push(
             {
                 'nickname': element.nickname,
@@ -459,8 +455,8 @@ async function calculatePodium(){
         // console.log('sorted scores');
         // console.log(scores);
         first.innerHTML = scores[0].nickname + ": " + scores[0].score;
-        second.innerHTML = scores[1].nickname + ": " + scores[1].score;;
-        third.innerHTML = scores[2].nickname + ": " + scores[2].score;;
+        second.innerHTML = scores[1].nickname + ": " + scores[1].score;
+        third.innerHTML = scores[2].nickname + ": " + scores[2].score;
     }
     catch(e) {
         getErrorMessage(e.message);
@@ -582,7 +578,7 @@ function swipe(e, left) {
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
-    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 0 ){
+    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
         sell_tree_button.style.display = "flex";
     }
     else{
