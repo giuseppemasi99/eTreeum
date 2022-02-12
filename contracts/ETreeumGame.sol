@@ -96,7 +96,7 @@ contract ETreeumGame is ERC721 {
     }
 
     event JoinedGame(address a, uint256 id, Tree tree);
-    event RankingChanged();
+    //event RankingChanged();
     event TreeGrown(address a, uint256 treeId, Stages stage);
     event BoughtSeed(address a, uint256 id, Tree t);
     event UpdatedPlayerScore(address a, uint32 score);

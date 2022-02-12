@@ -1,6 +1,7 @@
 var isNewUser = undefined;
 var userTrees = Array();
 var userIdsOfTrees = Array();
+var scores = Array();
 var player_username;
 var player_score;
 
@@ -447,11 +448,19 @@ async function calculatePodium(){
     third = document.getElementById("third_name");
 
     try {
-        var ranking = await contract.methods.getRanking().call({from:senderAddress, gas: 120000});
-        console.log("RANKING", ranking);
-        first.innerHTML = ranking[0].nickname + ": " + ranking[0].score;
-        second.innerHTML = ranking[1].nickname + ": " + ranking[1].score;;
-        third.innerHTML = ranking[2].nickname + ": " + ranking[2].score;;
+        scores_ = await contract.methods.getScores().call({from:senderAddress, gas: 120000});
+        scores_.forEach(element => scores.push(
+            {
+                'nickname': element.nickname,
+                'score': parseInt(element.score)
+            }
+        ));
+        scores = scores.sort((a, b) => (a.score < b.score) ? 1 : -1)
+        // console.log('sorted scores');
+        // console.log(scores);
+        first.innerHTML = scores[0].nickname + ": " + scores[0].score;
+        second.innerHTML = scores[1].nickname + ": " + scores[1].score;;
+        third.innerHTML = scores[2].nickname + ": " + scores[2].score;;
     }
     catch(e) {
         getErrorMessage(e.message);
