@@ -407,10 +407,14 @@ async function submitNewName(){
 async function calculatePodium(){
 
     var first, second, third;
+    var second_label, third_label;
 
     first = document.getElementById("first_name");
     second = document.getElementById("second_name");
     third = document.getElementById("third_name");
+
+    second_label = document.getElementById("second");
+    third_label = document.getElementById("third");
 
     try {
         let scores_ = await contract.methods.getScores().call({from:senderAddress, gas: 120000});
@@ -425,8 +429,20 @@ async function calculatePodium(){
         // console.log('sorted scores');
         // console.log(scores);
         first.innerHTML = scores[0].nickname + ": " + scores[0].score;
-        second.innerHTML = scores[1].nickname + ": " + scores[1].score;
-        third.innerHTML = scores[2].nickname + ": " + scores[2].score;
+        
+        if(scores.length == 1){
+            second_label.style.display = "none";
+            third_label.style.display = "none";
+        }else if(scores.length == 2){
+            second.innerHTML = scores[1].nickname + ": " + scores[1].score;
+            second_label.style.display = "flex";
+            third_label.style.display = "none";
+        }else if(scores.length == 3){
+            second.innerHTML = scores[1].nickname + ": " + scores[1].score;
+            third.innerHTML = scores[2].nickname + ": " + scores[2].score;
+            second_label.style.display = "flex";
+            third_label.style.display = "flex";
+        }
     }
     catch(e) {
         getErrorMessage(e.message);
@@ -444,14 +460,17 @@ function printTrees(){
     initial_div.style.display = "none";
 
     var counter, tree_num, tot_trees, div_tree, tree_img, tree_name;
+    var water_counter, sun_counter;
     var arrow, treeCard, sell_tree_button;
 
     counter = document.getElementById("counting_tree");
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
     div_tree = document.getElementById("tree");
-    treeCard = document.getElementById("treeCard")
+    treeCard = document.getElementById("treeCard");
     tree_name = document.getElementById("treeName");
+    water_counter = document.getElementById("water_counter");
+    sun_counter = document.getElementById("sun_counter");
 
     // button
     sell_tree_button = document.getElementById("sell_tree");
@@ -514,6 +533,10 @@ function printTrees(){
 
     div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
 
+    water_counter.innerHTML = userTrees[tree_num.innerHTML-1]["waterGivenInAWeek"];
+    sun_counter.innerHTML = userTrees[tree_num.innerHTML-1]["sunGivenInAWeek"];
+
+    
     if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
         sell_tree_button.style.display = "flex";
     }
@@ -679,6 +702,7 @@ async function giveSun(){
         alert("Good job, you gave " + sunHours + " " + sun + " of sun to your tree");
         let t = await contract.methods.getTree(treeId).call({from:senderAddress, gas: 1500000});
         userTrees[num_tree-1] = {...t};
+        printTrees();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -703,6 +727,7 @@ async function giveWater(){
         alert("Good job, you gave " + waterAmount + " milliliters of water to your tree");
         let t = await contract.methods.getTree(treeId).call({from:senderAddress, gas: 1500000});
         userTrees[num_tree-1] = {...t};
+        printTrees();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -862,7 +887,6 @@ function sellTree(){
     arrow = document.getElementsByClassName("arrow");
     menu_buySeed = document.getElementById("menu_buySeed");
     sell_button = document.getElementById("sell_tree");
-    tree_to_sell_div = document.getElementById("tree_to_sell");
     tree_img = document.getElementById("tree_to_sell_img");
 
     num_tree = parseInt(document.getElementById("tree_number").innerHTML);
@@ -880,9 +904,6 @@ function sellTree(){
 
     tree_img_src = whichImage(userTrees[num_tree-1]["stage"]);
     tree_img.src = "frontend/img/"+tree_img_src;
-
-    tree_to_sell_div.style.backgroundColor = whichColor(userTrees[num_tree-1]["specie"]["risk"]);
-
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;

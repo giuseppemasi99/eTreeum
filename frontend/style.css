@@ -319,8 +319,6 @@ div#tree_to_sell img{
     width: 80px;
     height: 110px;
 
-    margin: 30px;
-
     border-radius: 10px;
 }
 div#price_of_sell_div{
@@ -337,6 +335,12 @@ input#tree_price{
     margin-right: 5px;
 
     text-align: right;
+}
+
+p#advice{
+    font-size: 10pt;
+    margin-top: 2px;
+    margin-bottom: 10px;
 }
 
 /* CSS FOR THE BODY OF THE PAGE*/
@@ -415,7 +419,6 @@ div#middle_div div#noTrees p#p2{
 div#middle_div div#noTrees p#p3{
     font-size: 16pt;
 }
-
 
 div#tree_body{
     display: flex;
@@ -519,15 +522,15 @@ div#bottom{
     justify-content: center;
     align-items: center;
 
-    height: 10%;
     width: 100%;
 
     margin-top: 10px;
+    margin-bottom: 5px;
 }
 
 button.down-button{
     margin-top: 0px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     margin-right: 10px;
     margin-left: 10px;
 
@@ -539,6 +542,12 @@ button.down-button{
     cursor: not-allowed;
 
     font-size: 80%;
+}
+
+div#water_info, div#sun_info{
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
 }
 
 button#water{

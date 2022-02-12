@@ -132,7 +132,7 @@
                 <input type="text" id="tree_price" value="" placeholder="Price"/>
                 <img src="frontend/img/eth.png">
             </div>
-            
+            <p id="advice">NOTE: A buyer will pay this price plus a tax!</p>
             <div class="buttons_option">
                 <button id="sell_tree_button" type="button">Sell it!</button>
                 <button id="cancel_sell_tree" type="button">No thanks</button>
@@ -164,8 +164,8 @@
                             <img id="sell_tree" src="frontend/img/eth.png">
 
                             <span class="info_row">
-                                <button id="change_name" type="button">✏️</button>
                                 <label id="treeName">TreeName</label>
+                                <button id="change_name" type="button">✏️</button>
                             </span>
 
                             <label id="info">&#8505;</label>
@@ -179,8 +179,16 @@
                         </div>
 
                         <div id="bottom">
-                            <button class="down-button" id="water" type="button">&#128167;</button>
-                            <button class="down-button" id="sun" type="button">&#9728;</button>
+                            <div id="water_info">
+                                <button class="down-button" id="water" type="button">&#128167;</button>
+                                <label id="water_counter">75</label>
+                            </div>
+                            <div id="sun_info">
+                                <button class="down-button" id="sun" type="button">&#9728;</button>
+                                <label id="sun_counter">100</label>
+                            </div>
+                            
+                            
                         </div>
 
                     </div>

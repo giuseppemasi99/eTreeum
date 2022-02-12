@@ -162,7 +162,6 @@ div#tree_to_sell{
 
 div#tree_to_sell img{
     width: 150px;
-    margin: 15px;
     border-radius: 10px;
 }
 
@@ -227,6 +226,7 @@ div#buy_new_seed{
 img#eth_logo{
     width: 10px;
     height: 15px;
+    margin-right: 5px;
 }
 
 input#name_newSeed{

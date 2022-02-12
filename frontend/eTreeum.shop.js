@@ -94,15 +94,15 @@ async function showSellingTrees(){
         eth.className = "eth_value";
         eth.id = "id" + i;
 
-        
-        eth.addEventListener('click', buyOptions.bind(null, event, i));
-
         container.appendChild(tree_row);
         tree_row.appendChild(tree_name_div);
         tree_name_div.appendChild(tree_div);
         tree_name_div.appendChild(tree_info);
         tree_div.appendChild(img);
         tree_row.appendChild(eth_div);
+        
+        eth_div.appendChild(eth);        
+        eth.appendChild(eth_value);
 
         if(owners[i] == senderAddress){
             
@@ -118,13 +118,13 @@ async function showSellingTrees(){
             change_value.appendChild(change_value_char);
             
             change_value.addEventListener('click', clickChangePrice.bind(null, event, i));
+            eth.style.cursor = "default";
+            eth.style.opacity = 0.2;
             
+        }else{
+            eth.addEventListener('click', buyOptions.bind(null, event, i));
         }
-        
-        eth_div.appendChild(eth);        
-        eth.appendChild(eth_value);
 
-        tree_div.style.backgroundColor = whichColor(sellingTrees[i]["specie"]["risk"]);
         src += whichImage(sellingTrees[i]["stage"]);
         img.src = src;
 
@@ -171,12 +171,11 @@ function buyNewSeed(){
 
 function buyOptions(event, treeIndex){
     
-    var buy_option_div, shop_div, tree_to_show_div, tree_image, eth_span;
+    var buy_option_div, shop_div, tree_image, eth_span;
     var buy_buttons, change_price_buttons, menu_buySeed;
 
     buy_option_div = document.getElementById("buy_options");
     shop_div = document.getElementById("shop_body");
-    tree_to_show_div = document.getElementById("tree_to_sell");
     tree_image = document.getElementById("tree_to_sell_image");
     eth_span = document.getElementById("buy_options_eth");
 
@@ -204,7 +203,6 @@ function buyOptions(event, treeIndex){
         }
     }
 
-    tree_to_show_div.style.backgroundColor = whichColor(sellingTrees[treeIndex]["specie"]["risk"]);
     tree_image.src = "frontend/img/" + whichImage(sellingTrees[treeIndex]["stage"]);
 
     document.getElementById('buy').value = treeIndex;
@@ -234,13 +232,13 @@ function cancelOption(){
         
         let k = 0;
 
-        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
-        buy_buttons[i].style.cursor = "pointer";
-
         if(owners[i] == senderAddress){
             change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
             change_price_buttons[k].style.cursor = "pointer";
             k += 1;
+        }else{
+            buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
+            buy_buttons[i].style.cursor = "pointer";
         }
     }
 
@@ -310,13 +308,13 @@ function cancelNewSeed(){
 
         let k = 0;
 
-        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
-        buy_buttons[i].style.cursor = "pointer";
-
         if(owners[i] == senderAddress){
             change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
             change_price_buttons[k].style.cursor = "pointer";
             k += 1;
+        }else{
+            buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
+            buy_buttons[i].style.cursor = "pointer";
         }
     }
 
@@ -423,13 +421,13 @@ function cancelChangePrice(){
 
         let k = 0;
 
-        buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
-        buy_buttons[i].style.cursor = "pointer";
-
         if(owners[i] == senderAddress){
             change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
             change_price_buttons[k].style.cursor = "pointer";
             k += 1;
+        }else{
+            buy_buttons[i].addEventListener('click', buyOptions.bind(null, event, i));
+            buy_buttons[i].style.cursor = "pointer";
         }
 
     }
