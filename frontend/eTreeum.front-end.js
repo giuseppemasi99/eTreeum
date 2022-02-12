@@ -678,7 +678,7 @@ function exitStat(){
 
     if (!swipeEventActive && parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = true;
-        console.log(arrow)
+        
         arrow[0].addEventListener("click", swipe.bind(null, event, true));
         arrow[1].addEventListener("click", swipe.bind(null, event, false));
         
