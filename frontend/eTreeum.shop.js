@@ -378,13 +378,12 @@ function clickChangePrice(event, treeIndex){
 // function that actually change the price of the tree in the shop
 async function _changePrice(treeId, new_price){
 
-    if(isNaN(new_price)){
-        alert('Please, insert a number!');
+    try{
+        new_price = web3.utils.toWei(new_price, 'ether');
+    }catch(e){
+        alert("Please, enter a number!");
         return;
     }
-
-    new_price = new_price.toString();
-    new_price = web3.utils.toWei(new_price, 'ether');
 
     try {
         var transaction = await contract.methods.changePrice(treeId, new_price).send(
