@@ -27,13 +27,14 @@ contract ETreeumGame is ERC721 {
     //number of species in the world: about 390000 --> uint32
     mapping(ExtinctionRisk => uint32[]) private risksIndexes;
     mapping(ExtinctionRisk => uint8[5]) private valuesForStage;
+    //mapping(ExtinctionRisk => uint8[3]) private commissionsForStage;
     mapping(uint256 => Tree) trees;
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
     address[] private playersAddresses;
     mapping(uint256 => uint256) private shop;
     uint256[] private shopIds;
-    PlayerInRanking[3] private ranking;
+    //PlayerInRanking[3] private ranking;
 
     struct Species {
         string name; 
@@ -57,7 +58,7 @@ contract ETreeumGame is ERC721 {
     struct PlayerInRanking {
         string nickname;
         uint32 score;
-        address playerAddress;
+        //address playerAddress;
     }
 
     struct Player {
@@ -77,18 +78,25 @@ contract ETreeumGame is ERC721 {
         _;
     }
 
+    modifier MustBeGardener() {
+        require(msg.sender == _gardener, "You cannot set the rules of the game");
+        _;
+    }
+
     modifier UpdatePlayerScore(address player){
         _;
         uint32 oldScore = players[player].score;
         players[player].score = _computePlayerScore(player);
         if (oldScore != players[player].score){
-            computeRanking();
             emit UpdatedPlayerScore(player, players[player].score);
+            /*if(_needUpdateRanking(player)) {
+                emit RankingChanged();
+            }*/
         } 
     }
 
     event JoinedGame(address a, uint256 id, Tree tree);
-    event RankingChanged(PlayerInRanking[3] ranking);
+    event RankingChanged();
     event TreeGrown(address a, uint256 treeId, Stages stage);
     event BoughtSeed(address a, uint256 id, Tree t);
     event UpdatedPlayerScore(address a, uint32 score);
@@ -114,12 +122,19 @@ contract ETreeumGame is ERC721 {
         valuesForStage[ExtinctionRisk.LeastConcern] = [1, 5, 10, 15, 25];
     }
 
-    function addSpecies(string memory speciesName, ExtinctionRisk risk, uint16 waterNeeded, uint8 sunNeeded) public {
-        require(msg.sender == _gardener, "You cannot set the rules of the game");
+    function addSpecies(string memory speciesName, ExtinctionRisk risk, uint16 waterNeeded, uint8 sunNeeded) MustBeGardener() public {
         require(bytes(speciesName).length > 0, "The name cannot be empty");
         require(!_existsSpecies(speciesName), "This species already exists");
         gameSpecies.push(Species(speciesName, risk, waterNeeded, sunNeeded));
         risksIndexes[risk].push(uint32(gameSpecies.length -1));
+    }
+
+    function changeExtinctionRisk(string calldata speciesName, ExtinctionRisk newRisk) MustBeGardener() public {
+        for(uint8 i=0; i<gameSpecies.length; i++) {
+            if (keccak256(bytes(gameSpecies[i].name)) == keccak256(bytes(speciesName))) {
+                gameSpecies[i].risk = newRisk;
+            }
+        }
     }
 
     function _existsSpecies(string memory speciesName) view private returns (bool) {
@@ -129,8 +144,7 @@ contract ETreeumGame is ERC721 {
         return false;
     }
 
-    function changeValuesForStage(ExtinctionRisk risk, uint8[5] calldata values) public {
-        require(msg.sender == _gardener, "You cannot set the rules of the game");
+    function changeValuesForStage(ExtinctionRisk risk, uint8[5] calldata values) MustBeGardener() public {
         valuesForStage[risk] = values;
     }
 
@@ -225,7 +239,7 @@ contract ETreeumGame is ERC721 {
         Tree storage t = trees[treeId];
         require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
         require(shop[treeId] == 0, "This tree is already in the shop");
-        require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
+        //require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
         shop[treeId] = price;
         shopIds.push(treeId);
     }
@@ -243,14 +257,16 @@ contract ETreeumGame is ERC721 {
         require(shop[treeId] != 0, "This tree is not up for sale");
         require(shopIds[shopIndex] == treeId, "You are selecting the wrong tree");
         uint256 price = shop[treeId];
-        require(msg.value >= price, "You are not paying enough");
+        uint256 commission = trees[treeId].value * 1e15; 
+        require(msg.value >= price + commission, "You are not paying enough");
         address oldOwner = ERC721.ownerOf(treeId);
         uint256 oldOwnerIndex = _getOwnerIndex(treeId, oldOwner);
-        uint256 percentage = price / 100;
-        price = price - percentage;
-        planter.transfer(percentage);
+        //uint256 percentage = price / 100;
+        //price = price - percentage;
+        //planter.transfer(percentage);
+        planter.transfer(commission);
         ERC721._transfer(oldOwner, msg.sender, treeId);//ERC721.safeTransferFrom(oldOwner, msg.sender, treeId);
-        payable(oldOwner).transfer(price);
+        payable(oldOwner).transfer(msg.value - commission);
         _afterSelling(oldOwner, msg.sender, treeId, shopIndex, oldOwnerIndex);
     }
 
@@ -263,36 +279,22 @@ contract ETreeumGame is ERC721 {
         players[msg.sender].treeOwned.push(treeId);
     }
 
-    function getShop() view public returns (Tree[] memory, uint256[] memory, uint256[] memory, address[] memory){
-        Tree[] memory treesInShop = new Tree[](shopIds.length);
-        uint256[] memory prices = new uint256[](shopIds.length);
-        uint256[] memory _treeOwned = new uint256[](shopIds.length);
-        address[] memory owners = new address[](shopIds.length);
+    function getShop() view public returns (uint256[] memory, Tree[] memory, uint256[] memory, address[] memory){
+         Tree[] memory treesInShop = new Tree[](shopIds.length);
+         uint256[] memory prices = new uint256[](shopIds.length);
+         address[] memory owners = new address[](shopIds.length);
+         for (uint256 i=0; i<shopIds.length; i++) {
+             treesInShop[i] = trees[shopIds[i]];
+             prices[i] = shop[shopIds[i]];
+             owners[i] = ERC721.ownerOf(shopIds[i]);
+         }
+         return (shopIds, treesInShop, prices, owners);
+     }
 
-        for (uint256 i=0; i<shopIds.length; i++) {
-            treesInShop[i] = trees[shopIds[i]];
-            prices[i] = shop[shopIds[i]];
-        }
-
-        for (uint256 i=0; i<shopIds.length; i++) {
-            for (uint256 j=0; j<playersAddresses.length; j++) {
-                _treeOwned = players[playersAddresses[j]].treeOwned;
-                for (uint256 k=0; k<_treeOwned.length; k++) {
-                    if(shopIds[i] == _treeOwned[k]){
-                        owners[i] = playersAddresses[j];
-                        break;
-                    }
-                }
-            }
-        }
-
-        return (treesInShop, prices, shopIds, owners);
-    }
-
-    function _checkTreePrice(uint256 value, uint256 price) pure private returns (bool) {
+    /*function _checkTreePrice(uint256 value, uint256 price) pure private returns (bool) {
         uint256 percentage = value/100;
         return price >= value - percentage && price <= value + percentage && price != 0;
-    }
+    }*/
 
     function changePrice(uint256 treeId, uint256 newPrice) public {
         shop[treeId] = newPrice;
@@ -324,11 +326,33 @@ contract ETreeumGame is ERC721 {
         return score;
     }
 
-    function getRanking() view public returns (PlayerInRanking[3] memory) {
+    /*function getRanking() view public returns (PlayerInRanking[3] memory) {
         return ranking;
+    }*/
+
+    /*function _needUpdateRanking(address player) public returns (bool) {
+        if (player == ranking[2].playerAddress) {
+            ranking[2].score = players[player].score;
+        }
+        else if (player == ranking[1].playerAddress) {
+            ranking[1].score = players[player].score;
+        }
+        else if (player == ranking[0].playerAddress) {
+            ranking[0].score = players[player].score;
+        }
+        return players[player].score > ranking[2].score || player == ranking[2].playerAddress || player == ranking[1].playerAddress || player == ranking[0].playerAddress;
+    }*/
+
+    function getScores() view public returns (PlayerInRanking[] memory){
+        PlayerInRanking[] memory playerScores = new PlayerInRanking[](playersAddresses.length);
+        for (uint i=0; i<playersAddresses.length; i++) {
+            Player memory p = players[playersAddresses[i]];
+            playerScores[i] = PlayerInRanking(p.nickname, p.score);
+        }
+        return playerScores;
     }
 
-    function computeRanking() public {
+    /*function computeRanking() public {
         bool changed = false;
         for(uint i=0; i<playersAddresses.length; i++) {
             Player memory p = players[playersAddresses[i]];
@@ -358,6 +382,6 @@ contract ETreeumGame is ERC721 {
         if (changed) {
             emit RankingChanged(ranking);
         }
-    }
+    }*/
 
 }
