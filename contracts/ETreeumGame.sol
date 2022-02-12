@@ -235,13 +235,22 @@ contract ETreeumGame is ERC721 {
         emit BoughtSeed(msg.sender, id, t);
     }
 
-    function sellTree(uint256 treeId, uint256 price) MustOwnTree(treeId) SetLastEntered public {
-        Tree storage t = trees[treeId];
-        require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
+    function sellTree(uint256 treeId, uint256 price) SetLastEntered public {
+        _checkSelling(treeId, price);
         require(shop[treeId] == 0, "This tree is already in the shop");
-        //require(_checkTreePrice(t.value, price), "The price is not between the allowed range");
         shop[treeId] = price;
         shopIds.push(treeId);
+    }
+
+    function changePrice(uint256 treeId, uint256 newPrice) SetLastEntered public {
+        _checkSelling(treeId, newPrice);
+        shop[treeId] = newPrice;
+    }
+
+    function _checkSelling(uint256 treeId, uint256 price) MustOwnTree(treeId) view private {
+        Tree memory t = trees[treeId];
+        require(uint8(t.stage) >= 2, "This tree isn't old enough for selling it");
+        require(price != 0, "The price cannot be 0");
     }
 
     function _getOwnerIndex(uint256 treeId, address player) view private returns (uint256 index) {
@@ -295,10 +304,6 @@ contract ETreeumGame is ERC721 {
         uint256 percentage = value/100;
         return price >= value - percentage && price <= value + percentage && price != 0;
     }*/
-
-    function changePrice(uint256 treeId, uint256 newPrice) public {
-        shop[treeId] = newPrice;
-    }
 
     function _computeTreeValue(ExtinctionRisk risk, Stages stage) view private returns (uint8) {
         /*uint8 value;
