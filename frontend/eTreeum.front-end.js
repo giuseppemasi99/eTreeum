@@ -730,7 +730,12 @@ async function giveSun(){
         alert("Good job, you gave " + sunHours + " " + sun + " of sun to your tree");
         let t = await contract.methods.getTree(treeId).call({from:senderAddress, gas: 1500000});
         userTrees[num_tree-1] = {...t};
-        printTrees();
+        var water_counter, sun_counter;
+        water_counter = document.getElementById("water_counter");
+        sun_counter = document.getElementById("sun_counter");
+        water_counter.innerHTML = userTrees[parseInt(num_tree)-1]["waterGivenInAWeek"];
+        sun_counter.innerHTML = userTrees[parseInt(num_tree)-1]["sunGivenInAWeek"];
+        //printTrees();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
@@ -755,7 +760,12 @@ async function giveWater(){
         alert("Good job, you gave " + waterAmount + " milliliters of water to your tree");
         let t = await contract.methods.getTree(treeId).call({from:senderAddress, gas: 1500000});
         userTrees[num_tree-1] = {...t};
-        printTrees();
+        var water_counter, sun_counter;
+        water_counter = document.getElementById("water_counter");
+        sun_counter = document.getElementById("sun_counter");
+        water_counter.innerHTML = userTrees[parseInt(num_tree)-1]["waterGivenInAWeek"];
+        sun_counter.innerHTML = userTrees[parseInt(num_tree)-1]["sunGivenInAWeek"];
+        //printTrees();
     }
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
