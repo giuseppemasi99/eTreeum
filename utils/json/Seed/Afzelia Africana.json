@@ -1,0 +1,13 @@
+{
+    "name": "Afzelia Africana Seed",
+    "description": "Seed of a tree of the species Afzelia Africana",
+    "image": "../utils/images/seed.png",
+    "attributes":
+    {
+      "color": "#9400D3",
+      "fun facts": [
+        "This tree can grow up to 40m in a forest", "Many parts of this tree are edible, including its fruits, leaves and flowers"
+      ]
+    } 
+ }
+ 

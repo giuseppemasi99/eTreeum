@@ -1,0 +1,13 @@
+{
+    "name": "Callitris Pancheri Bush",
+    "description": "Bush of a tree of the species Callitris Pancheri",
+    "image": "../utils/images/Bush.png",
+    "attributes": 
+    {
+      "color": "#FFD700",
+      "fun facts": [
+        "This tree is endemic to New Caledonia, where it occurs in small, scattered population along rivers.", "Being an evergreen tree, this plant needs little water and sun"
+      ]   
+    }
+ }
+ 

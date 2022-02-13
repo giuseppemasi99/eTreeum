@@ -1,0 +1,13 @@
+{
+    "name": "Abies Nebrodensis Bush",
+    "description": "Bush of a tree of the species Abies Nebrodensis",
+    "image": "../utils/images/Bush.png",
+    "attributes": 
+    {
+      "color": "rosybrown",
+      "fun facts": [
+        "This tree is from Sicily", "There are only about 25 mature specimen remaining", "Being an evergreen tree, this plant needs little water and sun"
+      ]   
+    }
+ }
+ 

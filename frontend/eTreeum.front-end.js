@@ -4,6 +4,7 @@ var userIdsOfTrees = Array();
 var scores = Array();
 var player_username;
 var player_score;
+var treeInfo = undefined;
 
 var swipeEventActive = false;
 
@@ -80,6 +81,23 @@ async function getTrees(){
     }catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
+    }
+}
+
+async function getTreeInfo(id) {
+    if (id != undefined) {
+        try {
+            let uri = await contract.methods.tokenURI(id).call({from:senderAddress, gas: 1500000});
+            let response = await fetch(uri);
+            treeInfo = await response.json();
+        }
+        catch(e){
+            console.log(e);
+            treeInfo = undefined;
+        }
+    }
+    else {
+        treeInfo = undefined;
     }
 
 }
@@ -451,7 +469,7 @@ async function calculatePodium(){
 }
 
 // function that show all the owned trees with the respective info and the user nickname
-function printTrees(){
+async function printTrees(){
     
     setupPage();
 
@@ -526,12 +544,14 @@ function printTrees(){
     tree_num.innerHTML = 1;
     tot_trees.innerHTML = userTrees.length;
 
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
+    await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    tree_img = treeInfo?.image || "";
+    treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
+    console.log("PRINTING", treeInfo);
     
     tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
 
-    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+    div_tree.style.backgroundImage = "url("+tree_img+")";
 
     water_counter.innerHTML = userTrees[tree_num.innerHTML-1]["waterGivenInAWeek"];
     sun_counter.innerHTML = userTrees[tree_num.innerHTML-1]["sunGivenInAWeek"];
@@ -546,7 +566,7 @@ function printTrees(){
 
 }
 
-function swipe(e, left) {
+async function swipe(e, left) {
 
     var tree_num, tot_trees, div_tree, tree_img, treeCard, tree_name, sell_tree_button;
     
@@ -565,11 +585,13 @@ function swipe(e, left) {
         tree_num.innerHTML = left ? parseInt(tree_num.innerHTML)-1 : parseInt(tree_num.innerHTML)+1;
     }
 
-    tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
-    treeCard.style.backgroundColor = whichColor(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
+    //tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
+    await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    tree_img = treeInfo?.image || "";
+    treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
     tree_name.innerHTML = userTrees[tree_num.innerHTML-1]["nickname"];
 
-    div_tree.style.backgroundImage = "url(frontend/img/"+tree_img+")";
+    div_tree.style.backgroundImage = "url("+tree_img+")";
 
     if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
         sell_tree_button.style.display = "flex";
@@ -871,7 +893,7 @@ function cancel(){
 
 }
 
-function sellTree(){
+async function sellTree(){
     // ottenere immagine e sfonto del tree da vendere
     var complete_body, sell_tree_div, tree_to_sell_div, num_tree, tree_img;
     var tree_img_src;
@@ -902,8 +924,10 @@ function sellTree(){
     menu_buySeed.removeEventListener('click', buyNewSeed);
     sell_button.removeEventListener('click', sellTree);
 
-    tree_img_src = whichImage(userTrees[num_tree-1]["stage"]);
-    tree_img.src = "frontend/img/"+tree_img_src;
+    //tree_img_src = whichImage(userTrees[num_tree-1]["stage"]);
+    //tree_img.src = "frontend/img/"+tree_img_src;
+    if (treeInfo == undefined) await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    tree_img.src = treeInfo?.image || "";
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;

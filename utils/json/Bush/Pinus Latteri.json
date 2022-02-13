@@ -1,0 +1,13 @@
+{
+    "name": "Pinus Latteri Bush",
+    "description": "Bush of a tree of the species Pinus Latteri",
+    "image": "../utils/images/Bush.png",
+    "attributes":
+    {
+      "color": "#897C80",
+      "fun facts": [
+      "This pine is native to Mainland Southeast Asia.", "This plant generally occurs at moderate altitudes, mostly from 400-1000 m"
+      ]   
+    }
+ }
+ 

@@ -1,5 +1,5 @@
 // Set the contract address
-var contractAddress = '0x3ec8548F335954B3db469230d6D7869F8735c952';
+var contractAddress = '0x6e1F7123c9DE64a07e737C8Bf0338fd753B30BB6';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "../build/contracts/ETreeumGame.json"
@@ -99,8 +99,6 @@ async function getPlayer(){
         var nickname_score = await contract.methods.getPlayerInfo(senderAddress).call({from:senderAddress, gas: 1500000});
         player_username = nickname_score[0];
         player_score = nickname_score[1];
-        // console.log("nickname_score");
-        // console.log(nickname_score);
         printUserInfo();
     }
     catch(e) {
@@ -128,24 +126,6 @@ function getErrorMessage(msg) {
         errorMessage = errorMessage.substring(0, errorMessage.indexOf("\"}"));
     }
     return errorMessage;
-}
-
-//function that given a value return the type of image to show
-function whichImage(value){
-    switch(value){
-        case '0':
-            return "seed.gif";
-        case '1':
-            return "little_tree.gif";
-        case '2':
-            return "da9cc5efa7671200c3def8a880721db7.gif";
-        case '3':
-            return "da9cc5efa7671200c3def8a880721db7.gif";
-        case '4':
-            return "da9cc5efa7671200c3def8a880721db7.gif";
-        default:
-            return "seed.gif";
-    }
 }
 
 //function that given a value return the color to show in background

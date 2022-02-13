@@ -2,16 +2,17 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract ETreeumGame is ERC721 {
+contract ETreeumGame is ERC721URIStorage {
 
     enum ExtinctionRisk {LeastConcern, ConservationDependent, NearThreatened, Vulnerable, Endangered, CriticallyEndangered}
     enum Stages {Seed, Bush, Adult, Majestic, Secular}
 
+    uint256 private moneyToThePlanter = 0;
     uint constant public SEED_PRICE = 1e15; // SEED_PRICE costa 1 finney
     uint16 constant MAX_WATER = 200;
-    uint8 constant MAX_SUN = 3;
-    uint8 constant PERCENTAGE_FOR_REAL_PLANT = 1;
+    uint8 constant MAX_SUN = 4;
     uint256 public treeCounter;
     address payable private _gardener;
     //fake address
@@ -27,14 +28,12 @@ contract ETreeumGame is ERC721 {
     //number of species in the world: about 390000 --> uint32
     mapping(ExtinctionRisk => uint32[]) private risksIndexes;
     mapping(ExtinctionRisk => uint8[5]) private valuesForStage;
-    //mapping(ExtinctionRisk => uint8[3]) private commissionsForStage;
     mapping(uint256 => Tree) trees;
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
     address[] private playersAddresses;
     mapping(uint256 => uint256) private shop;
     uint256[] private shopIds;
-    //PlayerInRanking[3] private ranking;
 
     struct Species {
         string name; 
@@ -58,7 +57,6 @@ contract ETreeumGame is ERC721 {
     struct PlayerInRanking {
         string nickname;
         uint32 score;
-        //address playerAddress;
     }
 
     struct Player {
@@ -89,30 +87,26 @@ contract ETreeumGame is ERC721 {
         players[player].score = _computePlayerScore(player);
         if (oldScore != players[player].score){
             emit UpdatedPlayerScore(player, players[player].score);
-            /*if(_needUpdateRanking(player)) {
-                emit RankingChanged();
-            }*/
         } 
     }
 
     event JoinedGame(address a, uint256 id, Tree tree);
-    //event RankingChanged();
     event TreeGrown(address a, uint256 treeId, Stages stage);
     event BoughtSeed(address a, uint256 id, Tree t);
     event UpdatedPlayerScore(address a, uint32 score);
 
-    constructor() ERC721("Tree", "T"){
+    constructor() ERC721("Tree", "eT"){
         treeCounter = 0;
         _gardener = payable(msg.sender);
-        addSpecies("Abies Nebrodensis", ExtinctionRisk.CriticallyEndangered, 1000, 10);
-        addSpecies("Callitris Pancheri", ExtinctionRisk.Endangered, 1000, 10);
-        addSpecies("Afzelia Africana", ExtinctionRisk.Vulnerable, 1000, 10);
-        addSpecies("Aloe Squarrosa", ExtinctionRisk.Vulnerable, 1000, 10);
-        addSpecies("Canarium Zeylanicum", ExtinctionRisk.Vulnerable, 1000, 10);
-        addSpecies("Pinus Latteri", ExtinctionRisk.NearThreatened, 1000, 10);
-        addSpecies("Baccaurea Polyneura", ExtinctionRisk.ConservationDependent, 1000, 10);
-        addSpecies("Malus Domestica", ExtinctionRisk.LeastConcern, 1000, 10);
-        addSpecies("Pinus Sylvestris", ExtinctionRisk.LeastConcern, 1000, 10);
+        addSpecies("Abies Nebrodensis", ExtinctionRisk.CriticallyEndangered, 600, 40);
+        addSpecies("Callitris Pancheri", ExtinctionRisk.Endangered, 600, 40);
+        addSpecies("Afzelia Africana", ExtinctionRisk.Vulnerable, 1000, 60);
+        addSpecies("Aloe Squarrosa", ExtinctionRisk.Vulnerable, 5000, 100);
+        addSpecies("Canarium Zeylanicum", ExtinctionRisk.Vulnerable, 600, 40);
+        addSpecies("Pinus Latteri", ExtinctionRisk.NearThreatened, 1000, 50);
+        addSpecies("Baccaurea Polyneura", ExtinctionRisk.ConservationDependent, 1000, 50);
+        addSpecies("Malus Domestica", ExtinctionRisk.LeastConcern, 3000, 50);
+        addSpecies("Pinus Sylvestris", ExtinctionRisk.LeastConcern, 600, 40);
         addSpecies("Theobroma Cacao", ExtinctionRisk.LeastConcern, 1000, 10);
         valuesForStage[ExtinctionRisk.CriticallyEndangered] = [40, 45, 55, 65, 80];
         valuesForStage[ExtinctionRisk.Endangered] = [30, 35, 45, 55, 65];
@@ -120,6 +114,10 @@ contract ETreeumGame is ERC721 {
         valuesForStage[ExtinctionRisk.NearThreatened] = [15, 20, 30, 35, 45];
         valuesForStage[ExtinctionRisk.ConservationDependent] = [5, 10, 15, 25, 35];
         valuesForStage[ExtinctionRisk.LeastConcern] = [1, 5, 10, 15, 25];
+    }
+
+    function _baseURI() override internal view virtual returns (string memory) {
+        return "../utils/json/";
     }
 
     function addSpecies(string memory speciesName, ExtinctionRisk risk, uint16 waterNeeded, uint8 sunNeeded) MustBeGardener() public {
@@ -178,16 +176,25 @@ contract ETreeumGame is ERC721 {
     function _plantSeed(address owner, string calldata nickname) UpdatePlayerScore(owner) private returns (uint256 id, Tree memory) {
         uint256 treeId = treeCounter;
         _safeMint(owner, treeId);
-        //_setTokenURI(treeCounter, tokenURI);
         uint random = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, treeCounter)));
         ExtinctionRisk risk = ExtinctionRisk(probabilitiesDitribution[random % 100]);
         uint32[] memory speciesAtRisk = risksIndexes[risk];
         uint32 speciesIndex = speciesAtRisk[random % speciesAtRisk.length];
-        Tree memory t = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _computeTreeValue(risk, Stages.Seed), 0, 0, 0);
+        Tree memory t = Tree(gameSpecies[speciesIndex], nickname, 0, 0, Stages.Seed, _getTreeValue(risk, Stages.Seed), 0, 0, 0);
         trees[treeId] = t;
         players[owner].treeOwned.push(treeId);
+        _setTokenURI(treeId, string(abi.encodePacked("Seed/", gameSpecies[speciesIndex].name, ".json")));
         treeCounter = treeCounter + 1;
         return (treeId, t);
+    }
+
+    function _getStageName(Stages stage) pure private returns (string memory) {
+        if (stage == Stages.Seed) return "Seed";
+        if (stage == Stages.Bush) return "Bush";
+        if (stage == Stages.Adult) return "Adult";
+        if (stage == Stages.Majestic) return "Majestic";
+        if (stage == Stages.Secular) return "Secular";
+        return "";
     }
 
     function _ownsTree(address player, uint256 id) view private returns (bool) {
@@ -199,18 +206,16 @@ contract ETreeumGame is ERC721 {
     }
 
     function _growTree(uint256 id, Tree storage t) private {
-        if (t.startWeek > block.timestamp -1 weeks) {
-            if (t.stage != Stages.Secular && t.waterGivenInAWeek >= t.specie.waterNeededInAWeek && t.sunGivenInAWeek >= t.specie.sunNeededInAWeek) {
-                t.stage = Stages(uint8(t.stage)+1);
-                t.value = _computeTreeValue(t.specie.risk, t.stage);
-                players[msg.sender].score = _computePlayerScore(msg.sender);
-                t.waterGivenInAWeek = 0;
-                t.sunGivenInAWeek = 0;
-                emit UpdatedPlayerScore(msg.sender, players[msg.sender].score);
-                emit TreeGrown(ERC721.ownerOf(id), id, t.stage);
-            }
+        if (t.stage != Stages.Secular && t.waterGivenInAWeek >= t.specie.waterNeededInAWeek && t.sunGivenInAWeek >= t.specie.sunNeededInAWeek) {
+            t.stage = Stages(uint8(t.stage)+1);
+            t.value = _getTreeValue(t.specie.risk, t.stage);
+            t.waterGivenInAWeek = 0;
+            t.sunGivenInAWeek = 0;
+            players[msg.sender].score = _computePlayerScore(msg.sender);
+            _setTokenURI(id, string(abi.encodePacked(_getStageName(t.stage), "/", t.specie.name, ".json")));
+            emit UpdatedPlayerScore(msg.sender, players[msg.sender].score);
+            emit TreeGrown(ERC721.ownerOf(id), id, t.stage);
         }
-        t.startWeek = block.timestamp;
     }
 
     function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public {
@@ -218,9 +223,16 @@ contract ETreeumGame is ERC721 {
         Tree storage t = trees[id];
         require(t.lastWater < block.timestamp -1 minutes, "You watered this plant not so long ago");
         //require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
-        t.waterGivenInAWeek += waterAmount;
+        if (t.startWeek > block.timestamp -1 weeks) {
+            t.waterGivenInAWeek += waterAmount;
+            _growTree(id, t);
+        }
+        else {
+            t.startWeek = block.timestamp;
+            t.waterGivenInAWeek = waterAmount;
+            t.sunGivenInAWeek = 0;
+        }
         t.lastWater = block.timestamp;
-        _growTree(id, t);
     }
 
     function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public {
@@ -228,16 +240,23 @@ contract ETreeumGame is ERC721 {
         Tree storage t = trees[id];
         require(t.lastSun < block.timestamp -1 minutes, "You exposed this plant to the sun not so long ago");
         //require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
-        t.sunGivenInAWeek += sunHours;
+         if (t.startWeek > block.timestamp -1 weeks) {
+            t.sunGivenInAWeek += sunHours;
+            _growTree(id, t);
+        }
+        else {
+            t.startWeek = block.timestamp;
+            t.sunGivenInAWeek = sunHours;
+            t.waterGivenInAWeek = 0;
+        }
         t.lastSun = block.timestamp;
-        _growTree(id, t);
     }
 
     function buySeed(string calldata treeNickname) SetLastEntered public payable {
         require(msg.value >= SEED_PRICE, "Not enough money for a seed");
         planter.transfer(msg.value);
+        moneyToThePlanter += msg.value;
         _plantSeed(msg.sender, treeNickname);
-        //emit BoughtSeed(msg.sender, id, t);
     }
 
     function sellTree(uint256 treeId, uint256 price) SetLastEntered public {
@@ -272,16 +291,13 @@ contract ETreeumGame is ERC721 {
         require(shopIds[shopIndex] == treeId, "You are selecting the wrong tree");
         uint256 price = shop[treeId];
         uint256 commission = trees[treeId].value * 1e15; 
-
         // msg.value espresso in wei
         require(msg.value >= price + commission, "You are not paying enough");
         address oldOwner = ERC721.ownerOf(treeId);
         uint256 oldOwnerIndex = _getOwnerIndex(treeId, oldOwner);
-        //uint256 percentage = price / 100;
-        //price = price - percentage;
-        //planter.transfer(percentage);
         planter.transfer(commission);
-        ERC721._transfer(oldOwner, msg.sender, treeId);//ERC721.safeTransferFrom(oldOwner, msg.sender, treeId);
+        moneyToThePlanter += commission;
+        ERC721._transfer(oldOwner, msg.sender, treeId);
         payable(oldOwner).transfer(msg.value - commission);
         _afterSelling(oldOwner, msg.sender, treeId, shopIndex, oldOwnerIndex);
     }
@@ -307,21 +323,7 @@ contract ETreeumGame is ERC721 {
          return (shopIds, treesInShop, prices, owners);
      }
 
-    /*function _checkTreePrice(uint256 value, uint256 price) pure private returns (bool) {
-        uint256 percentage = value/100;
-        return price >= value - percentage && price <= value + percentage && price != 0;
-    }*/
-
-    function _computeTreeValue(ExtinctionRisk risk, Stages stage) view private returns (uint8) {
-        /*uint8 value;
-        if (risk == ExtinctionRisk.CriticallyEndangered) value = 50;
-        else if (risk == ExtinctionRisk.Endangered) value = 40;
-        else if (risk == ExtinctionRisk.Vulnerable) value = 30;
-        else if (risk == ExtinctionRisk.NearThreatened) value = 15;
-        else if (risk == ExtinctionRisk.ConservationDependent) value = 5;
-        else if (risk == ExtinctionRisk.LeastConcern) value = 1;
-        value += (uint8(stage)+1) * 5;
-        return value;*/
+    function _getTreeValue(ExtinctionRisk risk, Stages stage) view private returns (uint8) {
         return valuesForStage[risk][uint8(stage)];
     }
 
@@ -338,23 +340,6 @@ contract ETreeumGame is ERC721 {
         return score;
     }
 
-    /*function getRanking() view public returns (PlayerInRanking[3] memory) {
-        return ranking;
-    }*/
-
-    /*function _needUpdateRanking(address player) public returns (bool) {
-        if (player == ranking[2].playerAddress) {
-            ranking[2].score = players[player].score;
-        }
-        else if (player == ranking[1].playerAddress) {
-            ranking[1].score = players[player].score;
-        }
-        else if (player == ranking[0].playerAddress) {
-            ranking[0].score = players[player].score;
-        }
-        return players[player].score > ranking[2].score || player == ranking[2].playerAddress || player == ranking[1].playerAddress || player == ranking[0].playerAddress;
-    }*/
-
     function getScores() view public returns (PlayerInRanking[] memory){
         PlayerInRanking[] memory playerScores = new PlayerInRanking[](playersAddresses.length);
         for (uint i=0; i<playersAddresses.length; i++) {
@@ -364,36 +349,8 @@ contract ETreeumGame is ERC721 {
         return playerScores;
     }
 
-    /*function computeRanking() public {
-        bool changed = false;
-        for(uint i=0; i<playersAddresses.length; i++) {
-            Player memory p = players[playersAddresses[i]];
-            //new first place
-            if (p.score > ranking[0].score) {
-                if (ranking[0].playerAddress != playersAddresses[i]) {
-                    ranking[2] = ranking[1];
-                    ranking[1] = ranking[0];
-                }
-                ranking[0] = PlayerInRanking(p.nickname, p.score, playersAddresses[i]);
-                changed = true;
-            }
-            else if (ranking[0].playerAddress != playersAddresses[i]) {
-                if (p.score > ranking[1].score) {
-                    if (ranking[1].playerAddress != playersAddresses[i]) {
-                        ranking[2] = ranking[1];
-                    }
-                    ranking[1] = PlayerInRanking(p.nickname, p.score, playersAddresses[i]);
-                    changed = true;
-                }
-                else if (ranking[1].playerAddress != playersAddresses[i] && p.score > ranking[2].score) {
-                    ranking[2] = PlayerInRanking(p.nickname, p.score, playersAddresses[i]);
-                    changed = true;
-                }
-            }
-        }
-        if (changed) {
-            emit RankingChanged(ranking);
-        }
-    }*/
+    function getPlantedTreesInTheWorld() view public returns (uint256) {
+        return moneyToThePlanter / (8 * 1e15); // about 20 euros
+    }
 
 }

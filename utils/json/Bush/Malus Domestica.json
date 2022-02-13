@@ -1,0 +1,13 @@
+{
+    "name": "Malus Domestica Bush",
+    "description": "Bush of a tree of the species Malus Domestica",
+    "image": "../utils/images/Bush.png",
+    "attributes":
+    {
+        "color": "#CAB6CD",
+        "fun facts": [
+            "The apple tree endures the cold really well, but is susceptible to water scarcity", "There are 7500 variety of apples in the world"
+        ]   
+    }
+ }
+ 
