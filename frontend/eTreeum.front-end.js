@@ -569,6 +569,7 @@ async function printTrees(){
 async function swipe(e, left) {
 
     var tree_num, tot_trees, div_tree, tree_img, treeCard, tree_name, sell_tree_button;
+    var sun_counter, water_counter;
     
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
@@ -576,6 +577,8 @@ async function swipe(e, left) {
     treeCard = document.getElementById("treeCard")
     tree_name = document.getElementById("treeName");
     sell_tree_button = document.getElementById("sell_tree");
+    water_counter = document.getElementById("water_counter");
+    sun_counter = document.getElementById("sun_counter");
     
     if (left && parseInt(tree_num.innerHTML) == 1){
         tree_num.innerHTML = tot_trees.innerHTML;
@@ -590,6 +593,9 @@ async function swipe(e, left) {
     tree_img = treeInfo?.image || "";
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
     tree_name.innerHTML = userTrees[tree_num.innerHTML-1]["nickname"];
+
+    water_counter.innerHTML = userTrees[tree_num.innerHTML-1]["waterGivenInAWeek"];
+    sun_counter.innerHTML = userTrees[tree_num.innerHTML-1]["sunGivenInAWeek"];
 
     div_tree.style.backgroundImage = "url("+tree_img+")";
 
