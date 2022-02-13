@@ -1,7 +1,7 @@
 {
-    "name": "Baccarea Polyneura Seed",
-    "description": "Seed of a tree of the species Baccarea Polyneura",
-    "image": "../utils/images/seed.png",
+    "name": "Baccaurea Polyneura Bush",
+    "description": "Bush of a tree of the species Baccaurea Polyneura",
+    "image": "../utils/images/Bush.png",
     "attributes": 
     {
       "color": "#CD853F",

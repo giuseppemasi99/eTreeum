@@ -476,7 +476,7 @@ img#sell_tree{
 }
 
 button#change_name{
-    background-color: grey;
+    background-color: transparent;
     color: black;
     cursor: pointer;
     margin: 0px;
@@ -510,8 +510,6 @@ div#tree{
     border-radius: 20px;
     height: 100%;
     width: 100%;
-
-    background-image: url(img/seed.gif);
     background-size: contain;                 
     background-repeat: no-repeat;
     background-position: center center; 

@@ -33,10 +33,11 @@ function subscribeToTreeGrown(){
             if (!error) {
                 console.log('TreeGrown event', event);
                 var treeId = event.returnValues['treeId'];
-                var newStage = event.returnValues['stage'];
+                var t = event.returnValues['t'];
+                var index = userIdsOfTrees.indexOf(parseInt(treeId));
                 if (senderAddress == event.returnValues.a) {
-                    userTrees[userIdsOfTrees.indexOf(parseInt(treeId))]['stage'] = newStage;
-                    printTrees();
+                    userTrees[index] = {...t};
+                    printTrees(index +1);
                 }
             }
         }
@@ -84,24 +85,6 @@ async function getTrees(){
     }
 }
 
-async function getTreeInfo(id) {
-    if (id != undefined) {
-        try {
-            let uri = await contract.methods.tokenURI(id).call({from:senderAddress, gas: 1500000});
-            let response = await fetch(uri);
-            treeInfo = await response.json();
-        }
-        catch(e){
-            console.log(e);
-            treeInfo = undefined;
-        }
-    }
-    else {
-        treeInfo = undefined;
-    }
-
-}
-
 async function login() {
 
     await getTrees();
@@ -113,16 +96,18 @@ async function login() {
 
 // function that allow the counter
 // This function comes from: https://codepen.io/dmcreis/pen/VLLYPo
-function startTreeCounter(){
+async function startTreeCounter(){
     
     var a = 0;
+    var counter = await getPlantedTrees();
+    var time = counter < 30 ? 500 : (counter < 100 ? 3000 : 6000);
 
     $(window).ready(function() {
         var oTop = $('#counter').offset().top - window.innerHeight;
         if (a == 0 && $(window).scrollTop() > oTop) {
             $('.counter-value').each(function() {
             var $this = $(this),
-                countTo = $this.attr('data-count');
+                countTo = counter;
             $({
                 countNum: $this.text()
             }).animate({
@@ -130,7 +115,7 @@ function startTreeCounter(){
                 },
 
                 {
-                duration: 6000,
+                duration: time,
                 easing: 'swing',
                 step: function() {
                     $this.text(Math.floor(this.countNum));
@@ -415,7 +400,7 @@ async function submitNewName(){
         divRename.style.display = "none";
         complete_body.style.opacity = 1;
     
-        printTrees();
+        printTrees(num_tree);
 
     }
 
@@ -469,8 +454,8 @@ async function calculatePodium(){
 }
 
 // function that show all the owned trees with the respective info and the user nickname
-async function printTrees(){
-    
+async function printTrees(index = 1){
+
     setupPage();
 
     var initial_div;
@@ -541,13 +526,12 @@ async function printTrees(){
         arrow[1].style.display = "none";
     }
 
-    tree_num.innerHTML = 1;
+    tree_num.innerHTML = index;
     tot_trees.innerHTML = userTrees.length;
 
-    await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    treeInfo = await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
     tree_img = treeInfo?.image || "";
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
-    console.log("PRINTING", treeInfo);
     
     tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
 
@@ -564,6 +548,18 @@ async function printTrees(){
         sell_tree_button.style.display = "none";
     }
 
+}
+
+async function getPlantedTrees() {
+    var planted = 0;
+    try {
+        planted = parseInt(await contract.methods.getPlantedTreesInTheWorld().call(({from:senderAddress, gas: 1500000})));
+    }
+    catch (e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+    return planted;
 }
 
 async function swipe(e, left) {
@@ -589,7 +585,7 @@ async function swipe(e, left) {
     }
 
     //tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
-    await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    treeInfo = await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
     tree_img = treeInfo?.image || "";
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
     tree_name.innerHTML = userTrees[tree_num.innerHTML-1]["nickname"];
@@ -942,8 +938,10 @@ async function sellTree(){
 
     //tree_img_src = whichImage(userTrees[num_tree-1]["stage"]);
     //tree_img.src = "frontend/img/"+tree_img_src;
-    if (treeInfo == undefined) await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    if (treeInfo == undefined) treeInfo = await getTreeInfo(userIdsOfTrees[num_tree-1]);
     tree_img.src = treeInfo?.image || "";
+
+    console.log("INFO", treeInfo, tree_img)
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;

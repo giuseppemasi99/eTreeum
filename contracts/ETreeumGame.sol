@@ -91,7 +91,7 @@ contract ETreeumGame is ERC721URIStorage {
     }
 
     event JoinedGame(address a, uint256 id, Tree tree);
-    event TreeGrown(address a, uint256 treeId, Stages stage);
+    event TreeGrown(address a, uint256 treeId, Tree t);
     event BoughtSeed(address a, uint256 id, Tree t);
     event UpdatedPlayerScore(address a, uint32 score);
 
@@ -107,7 +107,7 @@ contract ETreeumGame is ERC721URIStorage {
         addSpecies("Baccaurea Polyneura", ExtinctionRisk.ConservationDependent, 1000, 50);
         addSpecies("Malus Domestica", ExtinctionRisk.LeastConcern, 3000, 50);
         addSpecies("Pinus Sylvestris", ExtinctionRisk.LeastConcern, 600, 40);
-        addSpecies("Theobroma Cacao", ExtinctionRisk.LeastConcern, 1000, 10);
+        addSpecies("Theobroma Cacao", ExtinctionRisk.LeastConcern, 1000, 30);
         valuesForStage[ExtinctionRisk.CriticallyEndangered] = [40, 45, 55, 65, 80];
         valuesForStage[ExtinctionRisk.Endangered] = [30, 35, 45, 55, 65];
         valuesForStage[ExtinctionRisk.Vulnerable] = [25, 30, 40, 50, 60];
@@ -214,7 +214,7 @@ contract ETreeumGame is ERC721URIStorage {
             players[msg.sender].score = _computePlayerScore(msg.sender);
             _setTokenURI(id, string(abi.encodePacked(_getStageName(t.stage), "/", t.specie.name, ".json")));
             emit UpdatedPlayerScore(msg.sender, players[msg.sender].score);
-            emit TreeGrown(ERC721.ownerOf(id), id, t.stage);
+            emit TreeGrown(ERC721.ownerOf(id), id, t);
         }
     }
 

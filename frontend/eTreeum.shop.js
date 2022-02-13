@@ -74,7 +74,7 @@ async function showSellingTrees(){
 
     for(i = 0; i < num_selling_trees; i++){
 
-        src = "frontend/img/";
+        //src = "frontend/img/";
 
         tree_row = document.createElement("div");
         tree_name_div = document.createElement("div");
@@ -125,8 +125,9 @@ async function showSellingTrees(){
             eth.addEventListener('click', buyOptions.bind(null, event, i));
         }
 
-        src += whichImage(sellingTrees[i]["stage"]);
-        img.src = src;
+        info = await getTreeInfo(shopIds[i]);
+        //src += whichImage(sellingTrees[i]["stage"]);
+        img.src = info.image;
 
     }
     
@@ -169,7 +170,7 @@ function buyNewSeed(){
 
 }
 
-function buyOptions(event, treeIndex){
+async function buyOptions(event, treeIndex){
     
     var buy_option_div, shop_div, tree_image, eth_span;
     var buy_buttons, change_price_buttons, menu_buySeed;
@@ -203,7 +204,9 @@ function buyOptions(event, treeIndex){
         }
     }
 
-    tree_image.src = "frontend/img/" + whichImage(sellingTrees[treeIndex]["stage"]);
+    info = await getTreeInfo(shopIds[treeIndex]);
+    tree_image.src = info.image;
+    //tree_image.src = "frontend/img/" + whichImage(sellingTrees[treeIndex]["stage"]);
 
     document.getElementById('buy').value = treeIndex;
 

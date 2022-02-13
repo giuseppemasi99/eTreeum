@@ -1,5 +1,5 @@
 // Set the contract address
-var contractAddress = '0x6e1F7123c9DE64a07e737C8Bf0338fd753B30BB6';
+var contractAddress = '0x7944ed32c1fB9de43B57bDa71Ab45E634c6f6aa6';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "../build/contracts/ETreeumGame.json"
@@ -185,4 +185,21 @@ function whichStage(value){
         default:
             return "Undefined";
     }
+}
+
+async function getTreeInfo(id) {
+    var treeInfo = undefined;
+    if (id != undefined) {
+        try {
+            let uri = await contract.methods.tokenURI(id).call({from:senderAddress, gas: 1500000});
+            let response = await fetch(uri);
+            treeInfo = await response.json();
+        }
+        catch(e){
+            var errorMessage = getErrorMessage(e.message);
+            alert("Something went wrong: " + errorMessage);
+            treeInfo = undefined;
+        }
+    }
+    return treeInfo;
 }
