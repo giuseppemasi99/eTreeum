@@ -506,6 +506,7 @@ async function printTrees(index = 1){
 
     if(userTrees.length > 1 && !swipeEventActive){
         swipeEventActive = true;
+
         arrow[0].style.opacity = 1;
         arrow[1].style.opacity = 1;
 
@@ -533,21 +534,21 @@ async function printTrees(index = 1){
     tree_num.innerHTML = index;
     tot_trees.innerHTML = userTrees.length;
 
-    treeInfo = await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
+    treeInfo = await getTreeInfo(userIdsOfTrees[index-1]);
     tree_img = treeInfo?.image || "";
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
     
-    tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
-    specie.innerHTML = userTrees[tree_num.innerHTML-1]["specie"]["name"];
-    risk.innerHTML = " - " + whichRisk(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
+    tree_name.innerHTML = userTrees[index -1].nickname;
+    specie.innerHTML = userTrees[index-1]["specie"]["name"];
+    risk.innerHTML = " - " + whichRisk(userTrees[index-1]["specie"]["risk"]);
 
     div_tree.style.backgroundImage = "url("+tree_img+")";
 
-    water_counter.innerHTML = userTrees[tree_num.innerHTML-1]["waterGivenInAWeek"];
-    sun_counter.innerHTML = userTrees[tree_num.innerHTML-1]["sunGivenInAWeek"];
+    water_counter.innerHTML = userTrees[index-1]["waterGivenInAWeek"];
+    sun_counter.innerHTML = userTrees[index-1]["sunGivenInAWeek"];
 
     
-    if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
+    if(parseInt(userTrees[index-1]["stage"]) >= 2 ){
         sell_tree_button.style.display = "flex";
     }
     else{
@@ -572,6 +573,7 @@ async function swipe(e, left) {
 
     var tree_num, tot_trees, div_tree, tree_img, treeCard, tree_name, sell_tree_button;
     var sun_counter, water_counter;
+    var specie, risk;
     
     tree_num = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
@@ -581,6 +583,8 @@ async function swipe(e, left) {
     sell_tree_button = document.getElementById("sell_tree");
     water_counter = document.getElementById("water_counter");
     sun_counter = document.getElementById("sun_counter");
+    specie = document.getElementById("specie");
+    risk = document.getElementById("risk");
     
     if (left && parseInt(tree_num.innerHTML) == 1){
         tree_num.innerHTML = tot_trees.innerHTML;
@@ -595,6 +599,8 @@ async function swipe(e, left) {
     tree_img = treeInfo?.image || "";
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
     tree_name.innerHTML = userTrees[tree_num.innerHTML-1]["nickname"];
+    specie.innerHTML = userTrees[tree_num.innerHTML-1]["specie"]["name"];
+    risk.innerHTML = " - " + whichRisk(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
 
     water_counter.innerHTML = userTrees[tree_num.innerHTML-1]["waterGivenInAWeek"];
     sun_counter.innerHTML = userTrees[tree_num.innerHTML-1]["sunGivenInAWeek"];

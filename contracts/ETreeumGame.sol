@@ -28,7 +28,7 @@ contract ETreeumGame is ERC721URIStorage {
     //number of species in the world: about 390000 --> uint32
     mapping(ExtinctionRisk => uint32[]) private risksIndexes;
     mapping(ExtinctionRisk => uint8[5]) private valuesForStage;
-    mapping(uint256 => Tree) trees;
+    mapping(uint256 => Tree) private trees;
     mapping(address => string) private userNicknames;
     mapping(address => Player) private players;
     address[] private playersAddresses;
