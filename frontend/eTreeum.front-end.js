@@ -46,12 +46,11 @@ function subscribeToTreeGrown(){
 
 function registerPlayer() {
     
-    var join, username, rules, start_play;
+    var join, username, start_play;
     var initial_div;
 
     join = document.getElementById("join");
     username = document.getElementById("submit_username");
-    rules = document.getElementById("okrules_clicked");
     start_play = document.getElementById("start_play");
 
     initial_div = document.getElementById("initial_div");
@@ -59,8 +58,7 @@ function registerPlayer() {
     initial_div.style.display = "flex";
 
     join.addEventListener('click', setUsername);
-    username.addEventListener('click', showRules);
-    rules.addEventListener('click', setPlantName);
+    username.addEventListener('click', setPlantName);
     start_play.addEventListener('click', joinGame);
     
     username.disabled = true;
@@ -151,50 +149,23 @@ function setUsername(){
     join.disabled = true;
 }
 
-// function that show the rules of the game
-function showRules(){
-    var div_username, rules_div;
-    var username_button, rules_button;
-    var span, username;
-
-    div_username = document.getElementById("insert_username");
-    rules_div = document.getElementById("game_rules");
-    span = document.getElementById("username");
-    username = document.getElementById("input_username");
-
-    //  buttons
-    username_button = document.getElementById("submit_username");
-    rules_button = document.getElementById("okrules_clicked");
-    
-    span.innerHTML = username.value;
-    username.innerHTML = "";
-
-    div_username.style.display = "none";
-    rules_div.style.display = "flex";
-
-    username_button.disabled = true;
-    rules_button.disabled = false;
-}
-
 // function that set the plant name for a new user
 function setPlantName(){
 
-    var div_plantName, rules_div;
-    var start_play, rules_button;
+    var div_plantName, div_username;
+    var start_play;
 
     div_plantName = document.getElementById("select_treeName");
-    rules_div = document.getElementById("game_rules");
+    div_username = document.getElementById("insert_username");
 
     //  buttons
     start_play = document.getElementById("start_play");
-    rules_button = document.getElementById("okrules_clicked");
     
-    rules_div.style.display = "none";
+    div_username.style.display = "none";
     div_plantName.style.display = "flex";
 
-    rules_button.disabled = true;
+    username_button.disabled = true;
     start_play.disabled = false;
-
 }
 
 async function joinGame () {

@@ -31,14 +31,11 @@ a{
 /* CSS FOR THE HEADER*/
 
 div#header{
+    position: relative;
     height: 80px;
     width: 100%;
-
     display: flex;
-    text-align: center;
-
     align-items: center;
-
     color: black;
     background-color: rgb(36, 102, 36);
 }
@@ -46,45 +43,34 @@ div#header{
 div#logo{
     height: 100%;
     width: 15%;
-
-    margin: auto 0;
-    padding-left: 15px;
-
+    left: 15px;
+    position: absolute;
     display: flex;
     align-items: center;
-
 }
 
 header{
     height: 100%;
-    width: 70%;
-
+    width: 100%;
     display: flex;
-    
     justify-content: center;
-    
     align-items: center;
     text-align: center;
-
     font-weight: 900;
     font-size: 23pt;
 }
 
 div#right_top_header{
     height: 100%;
-    width: 20%;
-
     display: none;
     align-items: center;
-    justify-content: space-evenly;
-
+    position: absolute;
+    right: 25px;
     font-size: 15pt;
 }
 
 div#user_info{
-    margin-right: 25px;
     font-weight: 800;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -93,40 +79,60 @@ div#user_info{
 /*CSS FOR THE SHOP MENU*/
 
 div#menu ul{
-    margin: 0;
-    padding: 0;
+    margin-right: 15px;
     list-style-type: none;
+}
+
+div#beak {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 5px 5px 10px 0 rgb(0 0 0 / 50%);
+    transform: rotate(45deg);
+    height: 20px;
+    width: 20px;
+    bottom: 0px;
 }
 
 li#shop_chart{
     display: flex;
     align-items: center;
-
     height: 80px;
     width: 50px;
     cursor: pointer;
     justify-content: center;
+    position: relative;
+}
+
+li#shop_chart:hover > div {
+    display: block;
 }
 
 div#menu li ul{
-    display: none
+    display: none;
+    width: max-content;
+    height: fit-content;
+    padding: 2px;
 }
 
 div#menu li:hover ul{
     display: block;
-
     position: absolute;
-    top: 78px;
-
+    top: 70px;
     z-index:1;
-
     color: black;
-    background-color: rgb(36, 102, 36);
+    background-color: white;
 }
 
 div#menu ul li ul{
     text-align: left;
     border-radius: 5px;
+    box-shadow:  5px 5px 5px 0 rgba(0,0,0, 0.5);
+}
+
+div#menu ul li ul li+li{
+    border-top-style: solid;
+    border-bottom: rgb(36, 102, 36);
 }
 
 div#menu ul li ul li a{
@@ -137,12 +143,11 @@ div#menu ul li ul li a{
 }
 
 div#menu ul li ul li:hover{
-    background-color: rgb(28, 75, 17);
-    border-radius: 5px;
+    background-color: rgb(28, 75, 17, 0.8);
 }
 
 
-div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#treeName_change_div, div#treeStat, div#buy_new_seed, div#sell_tree_div{
+div#initial_div, div#insert_username, div#select_treeName, div#treeName_change_div, div#treeStat, div#buy_new_seed, div#sell_tree_div{
     position: absolute;
     z-index: 10;
 
@@ -166,7 +171,7 @@ div#initial_div, div#insert_username, div#game_rules, div#select_treeName, div#t
 }
 
 /*CSS FOR THE DIVS USED FOR NEW USERS*/
-div#initial_div, div#insert_username, div#game_rules, div#select_treeName{
+div#initial_div, div#insert_username, div#select_treeName{
     top: 80px;
     left: 0%;
     border: none;
@@ -191,7 +196,7 @@ input#input_username, input#input_treeName{
     margin-top: 30px;
 }
 
-button#join, button#submit_username, button#okrules_clicked, button#start_play{
+button#join, button#submit_username, button#start_play{
     max-width: max-content;
     cursor: pointer;
     margin-top: 30px;
