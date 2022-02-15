@@ -297,7 +297,7 @@ contract ETreeumGame is ERC721URIStorage {
         uint256 oldOwnerIndex = _getOwnerIndex(treeId, oldOwner);
         planter.transfer(commission);
         moneyToThePlanter += commission;
-        ERC721._transfer(oldOwner, msg.sender, treeId);
+        //ERC721._transfer(oldOwner, msg.sender, treeId);
         payable(oldOwner).transfer(msg.value - commission);
         _afterSelling(oldOwner, msg.sender, treeId, shopIndex, oldOwnerIndex);
     }
@@ -309,6 +309,7 @@ contract ETreeumGame is ERC721URIStorage {
         players[oldOwner].treeOwned[oldOwnerIndex] = players[oldOwner].treeOwned[players[oldOwner].treeOwned.length -1];
         players[oldOwner].treeOwned.pop();
         players[msg.sender].treeOwned.push(treeId);
+        ERC721._transfer(oldOwner, newOwner, treeId);
     }
 
     function getShop() view public returns (uint256[] memory, Tree[] memory, uint256[] memory, address[] memory){

@@ -1,0 +1,13 @@
+{
+    "name": "Canarium Zeylanicum Secular",
+    "description": "Secular of a tree of the species Canarium Zeylanicum",
+    "image": "../utils/images/secular.png",
+    "attributes": 
+    {
+      "color": "#FF8C00",
+      "fun facts": [
+        "The seeds of this plant are large, oval, and they can be eaten", "Being an evergreen tree, this plant needs little water and sun"
+      ]   
+    }
+ }
+ 

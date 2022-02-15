@@ -1,0 +1,13 @@
+{
+    "name": "Baccaurea Polyneura Secular",
+    "description": "Secular of a tree of the species Baccaurea Polyneura",
+    "image": "../utils/images/secular.png",
+    "attributes": 
+    {
+      "color": "#CD853F",
+      "fun facts": [
+        "This plant grow in the wild on sand, clay, loam and granite soils", "This tree can flower and fruit all year round"
+      ]   
+    }
+ }
+ 

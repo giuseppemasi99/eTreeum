@@ -244,6 +244,7 @@ async function setupPage(){
     var cancel_button, buy_seed_button, cancel_change_button, sell_button;
     var sell_tree_button, cancel_sell_tree_button;
     var div_treeName, complete_body, infoRow, counter, right_top_header;
+    var specie;
 
     // buttons
     rename = document.getElementById("change_name");
@@ -462,7 +463,8 @@ async function printTrees(index = 1){
     initial_div = document.getElementById("initial_div");
     initial_div.style.display = "none";
 
-    var counter, tree_num, tot_trees, div_tree, tree_img, tree_name;
+    var specie;
+    var counter, tree_num, tot_trees, div_tree, tree_img, tree_name, risk;
     var water_counter, sun_counter;
     var arrow, treeCard, sell_tree_button;
 
@@ -474,6 +476,8 @@ async function printTrees(index = 1){
     tree_name = document.getElementById("treeName");
     water_counter = document.getElementById("water_counter");
     sun_counter = document.getElementById("sun_counter");
+    specie = document.getElementById("specie");
+    risk = document.getElementById("risk");
 
     // button
     sell_tree_button = document.getElementById("sell_tree");
@@ -534,6 +538,8 @@ async function printTrees(index = 1){
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
     
     tree_name.innerHTML = userTrees[tree_num.innerHTML -1].nickname;
+    specie.innerHTML = userTrees[tree_num.innerHTML-1]["specie"]["name"];
+    risk.innerHTML = " - " + whichRisk(userTrees[tree_num.innerHTML-1]["specie"]["risk"]);
 
     div_tree.style.backgroundImage = "url("+tree_img+")";
 
@@ -604,35 +610,29 @@ async function swipe(e, left) {
 }
 
 // function used to show the information (stat) of a tree
-function showInfo(){
+async function showInfo(){
 
-    var complete_body, stat_div, tot_trees, num_tree, tree_id;
+    var complete_body, stat_div, tot_trees, num_tree, tree_fact;
     var water, sun, rename, arrow, info, menu_buySeed, sell_button;
-    var stage, spiece, risk;
     
     // divs and other elements
     stat_div = document.getElementById("treeStat");
     complete_body = document.getElementById("complete_body");
     num_tree = document.getElementById("tree_number");
     tot_trees = document.getElementById("tot_trees");
-    tree_id = document.getElementById("tree_id");
-    spiece = document.getElementById("spiece");
-    stage = document.getElementById("stage");
-    risk = document.getElementById("risk");
+    tree_fact = document.getElementById("tree_fact");
 
     // buttons
     rename = document.getElementById("change_name");
     water = document.getElementById("water");
     sun = document.getElementById("sun");
-    info = document.getElementById("info")
-    menu_buySeed = document.getElementById("menu_buySeed")
-    sell_button = document.getElementById("sell_tree")
+    info = document.getElementById("info");
+    menu_buySeed = document.getElementById("menu_buySeed");
+    sell_button = document.getElementById("sell_tree");
     arrow = document.getElementsByClassName("arrow");
     
-    tree_id.innerHTML = userIdsOfTrees[num_tree.innerHTML-1];
-    spiece.innerHTML = userTrees[num_tree.innerHTML-1]["specie"]["name"];
-    risk.innerHTML = whichRisk(userTrees[num_tree.innerHTML-1]["specie"]["risk"]);
-    stage.innerHTML = whichStage(userTrees[num_tree.innerHTML-1]["stage"]);
+    var tree_facts = treeInfo.attributes["fun facts"];
+    tree_fact.innerHTML = tree_facts[Math.floor(Math.random()*tree_facts.length)];
 
     stat_div.style.display = "flex";
     complete_body.style.opacity = 0.2;

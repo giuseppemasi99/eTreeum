@@ -1,0 +1,13 @@
+{
+    "name": "Aloe Squarrosa Majestic",
+    "description": "Majestic of a tree of the species Aloe Squarrosa",
+    "image": "../utils/images/majestic.png",
+    "attributes":
+    {
+      "color": "#b9f2ff",
+      "fun facts": [
+        "This tree usually grows at 300m of altitude", "This species needs lots of water during spring, but not much in winter", "This tree loves the sun in the summer"
+      ]      
+    }
+ }
+ 

@@ -1,0 +1,13 @@
+{
+    "name": "Pinus Sylvestris Majestic",
+    "description": "Majestic of a tree of the species Pinus Sylvestris",
+    "image": "../utils/images/majestic.png",
+    "attributes":
+    {
+      "color": "#753742",
+      "fun facts": [
+      "This tree is also known as the Scots pine", "The species is mainly found on poorer, sandy soils, rocky outcrops, peat bogs or close to the forest limit", "Being an evergreen tree, this plant needs little water and sun"
+      ]   
+    }
+ }
+ 

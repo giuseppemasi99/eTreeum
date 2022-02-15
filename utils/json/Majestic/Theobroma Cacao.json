@@ -1,0 +1,13 @@
+{
+    "name": "Theobroma Cacao Majestic",
+    "description": "Majestic of a tree of the species Theobroma Cacao",
+    "image": "../utils/images/Majestic.png",
+    "attributes":
+    {
+      "color": "#753742",
+      "fun facts": [
+        "This tree doesn't love direct light, so it grows under other taller trees' shade", "One tree produces up to 50 mature fruits a year"
+      ]   
+    }
+ }
+ 
