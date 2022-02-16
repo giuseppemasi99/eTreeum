@@ -37,7 +37,7 @@ async function getShopTrees(){
 async function showSellingTrees(){
 
     var introduction = document.getElementById("shop_body");
-    introduction.display = "block";
+    introduction.style.display = "block";
 
     await getPlayer();
     await getShopTrees();

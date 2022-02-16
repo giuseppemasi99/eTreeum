@@ -220,7 +220,6 @@ async function setupPage(){
     var cancel_button, buy_seed_button, cancel_change_button, sell_button;
     var sell_tree_button, cancel_sell_tree_button;
     var div_treeName, complete_body, infoRow, counter, right_top_header;
-    var specie;
 
     // buttons
     rename = document.getElementById("change_name");
@@ -525,12 +524,26 @@ async function printTrees(index = 1){
 
     
     if(parseInt(userTrees[index-1]["stage"]) >= 2 ){
-        sell_tree_button.style.display = "flex";
+        var show = await showSellButton(userIdsOfTrees[index-1]);
+        if (show) sell_tree_button.style.display = "flex";
+        else sell_tree_button.style.display = "none";
     }
     else{
         sell_tree_button.style.display = "none";
     }
 
+}
+
+async function showSellButton(id) {
+    var show = false;
+    try {
+        show = await contract.methods.checkNotInShop(id).call(({from:senderAddress, gas: 1500000}));
+    }
+    catch (e) {
+        var errorMessage = getErrorMessage(e.message);
+        alert("Something went wrong: " + errorMessage);
+    }
+    return show;
 }
 
 async function getPlantedTrees() {
@@ -570,7 +583,6 @@ async function swipe(e, left) {
         tree_num.innerHTML = left ? parseInt(tree_num.innerHTML)-1 : parseInt(tree_num.innerHTML)+1;
     }
 
-    //tree_img = whichImage(userTrees[tree_num.innerHTML-1]["stage"]);
     treeInfo = await getTreeInfo(userIdsOfTrees[tree_num.innerHTML-1]);
     tree_img = treeInfo?.image || "";
     treeCard.style.backgroundColor = treeInfo?.attributes.color || "gray";
@@ -584,7 +596,9 @@ async function swipe(e, left) {
     div_tree.style.backgroundImage = "url("+tree_img+")";
 
     if(parseInt(userTrees[tree_num.innerHTML-1]["stage"]) >= 2 ){
-        sell_tree_button.style.display = "flex";
+        var show = await showSellButton(userIdsOfTrees[tree_num.innerHTML-1]);
+        if (show) sell_tree_button.style.display = "flex";
+        else sell_tree_button.style.display = "none";
     }
     else{
         sell_tree_button.style.display = "none";

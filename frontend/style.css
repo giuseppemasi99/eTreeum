@@ -42,7 +42,7 @@ div#header{
 
 div#logo{
     height: 100%;
-    width: 15%;
+    width: 10%;
     left: 15px;
     position: absolute;
     display: flex;
@@ -65,7 +65,7 @@ div#right_top_header{
     display: none;
     align-items: center;
     position: absolute;
-    right: 25px;
+    right: 15px;
     font-size: 15pt;
 }
 
@@ -297,7 +297,7 @@ div.buttons_option button {
     min-width: 100px;
 }
 
-div.buttons_option button#cancel{
+div.buttons_option button#cancel, button#cancel_sell_tree{
     background-color: white;
     color: black;
     border-style: solid;
@@ -310,9 +310,7 @@ div#tree_to_sell{
 }
 
 div#tree_to_sell img{
-    width: 80px;
-    height: 110px;
-
+    width: 50%;
     border-radius: 10px;
 }
 div#price_of_sell_div{

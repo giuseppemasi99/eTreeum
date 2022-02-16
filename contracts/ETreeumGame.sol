@@ -261,9 +261,13 @@ contract ETreeumGame is ERC721URIStorage {
 
     function sellTree(uint256 treeId, uint256 price) SetLastEntered public {
         _checkSelling(treeId, price);
-        require(shop[treeId] == 0, "This tree is already in the shop");
+        require(checkNotInShop(treeId), "This tree is already in the shop");
         shop[treeId] = price;
         shopIds.push(treeId);
+    }
+
+    function checkNotInShop(uint256 treeId) view public returns (bool) {
+        return shop[treeId] == 0;
     }
 
     function changePrice(uint256 treeId, uint256 newPrice) SetLastEntered public {

@@ -94,7 +94,7 @@ div#header{
 
 div#logo{
     height: 100%;
-    width: 15%;
+    width: 10%;
     left: 15px;
     position: absolute;
     display: flex;
@@ -117,7 +117,7 @@ div#right_top_header{
     display: flex;
     align-items: center;
     position: absolute;
-    right: 25px;
+    right: 15px;
     font-size: 15pt;
 }
 
@@ -126,6 +126,10 @@ div#user_info{
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+span#user_score{
+    margin-top: -8px;
 }
 
 div#tree_to_sell{
@@ -140,8 +144,7 @@ div#tree_to_sell img{
 
 /*CSS FOR THE MENU'*/
 div#menu ul{
-    margin: 0;
-    padding: 0;
+    margin-right: 15px;
     list-style-type: none;
 }
 

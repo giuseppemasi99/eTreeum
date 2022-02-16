@@ -1,5 +1,5 @@
 // Set the contract address
-var contractAddress = '0x7944ed32c1fB9de43B57bDa71Ab45E634c6f6aa6';
+var contractAddress = '0xfd02A16Aa6d7FF45C6B5A872D79A343B70bB0938';
 
 // Set the relative URI of the contract’s skeleton (with ABI)
 var contractJSON = "../build/contracts/ETreeumGame.json"
@@ -58,7 +58,7 @@ async function buySeed(){
         if(window.location.href.indexOf('shop') == -1){
             cancel();
             await getTrees();
-            printTrees();
+            printTrees(userTrees.length);
         }else{
             cancelNewSeed();
             alert("You bought a new seed! You'll find it in the home page.");
