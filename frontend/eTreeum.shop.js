@@ -375,7 +375,7 @@ async function _changePrice(treeId, new_price, index){
 
     if (validNumber) {
         try {
-        await contract.methods.changePrice(treeId, new_price).send(
+        await contract.methods.changePrice(treeId, price).send(
             {
                 from:senderAddress, 
                 gas: 1500000
@@ -388,8 +388,7 @@ async function _changePrice(treeId, new_price, index){
     }
     }
 
-    
-
+    cancelChangePrice();
     document.getElementById('new_eth_input').value = "";
 }
 

@@ -297,7 +297,7 @@ div.buttons_option button {
     min-width: 100px;
 }
 
-div.buttons_option button#cancel, button#cancel_sell_tree{
+div.buttons_option button#cancel, button#cancel_sell_tree, button#cancel_change_treeName{
     background-color: white;
     color: black;
     border-style: solid;
