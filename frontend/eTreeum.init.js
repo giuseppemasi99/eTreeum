@@ -48,18 +48,16 @@ async function initialise() {
 async function buySeed(){
 
     var treeNickname = document.getElementById("name_newSeed").value;
-    document.getElementById("name_newSeed").value = "";
 
     try {
-        var transaction = await contract.methods.buySeed(treeNickname).send(
+        await contract.methods.buySeed(treeNickname).send(
             {
                 from:senderAddress, 
                 value: web3.utils.toWei('0.001', 'ether'),
                 gas: 1500000
             });
-        console.log("TRANSACTION", transaction);
 
-        if(window.location.href.indexOf('index') != -1){
+        if(window.location.href.indexOf('shop') == -1){
             cancel();
             await getTrees();
             printTrees();
@@ -71,6 +69,7 @@ async function buySeed(){
     catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
+        document.getElementById("name_newSeed").value = "";
     }
 
 }
@@ -84,7 +83,7 @@ function subscribeToUpdatedPlayerScore(){
                 if (senderAddress == event.returnValues.a) {
                     player_score = newScore;
                     printUserInfo();
-                    if(window.location.href.indexOf('index') != -1){
+                    if(window.location.href.indexOf('shop') == -1){
                         calculatePodium();
                     }
                 }

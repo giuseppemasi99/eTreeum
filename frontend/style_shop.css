@@ -172,35 +172,56 @@ div#menu ul{
     list-style-type: none;
 }
 
+div#beak {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 5px 5px 10px 0 rgb(0 0 0 / 50%);
+    transform: rotate(45deg);
+    height: 20px;
+    width: 20px;
+    bottom: 0px;
+}
+
 li#shop_chart{
     display: flex;
     align-items: center;
-
     height: 80px;
     width: 50px;
     cursor: pointer;
     justify-content: center;
+    position: relative;
+}
+
+li#shop_chart:hover > div {
+    display: block;
 }
 
 div#menu li ul{
-    display: none
+    display: none;
+    width: max-content;
+    height: fit-content;
+    padding: 2px;
 }
 
 div#menu li:hover ul{
     display: block;
-
     position: absolute;
-    top: 78px;
-
+    top: 70px;
     z-index:1;
-
     color: black;
-    background-color: rgb(36, 102, 36);
+    background-color: white;
 }
 
 div#menu ul li ul{
     text-align: left;
     border-radius: 5px;
+    box-shadow:  5px 5px 5px 0 rgba(0,0,0, 0.5);
+}
+
+div#menu ul li ul li+li{
+    border-top-style: solid;
+    border-bottom: rgb(36, 102, 36);
 }
 
 div#menu ul li ul li a{
@@ -211,8 +232,7 @@ div#menu ul li ul li a{
 }
 
 div#menu ul li ul li:hover{
-    background-color: rgb(28, 75, 17);
-    border-radius: 5px;
+    background-color: rgb(28, 75, 17, 0.8);
 }
 
 /*CSS FOR BUYING A SEED*/
@@ -246,13 +266,6 @@ div.buttons_option button{
     width: 100px;
 }
 
-img#seed_to_buy{
-    width: 80px;
-    height: 110px;
-
-    margin: 10px 5px;
-}
-
 /*CSS FOR CHANGE THE PRICE OF A TREE*/
 
 div#new_eth_value{
@@ -264,9 +277,6 @@ div#new_eth_value{
     margin: 10px;
 }
 
-
-
-
 input#new_eth_input{
     margin-bottom: 0px;
     margin-right: 5px;
@@ -276,6 +286,11 @@ input#new_eth_input{
 
 
 /*CSS FOR THE LIST OF SELLING TREE*/
+
+div#shop_rules {
+    font-size: 15px;
+    font-weight: 700;
+}
 
 div#trees_container{
     display: flex;

@@ -245,8 +245,8 @@ async function setupPage(){
     submit_change.addEventListener('click', submitNewName);
     exit_stat.addEventListener('click', exitStat);
     info.addEventListener("click", showInfo);
-    sun.addEventListener('click', giveSun);
-    water.addEventListener('click', giveWater);
+    sun.addEventListener('click', askSun);
+    water.addEventListener('click', askWater);
     menu_buy_seed.addEventListener('click', buyNewSeed);
     sell_button.addEventListener('click', sellTree);
     sell_tree_button.addEventListener('click', sellingTheTree);
@@ -412,7 +412,7 @@ async function calculatePodium(){
             second.innerHTML = scores[1].nickname + ": " + scores[1].score;
             second_label.style.display = "flex";
             third_label.style.display = "none";
-        }else if(scores.length == 3){
+        }else if(scores.length >= 3){
             second.innerHTML = scores[1].nickname + ": " + scores[1].score;
             third.innerHTML = scores[2].nickname + ": " + scores[2].score;
             second_label.style.display = "flex";
@@ -686,10 +686,13 @@ function exitStat(){
 
 }
 
-// function that gives the sun to the tree
-async function giveSun(){
-
+function askSun(){
     var sunHours = prompt("How much sun you want to give to your plant?");
+    if (sunHours) giveSun(sunHours);
+}
+
+// function that gives the sun to the tree
+async function giveSun(sunHours){
     var treeId, num_tree;
 
     num_tree = document.getElementById("tree_number").innerHTML;
@@ -717,10 +720,13 @@ async function giveSun(){
 
 }
 
-// function that gives the water to the tree
-async function giveWater(){
-
+function askWater() {
     var waterAmount = prompt("How much water you want to give to your plant?");
+    if (waterAmount) giveWater(waterAmount);
+}
+
+// function that gives the water to the tree
+async function giveWater(waterAmount){
     var treeId, num_tree;
 
     num_tree = document.getElementById("tree_number").innerHTML;

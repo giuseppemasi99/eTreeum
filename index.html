@@ -104,12 +104,13 @@
 
         <div id="buy_new_seed">
             <h3>Want to buy a new seed?</h3>
-            </p>
+            <br/>
             <p>Seed cost: <img id="eth_logo" src="frontend/img/eth.png"> 0.001</p>
+            <br/>
             <input type="text" id="name_newSeed" maxlength="15" value="" placeholder="TreeName"/>
             <div class="buttons_option">
-                <button id="buy_seed_button" type="button">Buy!</button>
                 <button id="cancel" type="button">No thanks</button>
+                <button id="buy_seed_button" type="button">Buy!</button>
             </div>
         </div>
 
@@ -155,7 +156,9 @@
 
                             <span class="info_row">
                                 <label id="treeName">TreeName</label>
-                                <button id="change_name" type="button">✏️</button>
+                                <button id="change_name" type="button">
+                                    <img id="edit_name_img" src="frontend/img/edit.png"/>
+                                </button>
                             </span>
 
                             <label id="info">&#8505;</label>

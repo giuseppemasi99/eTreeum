@@ -106,16 +106,18 @@ async function showSellingTrees(){
 
         if(owners[i] == senderAddress){
             
-            var change_value, change_value_char;
+            var change_value, image;
 
             change_value = document.createElement("span");
-            change_value_char = document.createTextNode("✏️");
+            image = document.createElement("img");
+            image.src = "frontend/img/edit.png";
+            image.width = "15";
             
             change_value.className = "change_value";
             change_value.id = "id" + i;
             
             eth_div.appendChild(change_value);
-            change_value.appendChild(change_value_char);
+            change_value.appendChild(image);
             
             change_value.addEventListener('click', clickChangePrice.bind(null, event, i));
             eth.style.cursor = "default";
