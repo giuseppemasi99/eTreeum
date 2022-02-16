@@ -31,6 +31,24 @@ img {
     max-height: 100%;
 }
 
+
+button{
+    display: block;
+    margin-top: 10px;
+    padding: 20px;
+
+    cursor: not-allowed;
+
+    font-size: 12pt;
+    font-weight: bolder;
+
+    border-radius: 15px;
+    border: none;
+
+    background-color: rgb(28, 75, 17);
+    color: white;
+}
+
 a{
     text-decoration: none;
 }
@@ -66,19 +84,11 @@ div#change_price_value_div{
 }
 
 div#div_buy_options_eth{
-
-    display: flex;
-    padding: 3px;
+    display: block;
     justify-content: center;
     text-align: center;
     align-items: center;
-
 }
-
-div#div_buy_options_eth img{
-    margin-left: 5px;
-}
-
 
 /* CSS FOR THE HEADER*/
 
@@ -233,13 +243,18 @@ div.buttons_option{
     display: flex;
 }
 
-div.buttons_option button{
+div.buttons_option button {
     cursor: pointer;
     padding: 10px;
     border-radius: 10px;
-    margin: 5px;
+    margin: 15px;
+    min-width: 100px;
+}
 
-    width: 100px;
+div.buttons_option button#cancel_change_value, button#cancel{
+    background-color: white;
+    color: black;
+    border-style: solid;
 }
 
 /*CSS FOR CHANGE THE PRICE OF A TREE*/

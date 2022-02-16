@@ -56,10 +56,12 @@ async function buySeed(){
             });
 
         if(window.location.href.indexOf('shop') == -1){
+            document.getElementById("name_newSeed").value = "";
             cancel();
             await getTrees();
             printTrees(userTrees.length);
         }else{
+            document.getElementById("name_newSeed").value = "";
             cancelNewSeed();
             alert("You bought a new seed! You'll find it in the home page.");
         }

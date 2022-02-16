@@ -15,7 +15,6 @@ async function start(){
 
     //Check is new user --> return
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
-    console.log('isNewUser:'+ isNewUser);
     
     if (isNewUser) {
         registerPlayer();
@@ -31,6 +30,7 @@ function subscribeToTreeGrown(){
     contract.events.TreeGrown(
         async function(error, event){
             if (!error) {
+                alert('Good job! Your tree just got older');
                 console.log('TreeGrown event', event);
                 var treeId = event.returnValues['treeId'];
                 var t = event.returnValues['t'];
@@ -431,7 +431,6 @@ async function calculatePodium(){
 
 // function that show all the owned trees with the respective info and the user nickname
 async function printTrees(index = 1){
-
     setupPage();
 
     var initial_div;
@@ -1007,22 +1006,24 @@ async function _sellTree(treeId, price){
         price = web3.utils.toWei(price, 'ether');
     }catch(e){
         alert("Please, enter a number!");
+        document.getElementById("tree_price").value = "";
         return;
     }
 
     try {
-        var transaction = await contract.methods.sellTree(treeId, price).send(
+        await contract.methods.sellTree(treeId, price).send(
             {
                 from:senderAddress, 
                 gas: 1500000
             });
-        console.log("TRANSACTION", transaction);
         alert("Tree added to the shop!");
+        printTrees(userIdsOfTrees.indexOf(treeId)+1);
     }catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
     }
 
+    document.getElementById("tree_price").value = "";
 }
 
 async function sellingTheTree(){
@@ -1031,7 +1032,6 @@ async function sellingTheTree(){
     treeId = userIdsOfTrees[num_tree - 1];
     
     price = document.getElementById("tree_price").value;
-    document.getElementById("tree_price").value = "";
 
     await _sellTree(treeId, price);
 

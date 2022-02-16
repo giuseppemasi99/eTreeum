@@ -6,7 +6,6 @@ var shopIds = Array();
 var owners = Array();
 
 $(window).on('load', async function() {
-    // comment this code when working with blockchain
     await initialise();
 
     if (isNewUser == undefined) isNewUser = await contract.methods.isNewUser(senderAddress).call({from:senderAddress, gas: 1200000});
@@ -23,15 +22,10 @@ $(window).on('load', async function() {
 
 async function getShopTrees(){
     let ret = await contract.methods.getShop().call({from:senderAddress, gas: 1500000});
-    // ret = (shopIds, treesInShop, prices, owners)
     shopIds = ret[0];
     sellingTrees = ret[1];
     prices = ret[2];
     owners = ret[3];
-    // console.log(sellingTrees);
-    // console.log(prices);
-    // console.log(shopIds);
-    // console.log(owners);
 }
 
 async function showSellingTrees(){
@@ -129,12 +123,9 @@ async function showSellingTrees(){
         }
 
         info = await getTreeInfo(shopIds[i]);
-        //src += whichImage(sellingTrees[i]["stage"]);
         img.src = info.image;
 
     }
-    
-
 }
 
 function buyNewSeed(){
@@ -174,14 +165,15 @@ function buyNewSeed(){
 }
 
 async function buyOptions(event, treeIndex){
-    
-    var buy_option_div, shop_div, tree_image, eth_span;
+
+    var buy_option_div, shop_div, tree_image, eth_span, eth_tax;
     var buy_buttons, change_price_buttons, menu_buySeed;
 
     buy_option_div = document.getElementById("buy_options");
     shop_div = document.getElementById("shop_body");
     tree_image = document.getElementById("tree_to_sell_image");
     eth_span = document.getElementById("buy_options_eth");
+    eth_tax = document.getElementById("buy_options_tax");
 
     menu_buySeed = document.getElementById("menu_buySeed");
     buy_buttons = document.getElementsByClassName("eth_value");
@@ -209,11 +201,12 @@ async function buyOptions(event, treeIndex){
 
     info = await getTreeInfo(shopIds[treeIndex]);
     tree_image.src = info.image;
-    //tree_image.src = "frontend/img/" + whichImage(sellingTrees[treeIndex]["stage"]);
 
     document.getElementById('buy').value = treeIndex;
 
-    eth_span.innerHTML = web3.utils.fromWei(prices[treeIndex].toString(), 'ether');
+    eth_span.innerHTML = "Buy this tree for " + web3.utils.fromWei(prices[treeIndex].toString(), 'ether');
+    var commission = web3.utils.toWei(sellingTrees[treeIndex].value.toString(), 'finney');
+    eth_tax.innerHTML = " + a commission of " + web3.utils.fromWei(commission, 'ether') + " to plant a real tree in the world";
 
     buy_option_div.style.display = "flex";
     shop_div.style.opacity = 0.2;
@@ -230,7 +223,7 @@ function cancelOption(){
 
     menu_buySeed = document.getElementById("menu_buySeed");    
     buy_buttons = document.getElementsByClassName("eth_value");
-    change_price_buttons = document.getElementsByClassName("change_value")
+    change_price_buttons = document.getElementsByClassName("change_value");
 
     menu_buySeed.addEventListener('click', buyNewSeed);
 
@@ -264,13 +257,13 @@ async function _buyTree(shopIndex){
     price = (parseInt(price) + parseInt(fee)).toString();
 
     try {
-        var transaction = await contract.methods.buyTree(treeId, shopIndex).send(
+        await contract.methods.buyTree(treeId, shopIndex).send(
             {
                 from:senderAddress, 
                 value: price, 
                 gas: 1500000
             });
-        console.log("TRANSACTION", transaction);
+        
         alert("Tree bought!");
         showSellingTrees();
     }catch(e) {
@@ -367,39 +360,47 @@ function clickChangePrice(event, treeIndex){
 }
 
 // function that actually change the price of the tree in the shop
-async function _changePrice(treeId, new_price){
+async function _changePrice(treeId, new_price, index){
+
+    var price;
+    var validNumber = false;
 
     try{
-        new_price = web3.utils.toWei(new_price, 'ether');
+        price = web3.utils.toWei(new_price, 'ether');
+        validNumber = true;
     }catch(e){
         alert("Please, enter a number!");
-        return;
+        document.getElementById('new_eth_input').value = "";
     }
 
-    try {
-        var transaction = await contract.methods.changePrice(treeId, new_price).send(
+    if (validNumber) {
+        try {
+        await contract.methods.changePrice(treeId, new_price).send(
             {
                 from:senderAddress, 
                 gas: 1500000
             });
-        console.log("TRANSACTION", transaction);
         alert("Price changed!");
+        document.getElementById('id' + index).innerHTML = new_price + " ETH";
     }catch(e) {
         var errorMessage = getErrorMessage(e.message);
         alert("Something went wrong: " + errorMessage);
     }
+    }
 
+    
+
+    document.getElementById('new_eth_input').value = "";
 }
 
 // function that effectively change the tree price value
 async function changePrice(){
 
     var new_price = document.getElementById('new_eth_input').value;
-    document.getElementById('new_eth_input').value = "";
 
     var treeIndex = document.getElementById('change_price_value').value;
 
-    await _changePrice(shopIds[treeIndex], new_price);
+    await _changePrice(shopIds[treeIndex], new_price, treeIndex);
 
     var change_price_value_div, shop_div;
     change_price_value_div = document.getElementById("change_price_value_div");
@@ -407,7 +408,7 @@ async function changePrice(){
     change_price_value_div.style.display = "none";
     shop_div.style.opacity = 1;
 
-    showSellingTrees();
+    //showSellingTrees();
 
 }
 
