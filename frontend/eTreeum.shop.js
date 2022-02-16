@@ -36,6 +36,9 @@ async function getShopTrees(){
 
 async function showSellingTrees(){
 
+    var introduction = document.getElementById("shop_body");
+    introduction.display = "block";
+
     await getPlayer();
     await getShopTrees();
 
@@ -73,8 +76,6 @@ async function showSellingTrees(){
 
 
     for(i = 0; i < num_selling_trees; i++){
-
-        //src = "frontend/img/";
 
         tree_row = document.createElement("div");
         tree_name_div = document.createElement("div");

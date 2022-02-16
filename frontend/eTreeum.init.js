@@ -40,8 +40,6 @@ async function initialise() {
     // Set the address from which transactions are sent
     accounts = await web3.eth.getAccounts();
     senderAddress = accounts[0];
-    console.log("Sender address set: " + senderAddress);
-
 }
 
 // function that actually buy the new seed

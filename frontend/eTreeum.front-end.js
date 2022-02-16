@@ -62,7 +62,6 @@ function registerPlayer() {
     start_play.addEventListener('click', joinGame);
     
     username.disabled = true;
-    rules.disabled = true;
     start_play.disabled = true;
     join.disabled = false;    
 
@@ -153,10 +152,16 @@ function setUsername(){
 function setPlantName(){
 
     var div_plantName, div_username;
-    var start_play;
+    var start_play, username_button, span, username;
 
     div_plantName = document.getElementById("select_treeName");
     div_username = document.getElementById("insert_username");
+    username_button = document.getElementById("submit_username");
+    span = document.getElementById("username");
+    username = document.getElementById("input_username");
+
+    span.innerHTML = username.value;
+    username.innerHTML = "";
 
     //  buttons
     start_play = document.getElementById("start_play");
@@ -890,8 +895,7 @@ function cancel(){
 
 async function sellTree(){
     // ottenere immagine e sfonto del tree da vendere
-    var complete_body, sell_tree_div, tree_to_sell_div, num_tree, tree_img;
-    var tree_img_src;
+    var complete_body, sell_tree_div, num_tree, tree_img;
     var water, sun, rename, arrow, info, menu_buySeed, sell_button;
 
     complete_body = document.getElementById("complete_body");
@@ -919,12 +923,8 @@ async function sellTree(){
     menu_buySeed.removeEventListener('click', buyNewSeed);
     sell_button.removeEventListener('click', sellTree);
 
-    //tree_img_src = whichImage(userTrees[num_tree-1]["stage"]);
-    //tree_img.src = "frontend/img/"+tree_img_src;
     if (treeInfo == undefined) treeInfo = await getTreeInfo(userIdsOfTrees[num_tree-1]);
     tree_img.src = treeInfo?.image || "";
-
-    console.log("INFO", treeInfo, tree_img)
     
     if(parseInt(tot_trees.innerHTML) > 1){
         swipeEventActive = false;
