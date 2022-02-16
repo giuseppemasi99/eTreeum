@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 /**
     @title The eTreeum game
-    @author Fabiana Migliorini, Giuseppe Masi, Rocco Pisciuneri
+    @author F. Migliorini, G. Masi, R. Pisciuneri
 */
 contract ETreeumGame is ERC721URIStorage {
 
