@@ -28,13 +28,13 @@ contract ETreeumGame is ERC721URIStorage {
     uint16 constant private MAX_WATER = 10000;
     //max sun a player can give to a plant at once
     ////JUST FOR LIVE DEMO: uint8 constant private MAX_SUN = 4;
-    uint8 constant private MAX_SUN = 255;
+    uint8 constant private MAX_SUN = 200;
     /// @notice Number of trees in the game
     uint256 public treeCounter;
     //the creator of the game
     address payable private _gardener;
     /// @notice The organization in charge of planting real trees in the world
-    address payable constant public planter = payable(0xFBB311A55434A47C99700F56B7b20fC3Cb440a98);
+    address payable constant public planter = payable(0x932A5138CdA68E64cD92091883CfF694CB355BAD);
     Species[] private gameSpecies;
     //useful to generate a random species based on their extinction risks: 0 -> 35 %, 1 -> 30 %, 2 -> 20 %, 3 -> 9 %, 4 -> 5 %, 5 -> 1%
     uint8[100] private probabilitiesDitribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5];        
