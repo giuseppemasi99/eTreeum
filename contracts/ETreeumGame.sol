@@ -24,9 +24,11 @@ contract ETreeumGame is ERC721URIStorage {
     /// @notice The price for a new seed 
     uint constant public SEED_PRICE = 1e15;
     //max water a player can give to a plant at once
-    uint16 constant private MAX_WATER = 200;
+    //JUST FOR LIVE DEMO: uint16 constant private MAX_WATER = 200;
+    uint16 constant private MAX_WATER = 10000;
     //max sun a player can give to a plant at once
-    uint8 constant private MAX_SUN = 4;
+    ////JUST FOR LIVE DEMO: uint8 constant private MAX_SUN = 4;
+    uint8 constant private MAX_SUN = 255;
     /// @notice Number of trees in the game
     uint256 public treeCounter;
     //the creator of the game
@@ -385,7 +387,8 @@ contract ETreeumGame is ERC721URIStorage {
     function giveWater(uint256 id, uint16 waterAmount) MustOwnTree(id) SetLastEntered public {
         require(waterAmount <= MAX_WATER, "Too much water");
         Tree storage t = trees[id];
-        require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
+        //JUST FOR LIVE DEMO: require(t.lastWater < block.timestamp -6 hours, "You watered this plant not so long ago");
+        require(t.lastWater < block.timestamp -1 minutes, "You watered this plant not so long ago");
         if (t.startWeek > block.timestamp -1 weeks) {
             t.waterGivenInAWeek += waterAmount;
             _growTree(id, t);
@@ -415,7 +418,8 @@ contract ETreeumGame is ERC721URIStorage {
     function giveSun(uint64 id, uint8 sunHours) MustOwnTree(id) SetLastEntered public {
         require(sunHours <= MAX_SUN, "Too much sun");
         Tree storage t = trees[id];
-        require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
+        //require(t.lastSun < block.timestamp -6 hours, "You exposed this plant to the sun not so long ago");
+        require(t.lastSun < block.timestamp -1 minutes, "You exposed this plant to the sun not so long ago");
         if (t.startWeek > block.timestamp -1 weeks) {
             t.sunGivenInAWeek += sunHours;
             _growTree(id, t);

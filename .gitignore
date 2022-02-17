@@ -4,3 +4,4 @@ package-lock.json
 yarn.lock
 token_github.txt
 screenReports/
+.DS_Store
