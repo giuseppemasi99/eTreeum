@@ -143,10 +143,9 @@ function buyNewSeed(){
     shop_body.style.opacity = 0.2;
 
     menu_buySeed.removeEventListener('click', buyNewSeed);
-    
-    for (let i=0; i<buy_buttons.length; i++){
+    let k = 0;
 
-        let k = 0;
+    for (let i=0; i<buy_buttons.length; i++){
 
         let elClone = buy_buttons[i].cloneNode(true);
         buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
@@ -180,10 +179,9 @@ async function buyOptions(event, treeIndex){
     change_price_buttons = document.getElementsByClassName("change_value")
 
     menu_buySeed.removeEventListener('click', buyNewSeed);
+    let k = 0;
 
     for (let i=0; i<buy_buttons.length; i++){
-
-        let k = 0;
 
         let elClone = buy_buttons[i].cloneNode(true);
         buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
@@ -226,10 +224,9 @@ function cancelOption(){
     change_price_buttons = document.getElementsByClassName("change_value");
 
     menu_buySeed.addEventListener('click', buyNewSeed);
+    let k = 0;
 
     for (let i=0; i<buy_buttons.length; i++){
-        
-        let k = 0;
 
         if(owners[i] == senderAddress){
             change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
@@ -295,17 +292,15 @@ function cancelNewSeed(){
     // buttons
     menu_buySeed = document.getElementById("menu_buySeed");
     buy_buttons = document.getElementsByClassName("eth_value");
-    change_price_buttons = document.getElementsByClassName("change_value")
+    change_price_buttons = document.getElementsByClassName("change_value");
 
     buy_seed_div.style.display = "none";
     shop_body.style.opacity = 1;
 
     menu_buySeed.addEventListener('click', buyNewSeed);
-    
+    let k = 0;
 
     for (let i=0; i<buy_buttons.length; i++){
-
-        let k = 0;
 
         if(owners[i] == senderAddress){
             change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
@@ -338,10 +333,9 @@ function clickChangePrice(event, treeIndex){
     shop_body.style.opacity = 0.2;
 
     menu_buySeed.removeEventListener('click', buyNewSeed);
+    let k = 0;
     
     for (let i=0; i<buy_buttons.length; i++){
-        
-        let k = 0;
 
         let elClone = buy_buttons[i].cloneNode(true);
         buy_buttons[i].parentNode.replaceChild(elClone, buy_buttons[i]);
@@ -421,11 +415,11 @@ function cancelChangePrice(){
     shop_div = document.getElementById("shop_body");
 
     buy_buttons = document.getElementsByClassName("eth_value");
-    change_price_buttons = document.getElementsByClassName("change_value")
+    change_price_buttons = document.getElementsByClassName("change_value");
+
+    let k = 0;
 
     for (let i=0; i<buy_buttons.length; i++){
-
-        let k = 0;
 
         if(owners[i] == senderAddress){
             change_price_buttons[k].addEventListener('click', clickChangePrice.bind(null, event, i));
